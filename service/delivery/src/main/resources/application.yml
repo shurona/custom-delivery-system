@@ -1,0 +1,6 @@
+server:
+  port: 19095
+
+spring:
+  application:
+    name: delivery-service
