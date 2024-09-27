@@ -1,0 +1,6 @@
+server:
+  port: 19093
+
+spring:
+  application:
+    name: store-service

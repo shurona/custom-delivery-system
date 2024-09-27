@@ -1,0 +1,6 @@
+server:
+  port: 19099
+
+spring:
+  application:
+    name: rider-service

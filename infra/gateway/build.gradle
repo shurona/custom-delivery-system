@@ -1,0 +1,19 @@
+plugins {
+
+}
+
+group = 'com.webest'
+version = '0.0.1-SNAPSHOT'
+
+dependencies {
+    // gateway
+    implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+
+    // jwt
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.12.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.5'
+
+    // test
+    testImplementation 'io.projectreactor:reactor-test'
+}
