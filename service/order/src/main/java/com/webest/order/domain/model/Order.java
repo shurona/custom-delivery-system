@@ -2,6 +2,9 @@ package com.webest.order.domain.model;
 
 
 import com.webest.app.jpa.BaseEntity;
+import com.webest.order.domain.events.OrderCanceledEvent;
+import com.webest.order.domain.events.OrderCompletedEvent;
+import com.webest.order.domain.events.OrderCreatedEvent;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -95,8 +98,61 @@ public class Order extends BaseEntity {
         this.totalPaymentPrice = totalPaymentPrice;
     }
 
-    public void delete(Boolean is_delete) {
+    public void delete() {
         this.isDeleted = true;
+    }
+
+    public OrderCreatedEvent createOrderCreatedEvent() {
+        return new OrderCreatedEvent(
+                this.id,
+                this.storeId,
+                this.paymentId,
+                this.couponId,
+                this.userId,
+                this.orderStatus,
+                this.isRequest,
+                this.requests,
+                this.totalQuantity,
+                this.totalProductPrice,
+                this.couponAppliedAmount,
+                this.deliveryTipAmount,
+                this.totalPaymentPrice);
+    }
+
+    public OrderCompletedEvent completed() {
+        this.orderStatus = OrderStatus.PAYMENT_COMPLETED;
+        return new OrderCompletedEvent(
+                this.id,
+                this.storeId,
+                this.paymentId,
+                this.couponId,
+                this.userId,
+                this.orderStatus,
+                this.isRequest,
+                this.requests,
+                this.totalQuantity,
+                this.totalProductPrice,
+                this.couponAppliedAmount,
+                this.deliveryTipAmount,
+                this.totalPaymentPrice);
+        }
+
+    public OrderCanceledEvent canceled() {
+        this.orderStatus = OrderStatus.PAYMENT_CANCELED;
+        return new OrderCanceledEvent(
+                this.id,
+                this.storeId,
+                this.paymentId,
+                this.couponId,
+                this.userId,
+                this.orderStatus,
+                this.isRequest,
+                this.requests,
+                this.totalQuantity,
+                this.totalProductPrice,
+                this.couponAppliedAmount,
+                this.deliveryTipAmount,
+                this.totalPaymentPrice);
     }
 
 }

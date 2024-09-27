@@ -3,6 +3,9 @@ package com.webest.order.presentation.response;
 import com.webest.order.domain.model.Order;
 import com.webest.order.domain.model.OrderStatus;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public record OrderResponse(Long id,
                             Long storeId,
                             Long paymentId,
@@ -31,6 +34,12 @@ public record OrderResponse(Long id,
                 order.getCouponAppliedAmount(),
                 order.getDeliveryTipAmount(),
                 order.getTotalPaymentPrice());
+    }
+
+    public static List<OrderResponse> of(List<Order> orders) {
+        return orders.stream()
+                .map(OrderResponse::of)
+                .collect(Collectors.toList());
     }
 
 }
