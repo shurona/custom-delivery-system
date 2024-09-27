@@ -1,0 +1,25 @@
+plugins {
+
+}
+
+group = 'com.webest'
+version = '0.0.1-SNAPSHOT'
+
+
+dependencies {
+
+    implementation project(":web-core")
+    implementation project(":app-core")
+
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.12.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.5'
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.security:spring-security-test'
+}
