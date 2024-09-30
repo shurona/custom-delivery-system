@@ -34,6 +34,6 @@ public class BaseEntity {
     protected Long updatedBy;
 
     @Column(name = "is_deleted")
-    protected Boolean isDeleted;
+    protected Boolean isDeleted = false;
 
 }
