@@ -3,7 +3,6 @@ package com.webest.order.application.service;
 import com.webest.order.application.dtos.OrderDto;
 import com.webest.order.application.dtos.OrderProductDto;
 import com.webest.order.domain.events.OrderCompletedEvent;
-import com.webest.order.domain.model.OrderStatus;
 import com.webest.order.domain.model.Order;
 import com.webest.order.domain.model.OrderProduct;
 import com.webest.order.domain.repository.order.OrderRepository;
