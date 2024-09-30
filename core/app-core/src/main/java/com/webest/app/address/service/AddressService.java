@@ -30,6 +30,13 @@ public interface AddressService {
     }
 
     /**
+     * 구역을 기준으로 주소 조회
+     */
+    default public AddressDto findAddressByDistrict(String city, String street, String district) {
+        return null;
+    }
+
+    /**
      * 주소를 코드로 조회
      */
     default public AddressDto findAddressByCode(Long code) {

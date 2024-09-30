@@ -29,6 +29,11 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    public AddressDto findAddressByDistrict(String city, String street, String district) {
+        return readAddressCsv.findAddressByDistrict(city, street, district);
+    }
+
+    @Override
     public AddressDto findAddressByCode(Long code) {
         return readAddressCsv.findAddressByCode(code);
     }
