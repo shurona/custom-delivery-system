@@ -10,7 +10,6 @@ import com.webest.web.exception.ApplicationException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -112,8 +111,6 @@ public class ReadAddressCsv {
      */
     public List<AddressDto> findAddressByStreet(String city, String street) {
         checkAddressExist();
-        System.out.println(
-            Arrays.toString(this.addressSetInfo.values().stream().toList().get(20000)));
         return this.addressSetInfo.values().stream()
             .filter(addressSet -> (addressSet[CITY_INDEX].equals(city)
                 && addressSet[STREET_INDEX].equals(street)
