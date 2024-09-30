@@ -1,8 +1,8 @@
 package com.webest.web.response;
 
-import com.webest.web.exception.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
 @Getter
@@ -22,16 +22,16 @@ public class CommonResponse<T> {
     /**
      * 실패시 메서드 - data 필드가 필요 없는 경우
      */
-    public static CommonResponse<?> error(ErrorCode errorcode) {
+    public static CommonResponse<?> error(HttpStatus status, String message) {
 
-        return new CommonResponse<>(errorcode.getStatus().value(), errorcode.getMessage(), null);
+        return new CommonResponse<>(status.value(), message, null);
     }
 
     /**
      * 실패시 메서드 - data 필드가 필요한 경우
      */
-    public static <T> CommonResponse<T> error(ErrorCode errorcode, T data) {
-        return new CommonResponse<>(errorcode.getStatus().value(), errorcode.getMessage(), data);
+    public static <T> CommonResponse<T> error(HttpStatus status, String message, T data) {
+        return new CommonResponse<>(status.value(), message, data);
     }
 
 }
