@@ -17,4 +17,9 @@ public final class CommonStaticVariable {
      */
     public static final String BASE_PACKAGE = "com.webest";
 
+    /**
+     * 법정동 주소 모아 놓은 csv
+     */
+    public static final String ADDRESS_CSV = "csv/address_20240802.csv";
+
 }
