@@ -37,4 +37,10 @@ public class CategoryController {
         return CommonResponse.success(categoryResponses);
     }
 
+    // 카테고리 수정
+    @PutMapping("{id}")
+    public CommonResponse<CategoryResponse> updateCategory() {
+
+    }
+
 }

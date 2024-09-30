@@ -2,6 +2,7 @@ package com.webest.store.category.application;
 
 import com.webest.store.category.api.dto.CategoryResponse;
 import com.webest.store.category.api.dto.CreateCategoryRequest;
+import com.webest.store.category.api.dto.UpdateCategoryRequest;
 import com.webest.store.category.domain.StoreCategory;
 import com.webest.store.category.domain.CategoryRepository;
 import com.webest.store.category.exception.CategoryErrorCode;
@@ -41,6 +42,14 @@ public class CategoryService {
         return categoryRepository.findAll().stream()
                 .map(CategoryResponse::of)
                 .collect(Collectors.toList());
+    }
+
+    // 카테고리 수정
+    @Transactional
+    public CategoryResponse updateCategory(UpdateCategoryRequest updateCategoryRequest) {
+        StoreCategory category = findCategoryById(updateCategoryRequest.id());
+        return CategoryResponse.of(category);
+
     }
 
     // key 값으로 카테고리가 이미 존재하는지 확인하는 메서드

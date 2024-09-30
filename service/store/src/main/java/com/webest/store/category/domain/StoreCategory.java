@@ -1,5 +1,6 @@
 package com.webest.store.category.domain;
 
+import com.webest.store.category.api.dto.UpdateCategoryRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -41,4 +42,5 @@ public class StoreCategory {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
+
 }
