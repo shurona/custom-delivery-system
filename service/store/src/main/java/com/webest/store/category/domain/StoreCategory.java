@@ -1,5 +1,6 @@
 package com.webest.store.category.domain;
 
+import com.webest.app.jpa.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,9 +13,9 @@ import org.hibernate.annotations.SQLRestriction;
 @Table(name = "p_store_category")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-//@SQLDelete(sql = "UPDATE p_store_category SET is_deleted = true WHERE id = ?")
-//@SQLRestriction("is_deleted = false")
-public class StoreCategory {
+@SQLDelete(sql = "UPDATE p_store_category SET is_deleted = true WHERE id = ?")
+@SQLRestriction("is_deleted = false")
+public class StoreCategory extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
