@@ -119,6 +119,18 @@ public class ReadAddressCsv {
     }
 
     /**
+     * City, Street, District 기준으로 주소 단일 조회
+     */
+    public AddressDto findAddressByDistrict(String city, String street, String district) {
+        checkAddressExist();
+        return this.addressSetInfo.values().stream()
+            .filter(addressSet -> (addressSet[CITY_INDEX].equals(city)
+                && addressSet[STREET_INDEX].equals(street)
+                && addressSet[DISTRICT_INDEX].equals(district)))
+            .map(AddressDto::from).findFirst().orElse(null);
+    }
+
+    /**
      * 코드로 주소 조회
      */
     public AddressDto findAddressByCode(Long code) {

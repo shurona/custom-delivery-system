@@ -51,4 +51,15 @@ public class AddressController {
         return CommonResponse.success(addressListByStreet);
     }
 
+    @GetMapping("city/{city}/street/{street}/district/{district}")
+    public CommonResponse<AddressDto> findAddressByDistrict(
+        @PathVariable("city") String city,
+        @PathVariable("street") String street,
+        @PathVariable("district") String district
+    ) {
+        AddressDto address = addressService.findAddressByDistrict(city, street,
+            district);
+        return CommonResponse.success(address);
+    }
+
 }
