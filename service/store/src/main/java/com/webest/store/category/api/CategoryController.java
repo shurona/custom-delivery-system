@@ -2,6 +2,7 @@ package com.webest.store.category.api;
 
 import com.webest.store.category.api.dto.CategoryResponse;
 import com.webest.store.category.api.dto.CreateCategoryRequest;
+import com.webest.store.category.api.dto.UpdateCategoryRequest;
 import com.webest.store.category.application.CategoryService;
 import com.webest.web.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
@@ -39,8 +40,9 @@ public class CategoryController {
 
     // 카테고리 수정
     @PutMapping("{id}")
-    public CommonResponse<CategoryResponse> updateCategory() {
-
+    public CommonResponse<CategoryResponse> updateCategory(UpdateCategoryRequest updateCategoryRequest) {
+        CategoryResponse categoryResponse = categoryService.updateCategoryValue(updateCategoryRequest);
+        return CommonResponse.success(categoryResponse);
     }
 
 }

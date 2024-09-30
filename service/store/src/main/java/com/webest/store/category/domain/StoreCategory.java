@@ -43,4 +43,8 @@ public class StoreCategory {
         return id != null ? id.hashCode() : 0;
     }
 
+    public void updateValue(String value) {
+        this.value = value;
+    }
+
 }

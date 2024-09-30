@@ -46,8 +46,9 @@ public class CategoryService {
 
     // 카테고리 수정
     @Transactional
-    public CategoryResponse updateCategory(UpdateCategoryRequest updateCategoryRequest) {
+    public CategoryResponse updateCategoryValue(UpdateCategoryRequest updateCategoryRequest) {
         StoreCategory category = findCategoryById(updateCategoryRequest.id());
+        category.updateValue(updateCategoryRequest.value());
         return CategoryResponse.of(category);
 
     }
