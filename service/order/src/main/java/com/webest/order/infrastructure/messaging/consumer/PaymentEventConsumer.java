@@ -3,6 +3,7 @@ package com.webest.order.infrastructure.messaging.consumer;
 
 import com.webest.order.application.service.OrderService;
 import com.webest.order.infrastructure.messaging.events.PaymentCompletedEvent;
+import com.webest.order.infrastructure.messaging.topic.OrderTopic;
 import com.webest.order.infrastructure.serialization.EventSerializer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;

@@ -1,8 +1,13 @@
-package com.webest.order.presentation.request;
+package com.webest.order.presentation.request.order;
 
 
 import com.webest.order.application.dtos.OrderDto;
+import com.webest.order.domain.model.OrderProduct;
 import com.webest.order.domain.model.OrderStatus;
+import com.webest.order.presentation.request.orderproduct.OrderProductRequest;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public record OrderUpdateRequest(Long storeId,
                                  Long paymentId,
@@ -14,7 +19,8 @@ public record OrderUpdateRequest(Long storeId,
                                  Double totalProductPrice,
                                  Double couponAppliedAmount,
                                  Double deliveryTipAmount,
-                                 Double totalPaymentPrice) {
+                                 Double totalPaymentPrice,
+                                 List<OrderProductRequest> orderProductRequests) {
     public OrderDto toDto() {
         return OrderDto.create(
                 this.storeId,
@@ -27,7 +33,10 @@ public record OrderUpdateRequest(Long storeId,
                 this.totalProductPrice,
                 this.couponAppliedAmount,
                 this.deliveryTipAmount,
-                this.totalPaymentPrice
+                this.totalPaymentPrice,
+                this.orderProductRequests.stream()
+                        .map(OrderProductRequest::toDto)
+                        .collect(Collectors.toList())
         );
     }
 

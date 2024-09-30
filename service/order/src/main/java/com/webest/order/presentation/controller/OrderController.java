@@ -1,12 +1,11 @@
 package com.webest.order.presentation.controller;
 
 import com.webest.order.application.service.OrderService;
-import com.webest.order.presentation.request.OrderCreateRequest;
-import com.webest.order.presentation.request.OrderUpdateRequest;
+import com.webest.order.presentation.request.order.OrderCreateRequest;
+import com.webest.order.presentation.request.order.OrderUpdateRequest;
 import com.webest.order.presentation.response.OrderResponse;
 import com.webest.web.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -66,10 +65,15 @@ public class OrderController {
         return CommonResponse.success(null);
     }
 
-
     /**
-     * 주문
+     * 주문 요청 (주문 -> 배달)
      */
+    @PostMapping("/{orderId}/request")
+    public CommonResponse<OrderResponse> requestOrder(@PathVariable(name = "orderId") Long orderId) {
+
+        return CommonResponse.success(orderService.requestOrder(orderId));
+    }
+
 
 
 }

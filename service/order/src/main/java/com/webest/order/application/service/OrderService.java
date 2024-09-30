@@ -1,12 +1,13 @@
 package com.webest.order.application.service;
 
 import com.webest.order.application.dtos.OrderDto;
-import com.webest.order.domain.events.OrderCanceledEvent;
+import com.webest.order.application.dtos.OrderProductDto;
 import com.webest.order.domain.events.OrderCompletedEvent;
 import com.webest.order.domain.model.OrderStatus;
-import com.webest.order.infrastructure.messaging.events.PaymentCompletedEvent;
 import com.webest.order.domain.model.Order;
-import com.webest.order.domain.repository.OrderRepository;
+import com.webest.order.domain.model.OrderProduct;
+import com.webest.order.domain.repository.order.OrderRepository;
+import com.webest.order.presentation.request.orderproduct.OrderProductRequest;
 import com.webest.order.presentation.response.OrderResponse;
 import com.webest.web.exception.ApplicationException;
 import com.webest.web.exception.ErrorCode;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,8 @@ public class OrderService {
 
     private final OrderEventService orderEventService;
 
+    private final OrderProductService orderProductService;
+
     /**
      * 주문 생성
      * @param request 주문 생성에 필요한 정보를 담은 OrderDto
@@ -31,6 +35,8 @@ public class OrderService {
      */
     @Transactional
     public OrderResponse createOrder(OrderDto request) {
+
+        List<OrderProduct> orderProducts = orderProductService.createOrderProduct(request.orderProductDtos());
 
         Order order = Order.create(
                 request.storeId(),
@@ -43,14 +49,15 @@ public class OrderService {
                 request.totalProductPrice(),
                 request.couponAppliedAmount(),
                 request.deliveryTipAmount(),
-                request.totalPaymentPrice()
+                request.totalPaymentPrice(),
+                orderProducts
         );
 
         // 주문 저장
         orderRepository.save(order);
 
         // 주문 생성시 이벤트 발생
-        orderEventService.publishOrderCreatedEvent(order.createOrderCreatedEvent());
+        orderEventService.publishOrderCreatedEvent(order.createdEvent());
 
         return OrderResponse.of(order);
     }
@@ -118,6 +125,7 @@ public class OrderService {
                     request.couponAppliedAmount(),
                     request.deliveryTipAmount(),
                     request.totalPaymentPrice());
+            orderEventService.publishOrderUpdatedEvent(order.updatedEvent());
             return OrderResponse.of(order);
         }).orElseThrow(() -> new ApplicationException(ErrorCode.ORDER_NOT_FOUND));
     }
@@ -130,6 +138,19 @@ public class OrderService {
     public void deleteOrder(Long orderId) {
         orderRepository.findById(orderId).map(order -> {
             order.delete();
+            orderEventService.publishOrderCanceledEvent(order.canceledEvent());
+            return OrderResponse.of(order);
+        }).orElseThrow(() -> new ApplicationException(ErrorCode.ORDER_NOT_FOUND));
+    }
+
+    /**
+     * 주문 요청(배달)
+     * @param orderId 삭제할 주문의 ID
+     */
+    @Transactional
+    public OrderResponse requestOrder(Long orderId) {
+       return orderRepository.findById(orderId).map(order -> {
+            order.requestOrder();
             return OrderResponse.of(order);
         }).orElseThrow(() -> new ApplicationException(ErrorCode.ORDER_NOT_FOUND));
     }

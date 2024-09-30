@@ -2,6 +2,8 @@ package com.webest.order.application.dtos;
 
 import com.webest.order.domain.model.OrderStatus;
 
+import java.util.List;
+
 public record OrderDto (Long storeId,
                         Long paymentId,
                         Long couponId,
@@ -12,7 +14,8 @@ public record OrderDto (Long storeId,
                         Double totalProductPrice,
                         Double couponAppliedAmount,
                         Double deliveryTipAmount,
-                        Double totalPaymentPrice
+                        Double totalPaymentPrice,
+                        List<OrderProductDto> orderProductDtos // 주문 상품 리스트 포함
 ) {
     public static OrderDto create(Long storeId,
                                   Long paymentId,
@@ -24,7 +27,8 @@ public record OrderDto (Long storeId,
                                   Double totalProductPrice,
                                   Double couponAppliedAmount,
                                   Double deliveryTipAmount,
-                                  Double totalPaymentPrice) {
+                                  Double totalPaymentPrice,
+                                  List<OrderProductDto> orderProductDtos) {
         return new OrderDto(
                 storeId,
                 paymentId,
@@ -36,7 +40,8 @@ public record OrderDto (Long storeId,
                 totalProductPrice,
                 couponAppliedAmount,
                 deliveryTipAmount,
-                totalPaymentPrice);
+                totalPaymentPrice,
+                orderProductDtos);
     }
 
 }

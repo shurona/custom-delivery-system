@@ -5,8 +5,11 @@ import com.webest.app.jpa.BaseEntity;
 import com.webest.order.domain.events.OrderCanceledEvent;
 import com.webest.order.domain.events.OrderCompletedEvent;
 import com.webest.order.domain.events.OrderCreatedEvent;
+import com.webest.order.domain.events.OrderUpdatedEvent;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,6 +39,10 @@ public class Order extends BaseEntity {
 
     private String requests;
 
+    private Integer addressCode;
+
+    private String detailAddress;
+
     private Integer totalQuantity;
 
     private Double totalProductPrice;
@@ -45,6 +52,9 @@ public class Order extends BaseEntity {
     private Double deliveryTipAmount;
 
     private Double totalPaymentPrice;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderProduct> orderProducts;
 
     public static Order create(Long storeId,
                                Long paymentId,
@@ -56,8 +66,10 @@ public class Order extends BaseEntity {
                                Double totalProductPrice,
                                Double couponAppliedAmount,
                                Double deliveryTipAmount,
-                               Double totalPaymentPrice)
+                               Double totalPaymentPrice,
+                               List<OrderProduct> orderProducts)
     {
+
         Order order = new Order();
         order.storeId = storeId;
         order.paymentId = paymentId;
@@ -65,11 +77,20 @@ public class Order extends BaseEntity {
         order.userId = userId;
         order.orderStatus = orderStatus;
         order.isRequest = isRequest;
-        order.totalQuantity = totalQuantity;
-        order.totalProductPrice = totalProductPrice;
+
+        order.totalQuantity = calculateTotalQuantity(orderProducts);
+
+        order.totalProductPrice = calculateTotalProductPrice(orderProducts);
+
         order.couponAppliedAmount = couponAppliedAmount;
+
         order.deliveryTipAmount = deliveryTipAmount;
-        order.totalPaymentPrice = totalPaymentPrice;
+
+        order.totalPaymentPrice = calculateTotalPaymentPrice(order.totalProductPrice, couponAppliedAmount, deliveryTipAmount);
+
+        order.orderProducts = orderProducts;
+
+        orderProducts.forEach(orderProduct -> orderProduct.setOrder(order));
 
         return order;
     }
@@ -102,8 +123,30 @@ public class Order extends BaseEntity {
         this.isDeleted = true;
     }
 
-    public OrderCreatedEvent createOrderCreatedEvent() {
+    // 배달로 요청
+    public void requestOrder() {
+        this.isRequest = true;
+    }
+
+    public OrderCreatedEvent createdEvent() {
         return new OrderCreatedEvent(
+                this.id,
+                this.storeId,
+                this.paymentId,
+                this.couponId,
+                this.userId,
+                this.orderStatus,
+                this.isRequest,
+                this.requests,
+                this.totalQuantity,
+                this.totalProductPrice,
+                this.couponAppliedAmount,
+                this.deliveryTipAmount,
+                this.totalPaymentPrice);
+    }
+
+    public OrderUpdatedEvent updatedEvent() {
+        return new OrderUpdatedEvent(
                 this.id,
                 this.storeId,
                 this.paymentId,
@@ -137,7 +180,7 @@ public class Order extends BaseEntity {
                 this.totalPaymentPrice);
         }
 
-    public OrderCanceledEvent canceled() {
+    public OrderCanceledEvent canceledEvent() {
         this.orderStatus = OrderStatus.PAYMENT_CANCELED;
         return new OrderCanceledEvent(
                 this.id,
@@ -153,6 +196,25 @@ public class Order extends BaseEntity {
                 this.couponAppliedAmount,
                 this.deliveryTipAmount,
                 this.totalPaymentPrice);
+    }
+
+    // 각 OrderProduct의 quantity 값을 더해 totalQuantity 계산
+    private static Integer calculateTotalQuantity(List<OrderProduct> orderProducts) {
+        return orderProducts.stream()
+                .mapToInt(OrderProduct::getQuantity)
+                .sum();
+    }
+
+    // 각 OrderProduct의 totalPrice 값을 더해 totalProductPrice 계산
+    private static Double calculateTotalProductPrice(List<OrderProduct> orderProducts) {
+        return orderProducts.stream()
+                .mapToDouble(OrderProduct::getTotalPrice)
+                .sum();
+    }
+
+    // totalProductPrice +
+    private static Double calculateTotalPaymentPrice(Double totalProductPrice, Double couponAppliedAmount, Double deliveryTipAmount) {
+        return totalProductPrice + deliveryTipAmount - couponAppliedAmount;
     }
 
 }

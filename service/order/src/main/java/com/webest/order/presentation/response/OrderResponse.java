@@ -1,6 +1,7 @@
 package com.webest.order.presentation.response;
 
 import com.webest.order.domain.model.Order;
+import com.webest.order.domain.model.OrderProduct;
 import com.webest.order.domain.model.OrderStatus;
 
 import java.util.List;
@@ -17,7 +18,8 @@ public record OrderResponse(Long id,
                             Double totalProductPrice,
                             Double couponAppliedAmount,
                             Double deliveryTipAmount,
-                            Double totalPaymentPrice) {
+                            Double totalPaymentPrice,
+                            List<OrderProductResponse> orderProductResponses){
 
 
     public static OrderResponse of(Order order) {
@@ -33,7 +35,11 @@ public record OrderResponse(Long id,
                 order.getTotalProductPrice(),
                 order.getCouponAppliedAmount(),
                 order.getDeliveryTipAmount(),
-                order.getTotalPaymentPrice());
+                order.getTotalPaymentPrice(),
+                order.getOrderProducts().stream()
+                        .map(OrderProductResponse::of)  // OrderProduct -> OrderProductResponse 변환
+                        .collect(Collectors.toList())
+        );
     }
 
     public static List<OrderResponse> of(List<Order> orders) {

@@ -1,4 +1,4 @@
-package com.webest.order.domain.repository;
+package com.webest.order.domain.repository.order;
 
 import com.webest.order.domain.model.Order;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -9,7 +9,7 @@ public enum OrderTopic {
     CREATED("order-created"),
     COMPLETED("order-completed"),
     UPDATED("order-updated"),
-    CANCELED("order-cancel");
+    CANCELED("order-canceled");
 
     private final String topic;
 
