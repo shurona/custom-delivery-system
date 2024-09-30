@@ -19,7 +19,7 @@ public class CategoryController {
 
     // 카테고리 생성
     @PostMapping
-    public CommonResponse<CategoryResponse> saveCategory(CreateCategoryRequest createCategoryRequest) {
+    public CommonResponse<CategoryResponse> saveCategory(@RequestBody CreateCategoryRequest createCategoryRequest) {
          CategoryResponse categoryResponse = categoryService.saveCategory(createCategoryRequest);
         return CommonResponse.success(categoryResponse);
     }
@@ -40,9 +40,16 @@ public class CategoryController {
 
     // 카테고리 수정
     @PutMapping("{id}")
-    public CommonResponse<CategoryResponse> updateCategory(UpdateCategoryRequest updateCategoryRequest) {
+    public CommonResponse<CategoryResponse> updateCategory(@RequestBody UpdateCategoryRequest updateCategoryRequest) {
         CategoryResponse categoryResponse = categoryService.updateCategoryValue(updateCategoryRequest);
         return CommonResponse.success(categoryResponse);
+    }
+
+    // 카테고리 삭제
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable("id") Long id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

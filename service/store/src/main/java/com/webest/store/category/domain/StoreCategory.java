@@ -1,31 +1,35 @@
 package com.webest.store.category.domain;
 
-import com.webest.store.category.api.dto.UpdateCategoryRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 @Entity
-@Table
+@Table(name = "p_store_category")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@SQLDelete(sql = "UPDATE p_store_category SET is_deleted = true WHERE id = ?")
+//@SQLRestriction("is_deleted = false")
 public class StoreCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String key;
+    private String categoryKey;
 
     private String value;
 
-    private StoreCategory(String key, String value) {
-        this.key = key;
+    private StoreCategory(String categoryKey, String value) {
+        this.categoryKey = categoryKey;
         this.value = value;
     }
 
-    public static StoreCategory of(String key, String value) {
-        return new StoreCategory(key, value);
+    public static StoreCategory of(String categoryKey, String value) {
+        return new StoreCategory(categoryKey, value);
     }
 
     @Override

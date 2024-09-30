@@ -53,9 +53,16 @@ public class CategoryService {
 
     }
 
+    // 카테고리 삭제
+    @Transactional
+    public void deleteCategory(Long id) {
+        StoreCategory category = findCategoryById(id);
+        categoryRepository.delete(category);
+    }
+
     // key 값으로 카테고리가 이미 존재하는지 확인하는 메서드
-    private void checkIfCategoryExistsByKey(String key) {
-        if (categoryRepository.existsByKey(key)) {
+    private void checkIfCategoryExistsByKey(String categoryKey) {
+        if (categoryRepository.existsByCategoryKey(categoryKey)) {
             throw new CategoryException(CategoryErrorCode.CATEGORY_ALREADY_EXISTS);
         }
     }
@@ -65,4 +72,5 @@ public class CategoryService {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryException(CategoryErrorCode.CATEGORY_NOT_FOUND));
     }
+
 }
