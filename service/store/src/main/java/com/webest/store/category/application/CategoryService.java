@@ -8,7 +8,6 @@ import com.webest.store.category.domain.CategoryRepository;
 import com.webest.store.category.exception.CategoryErrorCode;
 import com.webest.store.category.exception.CategoryException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
