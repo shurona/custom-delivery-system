@@ -1,5 +1,6 @@
 package com.webest.web.exception;
 
+import static com.webest.web.exception.ErrorCode.INVALID_INPUT;
 import static com.webest.web.exception.ErrorCode.SERVER_ERROR;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
@@ -23,8 +24,8 @@ public class GlobalExceptionHandler {
         ApplicationException exception
     ) {
 
-        return ResponseEntity.status(exception.getErrorCode().getStatus())
-            .body(CommonResponse.error(exception.getErrorCode()));
+        return ResponseEntity.status(exception.getHttpStatus())
+            .body(CommonResponse.error(exception.getHttpStatus(), exception.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -33,7 +34,7 @@ public class GlobalExceptionHandler {
 
         if (exception.getCause() instanceof ApplicationException) {
             return ResponseEntity.status(BAD_REQUEST)
-                .body(CommonResponse.error(ErrorCode.INVALID_INPUT));
+                .body(CommonResponse.error(INVALID_INPUT.getStatus(), INVALID_INPUT.getMessage()));
         }
 
         List<InvalidMethodResponseDto> invalidInputResList = exception.getBindingResult()
@@ -44,7 +45,8 @@ public class GlobalExceptionHandler {
             .toList();
 
         return ResponseEntity.status(BAD_REQUEST)
-            .body(CommonResponse.error(ErrorCode.INVALID_INPUT, invalidInputResList));
+            .body(CommonResponse.error(INVALID_INPUT.getStatus(), INVALID_INPUT.getMessage(),
+                invalidInputResList));
     }
 
     @ExceptionHandler({Exception.class, RuntimeException.class})
@@ -54,7 +56,7 @@ public class GlobalExceptionHandler {
         log.error("예상치 못한 에러 : ", e);
 
         return ResponseEntity.status(SERVER_ERROR.getStatus())
-            .body(CommonResponse.error(SERVER_ERROR));
+            .body(CommonResponse.error(SERVER_ERROR.getStatus(), SERVER_ERROR.getMessage()));
     }
 
 }
