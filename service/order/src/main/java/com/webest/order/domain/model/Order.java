@@ -2,10 +2,8 @@ package com.webest.order.domain.model;
 
 
 import com.webest.app.jpa.BaseEntity;
-import com.webest.order.domain.events.OrderCanceledEvent;
-import com.webest.order.domain.events.OrderCompletedEvent;
-import com.webest.order.domain.events.OrderCreatedEvent;
-import com.webest.order.domain.events.OrderUpdatedEvent;
+import com.webest.order.domain.events.*;
+import com.webest.order.domain.service.UserService;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,6 +17,7 @@ import java.util.List;
 @Entity
 @Table(name = "orders")
 public class Order extends BaseEntity {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,13 +34,13 @@ public class Order extends BaseEntity {
     @Enumerated(EnumType.STRING)  // Enum을 문자열로 DB에 저장
     private OrderStatus orderStatus;
 
-    private Boolean isRequest;
+    private Boolean isRequest; // 주문 -> 배달 요청여부
 
-    private String requests;
+    private String requests; // 요청 사항
 
-    private Integer addressCode;
+    private Long arrivalAddressCode;
 
-    private String detailAddress;
+    private String arrivalDetailAddress;
 
     private Integer totalQuantity;
 
@@ -111,12 +110,11 @@ public class Order extends BaseEntity {
         this.couponId = couponId;
         this.userId = userId;
         this.orderStatus = orderStatus;
-        this.isRequest = isRequest;
-        this.totalQuantity = totalQuantity;
-        this.totalProductPrice = totalProductPrice;
+        this.totalQuantity = calculateTotalQuantity(orderProducts);
+        this.totalProductPrice = calculateTotalProductPrice(orderProducts);
         this.couponAppliedAmount = couponAppliedAmount;
         this.deliveryTipAmount = deliveryTipAmount;
-        this.totalPaymentPrice = totalPaymentPrice;
+        this.totalPaymentPrice = calculateTotalPaymentPrice(calculateTotalProductPrice(orderProducts), couponAppliedAmount, deliveryTipAmount);
     }
 
     public void delete() {
@@ -138,6 +136,8 @@ public class Order extends BaseEntity {
                 this.orderStatus,
                 this.isRequest,
                 this.requests,
+                this.arrivalAddressCode,
+                this.arrivalDetailAddress,
                 this.totalQuantity,
                 this.totalProductPrice,
                 this.couponAppliedAmount,
@@ -155,6 +155,8 @@ public class Order extends BaseEntity {
                 this.orderStatus,
                 this.isRequest,
                 this.requests,
+                this.arrivalAddressCode,
+                this.arrivalDetailAddress,
                 this.totalQuantity,
                 this.totalProductPrice,
                 this.couponAppliedAmount,
@@ -173,6 +175,8 @@ public class Order extends BaseEntity {
                 this.orderStatus,
                 this.isRequest,
                 this.requests,
+                this.arrivalAddressCode,
+                this.arrivalDetailAddress,
                 this.totalQuantity,
                 this.totalProductPrice,
                 this.couponAppliedAmount,
@@ -191,6 +195,28 @@ public class Order extends BaseEntity {
                 this.orderStatus,
                 this.isRequest,
                 this.requests,
+                this.arrivalAddressCode,
+                this.arrivalDetailAddress,
+                this.totalQuantity,
+                this.totalProductPrice,
+                this.couponAppliedAmount,
+                this.deliveryTipAmount,
+                this.totalPaymentPrice);
+    }
+
+    public OrderRequestedEvent requestedEvent() {
+        this.orderStatus = OrderStatus.DELIVERING;
+        return new OrderRequestedEvent(
+                this.id,
+                this.storeId,
+                this.paymentId,
+                this.couponId,
+                this.userId,
+                this.orderStatus,
+                this.isRequest,
+                this.requests,
+                this.arrivalAddressCode,
+                this.arrivalDetailAddress,
                 this.totalQuantity,
                 this.totalProductPrice,
                 this.couponAppliedAmount,

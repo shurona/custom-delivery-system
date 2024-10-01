@@ -2,6 +2,10 @@ plugins {
 
 }
 
+ext {
+    set('querydslVersion', "5.0.0")  // QueryDSL 버전 명시적으로 설정
+}
+
 group = 'com.webest'
 version = '0.0.1-SNAPSHOT'
 
@@ -11,5 +15,11 @@ dependencies {
     implementation project(":app-core")
     runtimeOnly 'org.postgresql:postgresql'
     implementation 'org.springframework.kafka:spring-kafka'
+
+    // QueryDSL
+    implementation "com.querydsl:querydsl-jpa:${querydslVersion}:jakarta"
+    annotationProcessor "com.querydsl:querydsl-apt:${querydslVersion}:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
 }

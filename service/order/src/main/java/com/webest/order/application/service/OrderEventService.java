@@ -1,11 +1,8 @@
 package com.webest.order.application.service;
 
+import com.webest.order.domain.events.*;
 import com.webest.order.infrastructure.serialization.EventSerializer;
 import com.webest.order.infrastructure.messaging.topic.OrderTopic;
-import com.webest.order.domain.events.OrderCanceledEvent;
-import com.webest.order.domain.events.OrderCompletedEvent;
-import com.webest.order.domain.events.OrderCreatedEvent;
-import com.webest.order.domain.events.OrderUpdatedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -36,5 +33,9 @@ public class OrderEventService {
         kafkaTemplate.send(OrderTopic.CANCELED.getTopic(), EventSerializer.serialize(event));
     }
 
+    // 주문 -> 배달로 요청시 발생하는 이벤트
+    public void publishOrderRequestEvent(OrderRequestedEvent event) {
+        kafkaTemplate.send(OrderTopic.REQUEST.getTopic(), EventSerializer.serialize(event));
+    }
 
 }

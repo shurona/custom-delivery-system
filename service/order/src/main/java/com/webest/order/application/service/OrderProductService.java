@@ -11,6 +11,7 @@ import com.webest.web.exception.ApplicationException;
 import com.webest.web.exception.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,9 +23,10 @@ public class OrderProductService {
 
     private final OrderProductRepository orderProductRepository;
 
-
+    // OrderProductDto List로 받아 여러건의 주문 상품을 저장
     @Transactional
     public List<OrderProduct> createOrderProduct(List<OrderProductDto> requestList) {
+
         // 각 OrderProductDto를 OrderProduct로 변환 후 저장
         List<OrderProduct> orderProducts = requestList.stream()
                 .map(request -> OrderProduct.create(
@@ -38,6 +40,8 @@ public class OrderProductService {
         return orderProductRepository.saveAll(orderProducts);
     }
 
+
+
     @Transactional
     public OrderProductResponse updateOrderProduct(Long orderProductId, OrderProductDto request) {
 
@@ -48,8 +52,9 @@ public class OrderProductService {
                     request.price(),
                     request.totalPrice());
             return OrderProductResponse.of(orderProduct);
-        }).orElseThrow(() -> new ApplicationException(ErrorCode.ORDER_PRODUCT_NOT_FOUND));
+        }).orElseThrow(() -> new ApplicationException(HttpStatus.NOT_FOUND, "주문"));
     }
+
 
 
 }

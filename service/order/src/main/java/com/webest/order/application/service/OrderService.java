@@ -2,18 +2,29 @@ package com.webest.order.application.service;
 
 import com.webest.order.application.dtos.OrderDto;
 import com.webest.order.application.dtos.OrderProductDto;
+import com.webest.order.application.dtos.OrderSearchDto;
 import com.webest.order.domain.events.OrderCompletedEvent;
+import com.webest.order.domain.exception.ErrorCode;
+import com.webest.order.domain.exception.OrderException;
 import com.webest.order.domain.model.Order;
 import com.webest.order.domain.model.OrderProduct;
+import com.webest.order.domain.model.OrderStatus;
 import com.webest.order.domain.repository.order.OrderRepository;
+import com.webest.order.domain.service.UserService;
 import com.webest.order.presentation.request.orderproduct.OrderProductRequest;
+import com.webest.order.presentation.response.OrderProductResponse;
 import com.webest.order.presentation.response.OrderResponse;
+import com.webest.order.presentation.response.UserResponse;
+import com.webest.web.common.UserRole;
 import com.webest.web.exception.ApplicationException;
-import com.webest.web.exception.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,21 +38,25 @@ public class OrderService {
 
     private final OrderProductService orderProductService;
 
+    private final UserService userService;
+
     /**
      * 주문 생성
      * @param request 주문 생성에 필요한 정보를 담은 OrderDto
      * @return 저장된 주문 데이터를 담은 OrderResponse
      */
     @Transactional
-    public OrderResponse createOrder(OrderDto request) {
+    public OrderResponse createOrder(Long userId, UserRole userRole, OrderDto request) {
 
-        List<OrderProduct> orderProducts = orderProductService.createOrderProduct(request.orderProductDtos());
+        // 주문 상품 create
+        List<OrderProduct> orderProducts =
+                orderProductService.createOrderProduct(request.orderProductDtos());
 
         Order order = Order.create(
                 request.storeId(),
                 request.paymentId(),
                 request.couponId(),
-                request.userId(),
+                userId,
                 request.orderStatus(),
                 request.isRequest(),
                 request.totalQuantity(),
@@ -69,7 +84,7 @@ public class OrderService {
     public void completeOrder(Long orderId) {
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.ORDER_NOT_FOUND));
+                .orElseThrow(() -> new OrderException(ErrorCode.ORDER_NOT_FOUND));
 
         OrderCompletedEvent completedEvent = order.completed();
 
@@ -87,7 +102,7 @@ public class OrderService {
     @Transactional
     public OrderResponse getOrder(Long orderId) {
         return OrderResponse.of(orderRepository.findById(orderId)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.ORDER_NOT_FOUND)));
+                .orElseThrow(() -> new OrderException(ErrorCode.ORDER_NOT_FOUND)));
     }
 
     /**
@@ -109,24 +124,26 @@ public class OrderService {
      * @return 수정된 주문 데이터를 담은 OrderResponse
      */
     @Transactional
-    public OrderResponse updateOrder(Long orderId, OrderDto request) {
+    public OrderResponse updateOrder(Long userId, UserRole userRole, Long orderId, OrderDto request) {
+
 
         return orderRepository.findById(orderId).map(order -> {
             order.update(
                     request.storeId(),
                     request.paymentId(),
                     request.couponId(),
-                    request.userId(),
+                    userId,
                     request.orderStatus(),
                     request.isRequest(),
                     request.totalQuantity(),
                     request.totalProductPrice(),
                     request.couponAppliedAmount(),
                     request.deliveryTipAmount(),
-                    request.totalPaymentPrice());
+                    request.totalPaymentPrice()
+            );
             orderEventService.publishOrderUpdatedEvent(order.updatedEvent());
             return OrderResponse.of(order);
-        }).orElseThrow(() -> new ApplicationException(ErrorCode.ORDER_NOT_FOUND));
+        }).orElseThrow(() -> new OrderException(ErrorCode.ORDER_NOT_FOUND));
     }
 
     /**
@@ -134,24 +151,47 @@ public class OrderService {
      * @param orderId 삭제할 주문의 ID
      */
     @Transactional
-    public void deleteOrder(Long orderId) {
+    public void deleteOrder(Long userId, UserRole userRole, Long orderId) {
         orderRepository.findById(orderId).map(order -> {
             order.delete();
             orderEventService.publishOrderCanceledEvent(order.canceledEvent());
             return OrderResponse.of(order);
-        }).orElseThrow(() -> new ApplicationException(ErrorCode.ORDER_NOT_FOUND));
+        }).orElseThrow(() -> new OrderException(ErrorCode.ORDER_NOT_FOUND));
+    }
+
+
+    /**
+     * 주문 검색
+     * @param userId 유저 아이디 값
+     */
+    @Transactional
+    public Page<OrderResponse> searchOrders(Long userId, UserRole userRole, OrderSearchDto request, PageRequest pageRequest) {
+
+        return orderRepository.searchOrders(request, pageRequest)
+                .map(OrderResponse::of);
     }
 
     /**
      * 주문 요청(배달)
-     * @param orderId 삭제할 주문의 ID
+     * @param orderId 배달 요청할 주문의 ID
      */
     @Transactional
-    public OrderResponse requestOrder(Long orderId) {
+    public OrderResponse requestOrder(Long userId, UserRole userRole, Long orderId) {
+
        return orderRepository.findById(orderId).map(order -> {
-            order.requestOrder();
-            return OrderResponse.of(order);
-        }).orElseThrow(() -> new ApplicationException(ErrorCode.ORDER_NOT_FOUND));
+
+           // 주문 상태가 PREPARING이 아닐때 배달요청 불가
+           if (order.getOrderStatus() != OrderStatus.PREPARING) {
+               throw new OrderException(ErrorCode.INVALID_ORDER_STATUS);
+           }
+
+           order.requestOrder();
+
+           orderEventService.publishOrderRequestEvent(order.requestedEvent());
+
+           return OrderResponse.of(order);
+        }).orElseThrow(() -> new OrderException(ErrorCode.ORDER_NOT_FOUND));
+
     }
 
 

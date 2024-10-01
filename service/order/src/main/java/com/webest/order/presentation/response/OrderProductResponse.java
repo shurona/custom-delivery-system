@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 public record OrderProductResponse(Long id,
                                    Long productId,
+                                   Long orderId,
                                    Integer quantity,
                                    Double price,
                                    Double totalPrice) {
@@ -16,6 +17,7 @@ public record OrderProductResponse(Long id,
         return new OrderProductResponse(
                 orderProduct.getId(),
                 orderProduct.getProductId(),
+                orderProduct.getOrder().getId(),
                 orderProduct.getQuantity(),
                 orderProduct.getPrice(),
                 orderProduct.getTotalPrice());

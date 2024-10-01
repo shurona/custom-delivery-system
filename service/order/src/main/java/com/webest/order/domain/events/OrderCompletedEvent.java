@@ -28,6 +28,10 @@ public class OrderCompletedEvent {
 
     private String requests;
 
+    private Long arrivalAddressCode;
+
+    private String arrivalDetailAddress;
+
     private Integer totalQuantity;
 
     private Double totalProductPrice;
