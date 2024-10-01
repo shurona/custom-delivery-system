@@ -39,7 +39,7 @@ public class CategoryController {
     }
 
     // 카테고리 수정
-    @PutMapping("{id}")
+    @PutMapping
     public CommonResponse<CategoryResponse> updateCategory(@RequestBody UpdateCategoryRequest updateCategoryRequest) {
         CategoryResponse categoryResponse = categoryService.updateCategoryValue(updateCategoryRequest);
         return CommonResponse.success(categoryResponse);
