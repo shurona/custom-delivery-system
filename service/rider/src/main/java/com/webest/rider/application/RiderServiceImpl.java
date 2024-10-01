@@ -61,6 +61,9 @@ public class RiderServiceImpl implements RiderService {
         return RiderResponseDto.from(riderByIdAndCheck);
     }
 
+    /**
+     * 라이더 목록 조회
+     */
     @Override
     public Page<RiderResponseDto> findRiderListByCondition(Pageable pageable,
         RiderSearchCondition condition) {
@@ -69,6 +72,21 @@ public class RiderServiceImpl implements RiderService {
             condition);
 
         return riderListByQuery.map(RiderResponseDto::from);
+    }
+
+    /**
+     * 라이더 로그인 확인
+     */
+    @Override
+    public RiderResponseDto checkSignUp(String userId, String password) {
+        Rider rider = findRiderByUserIdAndCheck(userId);
+
+        // 안맞으면 에러
+        if (!passwordEncoder.matches(password, rider.getPassword())) {
+            throw new RiderException(RiderErrorCode.INVALID_PASSWORD);
+        }
+
+        return RiderResponseDto.from(rider);
     }
 
     /**
@@ -133,6 +151,15 @@ public class RiderServiceImpl implements RiderService {
      */
     private Rider findRiderByIdAndCheck(Long riderId) {
         return riderRepository.findById(riderId)
+            .orElseThrow(
+                () -> new RiderException(RiderErrorCode.RIDER_NOT_FOUND));
+    }
+
+    /**
+     * 라이더 userId가 있는지 확인
+     */
+    private Rider findRiderByUserIdAndCheck(String userId) {
+        return riderRepository.findByUserId(userId)
             .orElseThrow(
                 () -> new RiderException(RiderErrorCode.RIDER_NOT_FOUND));
     }

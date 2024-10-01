@@ -26,8 +26,16 @@ public interface RiderService {
      */
     public RiderResponseDto findRiderById(Long riderId);
 
+    /**
+     * 라이더 목록 조회
+     */
     public Page<RiderResponseDto> findRiderListByCondition(Pageable pageable,
         RiderSearchCondition condition);
+
+    /**
+     * 라이더 로그인
+     */
+    public RiderResponseDto checkSignUp(String userId, String password);
 
     /**
      * 라이더 정보 업데이트

@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum RiderErrorCode {
 
     // 400
+    INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "잘못된 비밀번호 입니다."),
     INVALID_PHONE_NUMBER_INPUT(HttpStatus.BAD_REQUEST, "잘못된 휴대전화 입력입니다."),
 
 
