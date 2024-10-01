@@ -42,6 +42,7 @@ public class StoreService {
     public StoreResponse updateStoreAddress(UpdateStoreAddressRequest request) {
         Store store = findStoreById(request.storeId());
 
+        // 네이버 Geocoding API로 위경도 가져오기
         GeoResponse geoResponse = naverGeoClient.getCoordinatesFromAddress(request.address());
         if (geoResponse.getAddresses() != null && !geoResponse.getAddresses().isEmpty()) {
             NaverAddress addressInfo = geoResponse.getAddresses().getFirst();
@@ -52,7 +53,7 @@ public class StoreService {
             store.updateAddress(request.address(), latitude, longitude);
 
         } else {
-            throw new RuntimeException("유효한 주소 정보가 없습니다.");
+            throw new StoreException(StoreErrorCode.INVALID_ADDRESS);
         }
         return StoreResponse.of(store);
     }
