@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,6 +46,13 @@ public class StoreController {
     public CommonResponse<Page<StoreResponse>> getAllStores(@PageableDefault() Pageable pageable) {
         Page<StoreResponse> responses = storeService.getAllStores(pageable);
         return CommonResponse.success(responses);
+    }
+
+    // 가게 삭제
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deleteStore(@PathVariable("id") Long id) {
+        storeService.deleteStore(id);
+        return ResponseEntity.noContent().build();
     }
 
 

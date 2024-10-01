@@ -64,6 +64,19 @@ public class StoreService {
         return StoreResponse.of(store);
     }
 
+    // 가게 전체 조회
+    public Page<StoreResponse> getAllStores(Pageable pageable) {
+        Page<Store> stores = storeRepository.findAll(pageable);
+        return stores.map(StoreResponse::of);
+    }
+
+    // 가게 삭제
+    @Transactional
+    public void deleteStore(Long id) {
+        Store store = findStoreById(id);
+        storeRepository.delete(store);
+    }
+
 
 
     // ID로 카테고리를 찾는 공통 메서드
@@ -73,8 +86,4 @@ public class StoreService {
         );
     }
 
-    public Page<StoreResponse> getAllStores(Pageable pageable) {
-        Page<Store> stores = storeRepository.findAll(pageable);
-        return stores.map(StoreResponse::of);
-    }
 }
