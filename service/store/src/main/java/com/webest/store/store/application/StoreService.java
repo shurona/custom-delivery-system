@@ -5,7 +5,6 @@ import com.webest.store.store.api.dto.StoreResponse;
 import com.webest.store.store.api.dto.UpdateStoreAddressRequest;
 import com.webest.store.store.domain.Store;
 import com.webest.store.store.domain.StoreRepository;
-import com.webest.store.store.domain.StoreStatus;
 import com.webest.store.store.exception.StoreErrorCode;
 import com.webest.store.store.exception.StoreException;
 import com.webest.store.store.infra.naver.NaverGeoClient;
@@ -14,11 +13,9 @@ import com.webest.store.store.infra.naver.dto.NaverAddress;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.geom.Arc2D;
 
 @RequiredArgsConstructor
 @Service
