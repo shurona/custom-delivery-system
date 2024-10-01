@@ -4,6 +4,7 @@ import com.webest.store.product.api.dto.CreateProductRequest;
 import com.webest.store.product.api.dto.ProductResponse;
 import com.webest.store.product.domain.Product;
 import com.webest.store.product.domain.ProductRepository;
+import com.webest.store.product.domain.ProductStatus;
 import com.webest.store.product.exception.ProductErrorCode;
 import com.webest.store.product.exception.ProductException;
 import com.webest.store.store.domain.Store;
@@ -26,6 +27,7 @@ public class ProductService {
     public ProductResponse saveProduct(CreateProductRequest request) {
         Store store = findStoreById(request.storeId());
         Product product = Product.of(store, request.name(), request.price(), request.description());
+        product.updateStatus(ProductStatus.AVAILABLE);
         productRepository.save(product);
         return ProductResponse.of(product);
     }
