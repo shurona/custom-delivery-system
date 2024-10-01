@@ -68,4 +68,10 @@ public class Store extends BaseEntity {
         return store;
     }
 
+    // 주소, 위도, 경도 업데이트 메서드
+    public void updateAddress(String address, Double latitude, Double longitude) {
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 }
