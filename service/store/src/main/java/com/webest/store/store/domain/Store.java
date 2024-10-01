@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.time.LocalTime;
+
 @Entity
 @Table(name = "p_store")
 @Getter
@@ -22,5 +24,48 @@ public class Store extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
+    private String name; // 가게 이름
+
+    private Long ownerId; // 가게 주인 ID
+
+    private Long categoryId; // 카테고리 ID, FK
+
+    private Integer preparationTime; // 조리 시간 (분 단위)
+
+    private Double minimumOrderAmount; // 최소 주문 금액
+
+    @Enumerated(EnumType.STRING)
+    private StoreStatus status = StoreStatus.CLOSED; // 가게 상태 : OPEN, PREPARING, CLOSED
+
+    private String phone; // 전화 번호
+
+    private LocalTime openTime; // 오픈 시간
+
+    private LocalTime closeTime; // 클로즈 시간
+
+    private String address; // 주소
+
+    private Double latitude; // 위도
+
+    private Double longitude; // 경도
+
+    private Double deliveryRadius; // 배달 반경
+
+    private Double deliveryTip; // 배달팁
+
+    public static Store of(String name, Long ownerId, Long categoryId, Integer preparationTime, Double minimumOrderAmount, String phone, LocalTime openTime, LocalTime closeTime) {
+        Store store = new Store();
+        store.name = name;
+        store.ownerId = ownerId;
+        store.categoryId = categoryId;
+        store.preparationTime = preparationTime;
+        store.minimumOrderAmount = minimumOrderAmount;
+        store.status = StoreStatus.CLOSED; // status는 항상 CLOSED로 고정
+        store.phone = phone;
+        store.openTime = openTime;
+        store.closeTime = closeTime;
+        return store;
+    }
 
 }

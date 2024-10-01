@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public class StoreException extends ApplicationException {
-    public StoreException(CategoryErrorCode errorCode) {
+    public StoreException(StoreErrorCode errorCode) {
         super(errorCode.getStatus(), errorCode.getMessage());
     }
 }
