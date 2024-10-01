@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RiderJpaRepository extends JpaRepository<Rider, Long> {
 
-    long countByPhone(PhoneNumber phoneNumber);
+    boolean existsByPhone(PhoneNumber phoneNumber);
 
     Optional<Rider> findByUserId(String userId);
 

@@ -19,7 +19,7 @@ public class RiderEndPoint {
     private final RiderService riderService;
 
     @PostMapping("/sign-in")
-    public CommonResponse<RiderResponseDto> checkSignIn(
+    public CommonResponse<RiderResponseDto> authenticateRider(
         @RequestBody RiderLoginRequestDto requestDto
     ) {
 

@@ -139,8 +139,6 @@ public class RiderServiceImpl implements RiderService {
         return rider.getRiderId();
     }
 
-    @Transactional
-
 
     /* ==========================================================================================
         private method
@@ -169,8 +167,9 @@ public class RiderServiceImpl implements RiderService {
      */
     private void checkDupPhoneNumber(String phoneNumber) {
         // 휴대폰 중복 확인
-        long riderPhoneCheck = riderRepository.countByPhone(new PhoneNumber(phoneNumber));
-        if (riderPhoneCheck > 0) {
+        boolean riderPhoneCheck = riderRepository.existsByPhone(new PhoneNumber(phoneNumber));
+        
+        if (riderPhoneCheck) {
             throw new RiderException(
                 RiderErrorCode.INVALID_PHONE_NUMBER_INPUT
             );

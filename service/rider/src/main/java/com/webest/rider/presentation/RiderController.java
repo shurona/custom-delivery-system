@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +39,7 @@ public class RiderController {
      */
     @PostMapping
     public CommonResponse<Long> createRider(
-        @RequestBody RiderCreateRequestDto requestDto
+        @Validated @RequestBody RiderCreateRequestDto requestDto
     ) {
         Long riderId = riderService.createRider(requestDto);
 
@@ -93,7 +94,7 @@ public class RiderController {
     @PatchMapping("/{id}")
     public CommonResponse<?> updateRiderById(
         @PathVariable("id") Long id,
-        @RequestBody RiderUpdateRequestDto requestDto
+        @Validated @RequestBody RiderUpdateRequestDto requestDto
     ) {
         RiderResponseDto riderResponseDto = riderService.updateRiderById(id, requestDto);
 

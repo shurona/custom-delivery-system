@@ -49,7 +49,6 @@ public class Rider extends BaseEntity {
     private Double longitude;
 
     @Embedded
-    @Column(unique = true, nullable = false)
     private PhoneNumber phone;
 
     @Column // TODO: ENUM 적용

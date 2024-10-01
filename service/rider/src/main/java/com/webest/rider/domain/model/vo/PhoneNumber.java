@@ -17,7 +17,7 @@ public class PhoneNumber {
 
     public final static String PHONE_NUMBER_PATTERN = "^010-\\d{3,4}-\\d{4}$";
 
-    @Column(name = "phone_number", unique = true, nullable = false)
+    @Column(name = "phone", unique = true, nullable = false)
     private String phoneNumber;
 
     public PhoneNumber(String phoneNumber) {

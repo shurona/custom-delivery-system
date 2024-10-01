@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum RiderTransportation {
     WALK("Walk"),
     BICYCLE("Bicycle"),
-    MOTORCYCLE("Motorcycle");;
+    MOTORCYCLE("Motorcycle");
 
     private final String type;
 
