@@ -2,6 +2,7 @@ package com.webest.store.product.domain;
 
 
 import com.webest.app.jpa.BaseEntity;
+import com.webest.store.store.domain.Store;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,7 +22,9 @@ public class Product extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long storeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
 
     private String name;
 
@@ -32,9 +35,13 @@ public class Product extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
 
-    public static Product of(Long storeId, String name, Double price, String description) {
+    public void setStore(Store store) {
+        this.store = store;
+    }
+
+    public static Product of(Store store, String name, Double price, String description) {
         Product product = new Product();
-        product.storeId = storeId;
+        product.store = store;
         product.name = name;
         product.price = price;
         product.description = description;
@@ -45,4 +52,5 @@ public class Product extends BaseEntity {
     public void updateStatus(ProductStatus status) {
         this.status = status;
     }
+
 }

@@ -1,6 +1,7 @@
 package com.webest.store.store.domain;
 
 import com.webest.app.jpa.BaseEntity;
+import com.webest.store.product.domain.Product;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import jakarta.persistence.GeneratedValue;
@@ -13,6 +14,8 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "p_store")
@@ -53,6 +56,16 @@ public class Store extends BaseEntity {
     private Double deliveryRadius; // 배달 반경
 
     private Double deliveryTip; // 배달팁
+
+    // 양방향 연관관계 설정
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Product> products = new ArrayList<>();
+
+    // 연관된 Product 추가 메서드
+    public void addProduct(Product product) {
+        products.add(product);
+        product.setStore(this); // 양방향 관계 설정
+    }
 
     public static Store of(String name, Long ownerId, Long categoryId, Integer preparationTime, Double minimumOrderAmount, String phone, LocalTime openTime, LocalTime closeTime) {
         Store store = new Store();

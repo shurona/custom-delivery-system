@@ -76,7 +76,7 @@ public class StoreService {
 
 
 
-    // ID로 카테고리를 찾는 공통 메서드
+    // ID로 상점을 찾는 공통 메서드
     private Store findStoreById(Long id) {
         return storeRepository.findById(id).orElseThrow(
                 () -> new StoreException(StoreErrorCode.STORE_NOT_FOUND)

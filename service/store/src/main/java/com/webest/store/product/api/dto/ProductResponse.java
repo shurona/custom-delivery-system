@@ -14,7 +14,7 @@ public record ProductResponse(
     public static ProductResponse of(Product product) {
         return new ProductResponse(
                 product.getId(),
-                product.getStoreId(),
+                product.getStore().getId(),
                 product.getName(),
                 product.getPrice(),
                 product.getDescription(),
