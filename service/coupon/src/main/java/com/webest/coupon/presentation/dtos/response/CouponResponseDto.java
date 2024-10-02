@@ -1,6 +1,7 @@
 package com.webest.coupon.presentation.dtos.response;
 
-import com.webest.coupon.domain.Coupon;
+import com.webest.coupon.domain.model.DateType;
+import com.webest.coupon.domain.model.DiscountType;
 import java.time.LocalDateTime;
 
 public record CouponResponseDto(
@@ -9,18 +10,11 @@ public record CouponResponseDto(
     LocalDateTime startTime,
     LocalDateTime endTime,
     Integer duration,
-    String dateType
+    DateType dateType,
+    DiscountType discountType,
+    Integer discountValue,
+    LocalDateTime createTime,
+    Integer quantity
 ) {
-
-    public static CouponResponseDto from(Coupon coupon) {
-        return new CouponResponseDto(
-            coupon.getCouponId(),
-            coupon.getContent(),
-            coupon.getStartTime(),
-            coupon.getEndTime(),
-            coupon.getDuration(),
-            coupon.getDateType()
-        );
-    }
 
 }
