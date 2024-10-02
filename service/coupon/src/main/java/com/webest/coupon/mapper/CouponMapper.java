@@ -20,8 +20,8 @@ public interface CouponMapper {
     @Mapping(source = "createdAt", target = "createTime")
     CouponResponseDto couponToDto(Coupon coupon);
 
-    @Mapping(source = "startTime", target = "startTime", qualifiedByName = "localDateToLocalDateTime")
-    @Mapping(source = "endTime", target = "endTime", qualifiedByName = "localDateToLocalDateTime")
+    @Mapping(source = "requestDto.startTime", target = "startTime", qualifiedByName = "localDateToLocalDateTime")
+    @Mapping(source = "requestDto.endTime", target = "endTime", qualifiedByName = "localDateToLocalDateTime")
     CouponCheckData createDtoToCouponCreationData(CouponCreateRequestDto requestDto);
 
     @Mapping(source = "requestDto.startTime", target = "startTime", qualifiedByName = "localDateToLocalDateTime")

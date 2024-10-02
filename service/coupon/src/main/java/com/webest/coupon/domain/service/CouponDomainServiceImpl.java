@@ -15,12 +15,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class CouponDomainServiceImpl implements CouponDomainService {
 
+    /**
+     * 쿠폰 생성 시 검증
+     */
     @Override
     public Coupon checkValidCreateCoupon(CouponCheckData coupon, String content) {
 
         checkStartEndDate(coupon.startTime(), coupon.endTime());
-
         checkMaxPercentageDiscount(coupon.discountType(), coupon.discountValue());
+        checkUnderZero(coupon.duration(), coupon.quantity());
 
         return Coupon.createCoupon(
             content,
@@ -41,12 +44,13 @@ public class CouponDomainServiceImpl implements CouponDomainService {
     public void checkValidUpdateCoupon(CouponCheckData coupon, String contents) {
 
         checkStartEndDate(coupon.startTime(), coupon.endTime());
-
+        checkUnderZero(coupon.duration(), coupon.quantity());
+        
     }
 
     /* =============================================================================
         Coupon 확인 Private Method
-         =============================================================================*/
+     =============================================================================*/
     // 시작 날짜가 끝 날짜 전인지 확인
     private void checkStartEndDate(LocalDateTime start, LocalDateTime end) {
         if (start.isAfter(end)) {
@@ -55,9 +59,15 @@ public class CouponDomainServiceImpl implements CouponDomainService {
     }
 
     // 비율 할인인 경우 90을 넘기면 안된다.
-    public void checkMaxPercentageDiscount(DiscountType type, Integer value) {
+    private void checkMaxPercentageDiscount(DiscountType type, Integer value) {
         if (DiscountType.PERCENTAGE.equals(type) && value > PERCENTAGE_MAX_VALUE) {
             throw new CouponException(CouponErrorCode.COUPON_PERCENTAGE_OVER_90);
+        }
+    }
+
+    private void checkUnderZero(Integer duration, Integer quantity) {
+        if (duration < 0 || quantity < 0) {
+            throw new CouponException(CouponErrorCode.CHECK_UNDER_ZERO);
         }
     }
 
