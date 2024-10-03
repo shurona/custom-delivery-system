@@ -14,7 +14,7 @@ public record CouponResponseDto(
     DiscountType discountType,
     Integer discountValue,
     LocalDateTime createTime,
-    Integer quantity
+    Integer maxQuantity
 ) {
 
 }

@@ -34,7 +34,7 @@ public record CouponCreateRequestDto(
 
     @NotNull
     @Positive
-    Integer quantity
+    Integer maxQuantity
 ) {
 
 }

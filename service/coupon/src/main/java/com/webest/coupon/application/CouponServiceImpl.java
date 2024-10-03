@@ -79,7 +79,7 @@ public class CouponServiceImpl implements CouponService {
             requestDto.dateType(),
             requestDto.startTime().atStartOfDay(),
             requestDto.endTime().atStartOfDay(),
-            requestDto.quantity()
+            requestDto.maxQuantity()
         );
 
         return couponMapper.couponToDto(coupon);

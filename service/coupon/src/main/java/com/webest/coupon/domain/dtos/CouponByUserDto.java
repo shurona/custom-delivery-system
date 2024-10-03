@@ -6,7 +6,7 @@ public record CouponByUserDto(
     Long couponId,
     String content,
     LocalDateTime expiredTime,
-    Boolean used
+    boolean used
 ) {
 
 }

@@ -75,7 +75,7 @@ public class CouponQueryRepositoryImpl implements CouponQueryRepository {
                 Projections.constructor(CouponByUserDto.class,
                     coupon.couponId, coupon.content, couponUser.expiredTime, couponUser.used))
             .from(coupon)
-            .leftJoin(coupon.couponUserList, couponUser)
+            .innerJoin(coupon.couponUserList, couponUser)
             .where(builder)
             .orderBy(couponUser.expiredTime.desc())
             .fetch();
@@ -96,7 +96,7 @@ public class CouponQueryRepositoryImpl implements CouponQueryRepository {
                     case "createdAt" -> new OrderSpecifier(direction, coupon.createdAt);
                     case "startTime" -> new OrderSpecifier(direction, coupon.startTime);
                     case "endTime" -> new OrderSpecifier(direction, coupon.endTime);
-                    case "quantity" -> new OrderSpecifier(direction, coupon.quantity);
+                    case "quantity" -> new OrderSpecifier(direction, coupon.maxQuantity);
                     default -> throw new CouponException(CouponErrorCode.INVALID_INPUT);
                 };
 

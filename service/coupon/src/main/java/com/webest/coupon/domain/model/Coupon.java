@@ -48,11 +48,11 @@ public class Coupon extends BaseEntity {
     private DateType dateType;
 
     // 이벤트 시간
-    @Column(name = "start_time")
+    @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
     // 이벤트 종료 시간
-    @Column(name = "end_time")
+    @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
     @Enumerated(EnumType.STRING)
@@ -115,6 +115,9 @@ public class Coupon extends BaseEntity {
         this.couponUserList.add(couponUser);
     }
 
+    /**
+     * 쿠폰을 발급 하면서 조건 처리한다.
+     */
     public LocalDateTime issueCoupon() {
 
         // 현재 발급 가능 시간인지 확인한다.
@@ -123,7 +126,8 @@ public class Coupon extends BaseEntity {
             throw new CouponException(CouponErrorCode.COUPON_NOT_ISSUE_PERIOD);
         }
 
-        if (this.maxQuantity < this.issuedQuantity) {
+        // 현재 발급 가능한 상태인지 확인한다.
+        if (this.issuedQuantity >= this.maxQuantity) {
             throw new CouponException(CouponErrorCode.COUPON_OUT_OF_STOCK);
         }
 

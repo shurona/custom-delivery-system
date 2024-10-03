@@ -69,6 +69,7 @@ public class CouponUser {
 
     public void useCoupon() {
         this.used = true;
+        this.usedTime = LocalDateTime.now();
     }
 
 }

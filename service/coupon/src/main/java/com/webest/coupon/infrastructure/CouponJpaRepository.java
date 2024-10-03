@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface CouponJpaRepository extends JpaRepository<Coupon, Long> {
 
+    /**
+     * 쿠폰 중에서 최근의 구폰을 먼저 사용한다.
+     */
     @Query("select coupon from Coupon as coupon left join fetch coupon.couponUserList as cu"
         + " where coupon.id = :couponId and cu.userId = :userId and cu.used = false"
         + " order by cu.createdAt")
