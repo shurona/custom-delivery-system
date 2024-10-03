@@ -9,6 +9,6 @@ public interface CouponUserService {
 
     public boolean issueCouponToUser(Long couponId, Long userId);
 
-    public boolean useCouponByUser(Long couponId, Long userId);
+    public boolean useCouponByUser(Long userCouponId, Long couponId, Long userId);
 
 }

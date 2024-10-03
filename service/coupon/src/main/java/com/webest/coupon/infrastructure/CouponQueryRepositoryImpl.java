@@ -73,7 +73,8 @@ public class CouponQueryRepositoryImpl implements CouponQueryRepository {
 
         return query.select(
                 Projections.constructor(CouponByUserDto.class,
-                    coupon.couponId, coupon.content, couponUser.expiredTime, couponUser.used))
+                    couponUser.couponUserId, coupon.couponId, coupon.content,
+                    couponUser.expiredTime, couponUser.used))
             .from(coupon)
             .innerJoin(coupon.couponUserList, couponUser)
             .where(builder)

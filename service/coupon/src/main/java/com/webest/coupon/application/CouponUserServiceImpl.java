@@ -11,6 +11,7 @@ import com.webest.coupon.mapper.CouponMapper;
 import com.webest.coupon.presentation.dtos.response.CouponByUserResponseDto;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,16 +53,25 @@ public class CouponUserServiceImpl implements CouponUserService {
 
     @Transactional
     @Override
-    public boolean useCouponByUser(Long couponId, Long userId) {
+    public boolean useCouponByUser(Long userCouponId, Long couponId, Long userId) {
 
-        Coupon coupon = couponByIdWithCouponUser(couponId, userId);
+        Coupon coupon = findCouponByUserCouponId(userCouponId);
 
+        List<CouponUser> couponUserList = coupon.getCouponUserList();
         // 쿠폰을 보유하고 있는지 확인
-        if (coupon.getCouponUserList().isEmpty()) {
-            throw new CouponException(CouponErrorCode.NO_OWNED_COUPON);
+        if (couponUserList.isEmpty()) {
+            throw new CouponException(CouponErrorCode.NOT_OWNED_COUPON);
         }
 
-        coupon.getCouponUserList().get(0).useCoupon();
+        CouponUser couponUser = couponUserList.get(0);
+
+        // 쿠폰을 보유하고 있는지 확인
+        if (!Objects.equals(couponUser.getUserId(), userId)
+            || !Objects.equals(couponUser.getCoupon().getCouponId(), couponId)) {
+            throw new CouponException(CouponErrorCode.NOT_OWNED_COUPON);
+        }
+
+        couponUser.useCoupon();
 
         return true;
     }
@@ -78,7 +88,14 @@ public class CouponUserServiceImpl implements CouponUserService {
     private Coupon couponByIdWithCouponUser(Long couponId, Long userId) {
         return couponRepository.findCouponByCouponIdAndUserId(couponId, userId)
             .orElseThrow(() ->
-                new CouponException(CouponErrorCode.NO_OWNED_COUPON)
+                new CouponException(CouponErrorCode.NOT_OWNED_COUPON)
+            );
+    }
+
+    private Coupon findCouponByUserCouponId(Long userCouponId) {
+        return couponRepository.findCouponByCouponUserId(userCouponId)
+            .orElseThrow(() ->
+                new CouponException(CouponErrorCode.NOT_OWNED_COUPON)
             );
     }
 }
