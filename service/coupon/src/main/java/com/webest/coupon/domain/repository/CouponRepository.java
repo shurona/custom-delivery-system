@@ -4,4 +4,5 @@ import com.webest.coupon.infrastructure.CouponJpaRepository;
 
 public interface CouponRepository extends CouponJpaRepository {
 
+
 }

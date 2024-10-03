@@ -1,12 +1,16 @@
 package com.webest.coupon.infrastructure;
 
 import static com.webest.coupon.domain.model.QCoupon.coupon;
+import static com.webest.coupon.domain.model.QCouponUser.couponUser;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.webest.coupon.common.exception.CouponErrorCode;
+import com.webest.coupon.common.exception.CouponException;
+import com.webest.coupon.domain.dtos.CouponByUserDto;
 import com.webest.coupon.domain.model.Coupon;
 import com.webest.coupon.domain.model.CouponSearchCondition;
 import com.webest.coupon.domain.repository.CouponQueryRepository;
@@ -56,20 +60,46 @@ public class CouponQueryRepositoryImpl implements CouponQueryRepository {
 
     }
 
+    @Override
+    public List<CouponByUserDto> findCouponListByUserId(Long userId, Boolean used) {
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        builder.and(couponUser.userId.eq(userId));
+
+        if (used != null) {
+            builder.and(couponUser.used.eq(used));
+        }
+
+        return query.select(
+                Projections.constructor(CouponByUserDto.class,
+                    coupon.couponId, coupon.content, couponUser.expiredTime, couponUser.used))
+            .from(coupon)
+            .leftJoin(coupon.couponUserList, couponUser)
+            .where(builder)
+            .orderBy(couponUser.expiredTime.desc())
+            .fetch();
+    }
+
+    @SuppressWarnings("unchecked")
     private List<OrderSpecifier> sortCoupon(Pageable pageable) {
 
         if (pageable.getSort().isEmpty()) {
             return List.of(new OrderSpecifier<>(Order.DESC, coupon.createdAt));
         }
 
-        return pageable.getSort().map(order -> {
-            Order direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
+        return pageable.getSort()
+            .map(order -> {
+                Order direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
 
-            PathBuilder<Coupon> userPath = new PathBuilder<>(Coupon.class, "coupon");
+                return switch (order.getProperty()) {
+                    case "createdAt" -> new OrderSpecifier(direction, coupon.createdAt);
+                    case "startTime" -> new OrderSpecifier(direction, coupon.startTime);
+                    case "endTime" -> new OrderSpecifier(direction, coupon.endTime);
+                    case "quantity" -> new OrderSpecifier(direction, coupon.quantity);
+                    default -> throw new CouponException(CouponErrorCode.INVALID_INPUT);
+                };
 
-            return new OrderSpecifier(direction,
-                userPath.get(order.getProperty()));
-
-        }).toList();
+            }).toList();
     }
 }

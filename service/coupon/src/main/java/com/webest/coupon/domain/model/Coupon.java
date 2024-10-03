@@ -2,6 +2,9 @@ package com.webest.coupon.domain.model;
 
 
 import com.webest.app.jpa.BaseEntity;
+import com.webest.coupon.common.exception.CouponErrorCode;
+import com.webest.coupon.common.exception.CouponException;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -9,13 +12,19 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLRestriction;
 
+@Slf4j
 @SQLRestriction(BaseEntity.DEFAULT_CONDITION)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -38,9 +47,11 @@ public class Coupon extends BaseEntity {
     @Column(name = "date_type")
     private DateType dateType;
 
+    // 이벤트 시간
     @Column(name = "start_time")
     private LocalDateTime startTime;
 
+    // 이벤트 종료 시간
     @Column(name = "end_time")
     private LocalDateTime endTime;
 
@@ -51,8 +62,15 @@ public class Coupon extends BaseEntity {
     @Column(name = "discount_value")
     private Integer discountValue;
 
-    @Column
-    private Integer quantity;
+    @Column(name = "max_quantity")
+    private Integer maxQuantity;
+
+    @ColumnDefault(value = "0")
+    @Column(name = "issued_quantity")
+    private Integer issuedQuantity = 0;
+
+    @OneToMany(mappedBy = "coupon", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<CouponUser> couponUserList = new ArrayList<>();
 
     public static Coupon createCoupon(String content, LocalDateTime startTime,
         LocalDateTime endTime,
@@ -65,7 +83,7 @@ public class Coupon extends BaseEntity {
         coupon.dateType = dateType;
         coupon.discountType = type;
         coupon.discountValue = value;
-        coupon.quantity = quantity;
+        coupon.maxQuantity = quantity;
 
         return coupon;
     }
@@ -83,11 +101,44 @@ public class Coupon extends BaseEntity {
         this.endTime = endTime;
         this.duration = duration;
         this.dateType = dateType;
-        this.quantity = quantity;
+        this.maxQuantity = quantity;
     }
 
     public void disableCoupon() {
         this.isDeleted = true;
     }
 
+    /*
+     * User coupon 처리
+     */
+    public void addUserToCoupon(CouponUser couponUser) {
+        this.couponUserList.add(couponUser);
+    }
+
+    public LocalDateTime issueCoupon() {
+
+        // 현재 발급 가능 시간인지 확인한다.
+        if (LocalDateTime.now().isBefore(this.startTime)
+            || LocalDateTime.now().isAfter(this.endTime)) {
+            throw new CouponException(CouponErrorCode.COUPON_NOT_ISSUE_PERIOD);
+        }
+
+        if (this.maxQuantity < this.issuedQuantity) {
+            throw new CouponException(CouponErrorCode.COUPON_OUT_OF_STOCK);
+        }
+
+        //TODO: DB 정합성 문제 해결 해서 quantity를 안전하게 처리할 수 있도록 한다.
+        this.issuedQuantity += 1;
+
+        // 만료 날짜 계산 후 넘겨준다.
+        return switch (this.dateType) {
+            case DAY -> LocalDateTime.now().plusDays(this.duration);
+            case MONTH -> LocalDateTime.now().plusMonths(this.duration);
+            case HOUR -> LocalDateTime.now().plusHours(this.duration);
+            default -> {
+                log.error("문제있는 Enum : {}", this.dateType);
+                throw new CouponException(CouponErrorCode.INTERNAL_SERVER_ERROR);
+            }
+        };
+    }
 }
