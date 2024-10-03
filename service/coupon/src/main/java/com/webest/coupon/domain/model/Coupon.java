@@ -56,17 +56,17 @@ public class Coupon extends BaseEntity {
     private LocalDateTime endTime;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "discount_type")
+    @Column(name = "discount_type", nullable = false)
     private DiscountType discountType;
 
-    @Column(name = "discount_value")
+    @Column(name = "discount_value", nullable = false)
     private Integer discountValue;
 
-    @Column(name = "max_quantity")
+    @Column(name = "max_quantity", nullable = false)
     private Integer maxQuantity;
 
     @ColumnDefault(value = "0")
-    @Column(name = "issued_quantity")
+    @Column(name = "issued_quantity", nullable = false)
     private Integer issuedQuantity = 0;
 
     @OneToMany(mappedBy = "coupon", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -74,7 +74,8 @@ public class Coupon extends BaseEntity {
 
     public static Coupon createCoupon(String content, LocalDateTime startTime,
         LocalDateTime endTime,
-        Integer duration, DateType dateType, DiscountType type, Integer value, Integer quantity) {
+        Integer duration, DateType dateType, DiscountType type, Integer value,
+        Integer maxQuantity) {
         Coupon coupon = new Coupon();
         coupon.content = content;
         coupon.startTime = startTime;
@@ -83,7 +84,7 @@ public class Coupon extends BaseEntity {
         coupon.dateType = dateType;
         coupon.discountType = type;
         coupon.discountValue = value;
-        coupon.maxQuantity = quantity;
+        coupon.maxQuantity = maxQuantity;
 
         return coupon;
     }
@@ -94,14 +95,14 @@ public class Coupon extends BaseEntity {
         DateType dateType,
         LocalDateTime startTime,
         LocalDateTime endTime,
-        Integer quantity
+        Integer maxQuantity
     ) {
         this.content = content;
         this.startTime = startTime;
         this.endTime = endTime;
         this.duration = duration;
         this.dateType = dateType;
-        this.maxQuantity = quantity;
+        this.maxQuantity = maxQuantity;
     }
 
     public void disableCoupon() {

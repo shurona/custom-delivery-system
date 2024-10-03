@@ -65,8 +65,8 @@ public class CouponDomainServiceImpl implements CouponDomainService {
         }
     }
 
-    private void checkUnderZero(Integer duration, Integer quantity) {
-        if (duration < 0 || quantity < 0) {
+    private void checkUnderZero(Integer duration, Integer maxQuantity) {
+        if (duration < 0 || maxQuantity < 0) {
             throw new CouponException(CouponErrorCode.CHECK_UNDER_ZERO);
         }
     }

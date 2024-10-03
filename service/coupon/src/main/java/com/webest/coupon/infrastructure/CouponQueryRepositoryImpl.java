@@ -97,7 +97,7 @@ public class CouponQueryRepositoryImpl implements CouponQueryRepository {
                     case "createdAt" -> new OrderSpecifier(direction, coupon.createdAt);
                     case "startTime" -> new OrderSpecifier(direction, coupon.startTime);
                     case "endTime" -> new OrderSpecifier(direction, coupon.endTime);
-                    case "quantity" -> new OrderSpecifier(direction, coupon.maxQuantity);
+                    case "maxQuantity" -> new OrderSpecifier(direction, coupon.maxQuantity);
                     default -> throw new CouponException(CouponErrorCode.INVALID_INPUT);
                 };
 
