@@ -23,7 +23,7 @@ public class CouponDomainServiceImpl implements CouponDomainService {
 
         checkStartEndDate(coupon.startTime(), coupon.endTime());
         checkMaxPercentageDiscount(coupon.discountType(), coupon.discountValue());
-        checkUnderZero(coupon.duration(), coupon.quantity());
+        checkUnderZero(coupon.duration(), coupon.maxQuantity());
 
         return Coupon.createCoupon(
             content,
@@ -33,7 +33,7 @@ public class CouponDomainServiceImpl implements CouponDomainService {
             coupon.dateType(),
             coupon.discountType(),
             coupon.discountValue(),
-            coupon.quantity()
+            coupon.maxQuantity()
         );
     }
 
@@ -44,8 +44,8 @@ public class CouponDomainServiceImpl implements CouponDomainService {
     public void checkValidUpdateCoupon(CouponCheckData coupon, String contents) {
 
         checkStartEndDate(coupon.startTime(), coupon.endTime());
-        checkUnderZero(coupon.duration(), coupon.quantity());
-        
+        checkUnderZero(coupon.duration(), coupon.maxQuantity());
+
     }
 
     /* =============================================================================
@@ -65,8 +65,8 @@ public class CouponDomainServiceImpl implements CouponDomainService {
         }
     }
 
-    private void checkUnderZero(Integer duration, Integer quantity) {
-        if (duration < 0 || quantity < 0) {
+    private void checkUnderZero(Integer duration, Integer maxQuantity) {
+        if (duration < 0 || maxQuantity < 0) {
             throw new CouponException(CouponErrorCode.CHECK_UNDER_ZERO);
         }
     }

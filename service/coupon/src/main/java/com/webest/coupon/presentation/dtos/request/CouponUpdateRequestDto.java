@@ -28,7 +28,7 @@ public record CouponUpdateRequestDto(
 
     @NotNull
     @Min(0)
-    Integer quantity
+    Integer maxQuantity
 ) {
 
 }

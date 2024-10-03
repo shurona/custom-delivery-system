@@ -11,7 +11,7 @@ public record CouponCheckData(
     LocalDateTime endTime,
     DiscountType discountType,
     Integer discountValue,
-    Integer quantity
+    Integer maxQuantity
 ) {
 
 
