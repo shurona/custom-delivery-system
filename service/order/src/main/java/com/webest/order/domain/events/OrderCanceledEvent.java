@@ -13,31 +13,4 @@ public class OrderCanceledEvent {
 
     private Long id;
 
-    private Long storeId;
-
-    private Long paymentId;
-
-    private Long couponId;
-
-    private Long userId;
-
-    private OrderStatus orderStatus;
-
-    private Boolean isRequest;
-
-    private String requests;
-
-    private Long arrivalAddressCode;
-
-    private String arrivalDetailAddress;
-
-    private Integer totalQuantity;
-
-    private Double totalProductPrice;
-
-    private Double couponAppliedAmount;
-
-    private Double deliveryTipAmount;
-
-    private Double totalPaymentPrice;
 }

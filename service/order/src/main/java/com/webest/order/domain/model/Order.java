@@ -36,21 +36,29 @@ public class Order extends BaseEntity {
 
     private Boolean isRequest; // 주문 -> 배달 요청여부
 
-    private String requests; // 요청 사항
+    private String requestsToStore; // 가게에게 요청사항
 
-    private Long arrivalAddressCode;
+    private String requestsToRider; // 배송원에게 요청사항
 
-    private String arrivalDetailAddress;
+    private Long storeAddressCode; // 가게 주소코드
+    
+    private String storeDetailAddress; // 가게 상세주소
 
-    private Integer totalQuantity;
+    private Long arrivalAddressCode; // 도착 주소코드
 
-    private Double totalProductPrice;
+    private String arrivalDetailAddress; // 도착 상세주소
 
-    private Double couponAppliedAmount;
+    private Integer totalQuantity; // 총 수량
 
-    private Double deliveryTipAmount;
+    private Double totalProductPrice; // 총 상품 가격
 
-    private Double totalPaymentPrice;
+    private Double couponAppliedAmount; // 쿠폰 적용 가격
+
+    private Double deliveryTipAmount; // 배달팁 가격
+
+    private Double totalPaymentPrice; // 총 결제 가격
+    
+    private Double deliveryFeeAmount; // 배달료
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderProduct> orderProducts;
@@ -61,6 +69,8 @@ public class Order extends BaseEntity {
                                Long userId,
                                OrderStatus orderStatus,
                                Boolean isRequest,
+                               String requestsToStore,
+                               String requestsToRider,
                                Integer totalQuantity,
                                Double totalProductPrice,
                                Double couponAppliedAmount,
@@ -76,6 +86,8 @@ public class Order extends BaseEntity {
         order.userId = userId;
         order.orderStatus = orderStatus;
         order.isRequest = isRequest;
+        order.requestsToStore = requestsToStore;
+        order.requestsToRider = requestsToRider;
 
         order.totalQuantity = calculateTotalQuantity(orderProducts);
 
@@ -100,6 +112,12 @@ public class Order extends BaseEntity {
                        Long userId,
                        OrderStatus orderStatus,
                        Boolean isRequest,
+                       String requestsToStore,
+                       String requestsToRider,
+                       Long storeAddressCode,
+                       String storeDetailAddress,
+                       Long arrivalAddressCode,
+                       String arrivalDetailAddress,
                        Integer totalQuantity,
                        Double totalProductPrice,
                        Double couponAppliedAmount,
@@ -110,6 +128,13 @@ public class Order extends BaseEntity {
         this.couponId = couponId;
         this.userId = userId;
         this.orderStatus = orderStatus;
+        this.isRequest = isRequest;
+        this.requestsToStore = requestsToStore;
+        this.requestsToRider = requestsToRider;
+        this.storeAddressCode = storeAddressCode;
+        this.storeDetailAddress = storeDetailAddress;
+        this.arrivalAddressCode = arrivalAddressCode;
+        this.arrivalDetailAddress = arrivalDetailAddress;
         this.totalQuantity = calculateTotalQuantity(orderProducts);
         this.totalProductPrice = calculateTotalProductPrice(orderProducts);
         this.couponAppliedAmount = couponAppliedAmount;
@@ -117,14 +142,29 @@ public class Order extends BaseEntity {
         this.totalPaymentPrice = calculateTotalPaymentPrice(calculateTotalProductPrice(orderProducts), couponAppliedAmount, deliveryTipAmount);
     }
 
+    // 주문 삭제
     public void delete() {
+        this.orderStatus = OrderStatus.ORDER_CANCELED;
         this.isDeleted = true;
     }
+
+    // 주문 확인중에서 음식 준비중으로 변경 (CONFIRMING_ORDER -> PREPARING)
+    public void preparing() {
+        this.orderStatus = OrderStatus.PREPARING;
+    }
+
+    // 주문 완료
+    public void complete() {
+        this.orderStatus = OrderStatus.COMPLETE;
+    }
+
 
     // 배달로 요청
     public void requestOrder() {
         this.isRequest = true;
     }
+
+
 
     public OrderCreatedEvent createdEvent() {
         return new OrderCreatedEvent(
@@ -135,7 +175,10 @@ public class Order extends BaseEntity {
                 this.userId,
                 this.orderStatus,
                 this.isRequest,
-                this.requests,
+                this.requestsToStore,
+                this.requestsToRider,
+                this.storeAddressCode,
+                this.storeDetailAddress,
                 this.arrivalAddressCode,
                 this.arrivalDetailAddress,
                 this.totalQuantity,
@@ -154,7 +197,10 @@ public class Order extends BaseEntity {
                 this.userId,
                 this.orderStatus,
                 this.isRequest,
-                this.requests,
+                this.requestsToStore,
+                this.requestsToRider,
+                this.storeAddressCode,
+                this.storeDetailAddress,
                 this.arrivalAddressCode,
                 this.arrivalDetailAddress,
                 this.totalQuantity,
@@ -164,9 +210,9 @@ public class Order extends BaseEntity {
                 this.totalPaymentPrice);
     }
 
-    public OrderCompletedEvent completed() {
-        this.orderStatus = OrderStatus.PAYMENT_COMPLETED;
-        return new OrderCompletedEvent(
+    public OrderPaymentCompletedEvent paymentCompletedEvent() {
+        this.orderStatus = OrderStatus.CONFIRMING_ORDER;
+        return new OrderPaymentCompletedEvent(
                 this.id,
                 this.storeId,
                 this.paymentId,
@@ -174,7 +220,10 @@ public class Order extends BaseEntity {
                 this.userId,
                 this.orderStatus,
                 this.isRequest,
-                this.requests,
+                this.requestsToStore,
+                this.requestsToRider,
+                this.storeAddressCode,
+                this.storeDetailAddress,
                 this.arrivalAddressCode,
                 this.arrivalDetailAddress,
                 this.totalQuantity,
@@ -184,9 +233,16 @@ public class Order extends BaseEntity {
                 this.totalPaymentPrice);
         }
 
+
+
     public OrderCanceledEvent canceledEvent() {
-        this.orderStatus = OrderStatus.PAYMENT_CANCELED;
+        this.orderStatus = OrderStatus.ORDER_CANCELED;
         return new OrderCanceledEvent(
+                this.id);
+    }
+
+    public OrderPreparingEvent preparingEvent() {
+        return new OrderPreparingEvent(
                 this.id,
                 this.storeId,
                 this.paymentId,
@@ -194,7 +250,10 @@ public class Order extends BaseEntity {
                 this.userId,
                 this.orderStatus,
                 this.isRequest,
-                this.requests,
+                this.requestsToStore,
+                this.requestsToRider,
+                this.storeAddressCode,
+                this.storeDetailAddress,
                 this.arrivalAddressCode,
                 this.arrivalDetailAddress,
                 this.totalQuantity,
@@ -214,7 +273,34 @@ public class Order extends BaseEntity {
                 this.userId,
                 this.orderStatus,
                 this.isRequest,
-                this.requests,
+                this.requestsToStore,
+                this.requestsToRider,
+                this.storeAddressCode,
+                this.storeDetailAddress,
+                this.arrivalAddressCode,
+                this.arrivalDetailAddress,
+                this.totalQuantity,
+                this.totalProductPrice,
+                this.couponAppliedAmount,
+                this.deliveryTipAmount,
+                this.totalPaymentPrice);
+    }
+
+
+    public OrderCompletedEvent completedEvent() {
+        this.orderStatus = OrderStatus.COMPLETE;
+        return new OrderCompletedEvent(
+                this.id,
+                this.storeId,
+                this.paymentId,
+                this.couponId,
+                this.userId,
+                this.orderStatus,
+                this.isRequest,
+                this.requestsToStore,
+                this.requestsToRider,
+                this.storeAddressCode,
+                this.storeDetailAddress,
                 this.arrivalAddressCode,
                 this.arrivalDetailAddress,
                 this.totalQuantity,

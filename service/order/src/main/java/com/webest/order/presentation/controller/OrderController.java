@@ -82,6 +82,19 @@ public class OrderController {
     }
 
     /**
+     * 주문 확인 (주문확인중: CONFIRMING_ORDER -> 준비중: PREPARING)
+     */
+    @PostMapping("/{orderId}/preparing")
+    public CommonResponse<?> preparingOrder(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+                                                      @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
+                                                      @PathVariable(name = "orderId") Long orderId) {
+
+        orderService.preparing(userId, userRole, orderId);
+
+        return CommonResponse.success(null);
+    }
+
+    /**
      * 주문 요청 (주문 -> 배달)
      */
     @PostMapping("/{orderId}/request")

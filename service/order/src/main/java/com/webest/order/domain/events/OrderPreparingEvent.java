@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderCompletedEvent {
+public class OrderPreparingEvent {
 
     private Long id;
 

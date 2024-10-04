@@ -24,7 +24,13 @@ public class OrderRequestedEvent {
 
     private Boolean isRequest;
 
-    private String requests;
+    private String requestsToStore;
+
+    private String requestsToRider;
+
+    private Long storeAddressCode;
+
+    private String storeDetailAddress;
 
     private Long arrivalAddressCode;
 

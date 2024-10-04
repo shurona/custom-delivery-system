@@ -7,9 +7,11 @@ import lombok.Getter;
 public enum OrderTopic {
 
     CREATED("order-created"),
-    COMPLETED("order-completed"),
+    PAYMENT_COMPLETED("order-payment-completed"),
     UPDATED("order-updated"),
     CANCELED("order-canceled"),
+    PREPARING("order-preparing"),
+    COMPLETED("order-completed"),
     REQUEST("order-requested");
 
     private final String topic;

@@ -2,6 +2,7 @@ package com.webest.order.presentation.request.order;
 
 
 import com.webest.order.application.dtos.OrderDto;
+import com.webest.order.application.dtos.OrderUpdateDto;
 import com.webest.order.domain.model.OrderProduct;
 import com.webest.order.domain.model.OrderStatus;
 import com.webest.order.presentation.request.orderproduct.OrderProductRequest;
@@ -15,20 +16,32 @@ public record OrderUpdateRequest(Long storeId,
                                  Long userId,
                                  OrderStatus orderStatus,
                                  Boolean isRequest,
+                                 String requestsToStore,
+                                 String requestsToRider,
+                                 Long storeAddressCode,
+                                 String storeDetailAddress,
+                                 Long arrivalAddressCode,
+                                 String arrivalDetailAddress,
                                  Integer totalQuantity,
                                  Double totalProductPrice,
                                  Double couponAppliedAmount,
                                  Double deliveryTipAmount,
                                  Double totalPaymentPrice,
                                  List<OrderProductRequest> orderProductRequests) {
-    public OrderDto toDto() {
-        return OrderDto.create(
+    public OrderUpdateDto toDto() {
+        return OrderUpdateDto.create(
                 this.storeId,
                 this.paymentId,
                 this.couponId,
                 this.userId,
                 this.orderStatus,
                 this.isRequest,
+                this.requestsToStore,
+                this.requestsToRider,
+                this.storeAddressCode,
+                this.storeDetailAddress,
+                this.arrivalAddressCode,
+                this.arrivalDetailAddress,
                 this.totalQuantity,
                 this.totalProductPrice,
                 this.couponAppliedAmount,

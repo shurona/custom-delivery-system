@@ -3,7 +3,8 @@ package com.webest.order.application.service;
 import com.webest.order.application.dtos.OrderDto;
 import com.webest.order.application.dtos.OrderProductDto;
 import com.webest.order.application.dtos.OrderSearchDto;
-import com.webest.order.domain.events.OrderCompletedEvent;
+import com.webest.order.application.dtos.OrderUpdateDto;
+import com.webest.order.domain.events.OrderPaymentCompletedEvent;
 import com.webest.order.domain.exception.ErrorCode;
 import com.webest.order.domain.exception.OrderException;
 import com.webest.order.domain.model.Order;
@@ -59,6 +60,8 @@ public class OrderService {
                 userId,
                 request.orderStatus(),
                 request.isRequest(),
+                request.requestsToStore(),
+                request.requestsToRider(),
                 request.totalQuantity(),
                 request.totalProductPrice(),
                 request.couponAppliedAmount(),
@@ -81,16 +84,16 @@ public class OrderService {
      * 주문 완료
      */
     @Transactional
-    public void completeOrder(Long orderId) {
+    public void paymentCompleteOrder(Long orderId) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderException(ErrorCode.ORDER_NOT_FOUND));
 
-        OrderCompletedEvent completedEvent = order.completed();
+        OrderPaymentCompletedEvent paymentCompletedEvent = order.paymentCompletedEvent();
 
         orderRepository.save(order);
 
-        orderEventService.publishOrderCompletedEvent(completedEvent);
+        orderEventService.publishOrderPaymentCompletedEvent(paymentCompletedEvent);
 
     }
 
@@ -124,7 +127,7 @@ public class OrderService {
      * @return 수정된 주문 데이터를 담은 OrderResponse
      */
     @Transactional
-    public OrderResponse updateOrder(Long userId, UserRole userRole, Long orderId, OrderDto request) {
+    public OrderResponse updateOrder(Long userId, UserRole userRole, Long orderId, OrderUpdateDto request) {
 
 
         return orderRepository.findById(orderId).map(order -> {
@@ -135,6 +138,12 @@ public class OrderService {
                     userId,
                     request.orderStatus(),
                     request.isRequest(),
+                    request.requestsToStore(),
+                    request.requestsToRider(),
+                    request.storeAddressCode(),
+                    request.storeDetailAddress(),
+                    request.arrivalAddressCode(),
+                    request.arrivalDetailAddress(),
                     request.totalQuantity(),
                     request.totalProductPrice(),
                     request.couponAppliedAmount(),
@@ -172,6 +181,22 @@ public class OrderService {
     }
 
     /**
+     * 주문 확인 (주문 상태값이 CONFIRMING_ORDER -> PREPARING 변경)
+     * @param orderId 주문 아이디 값
+     */
+    @Transactional
+    public void preparing(Long userId, UserRole userRole, Long orderId) {
+        orderRepository.findById(orderId).map(order -> {
+
+            order.preparing();
+
+            orderEventService.publishOrderPreparingEvent(order.preparingEvent());
+
+            return OrderResponse.of(order);
+        }).orElseThrow(() -> new OrderException(ErrorCode.ORDER_NOT_FOUND));
+    }
+
+    /**
      * 주문 요청(배달)
      * @param orderId 배달 요청할 주문의 ID
      */
@@ -194,6 +219,23 @@ public class OrderService {
 
     }
 
+    /**
+     * 주문 완료(배달완료 되었을때 이벤트를 받아서 처리)
+     * @param orderId 주문 완료 주문의 ID
+     */
+    @Transactional
+    public OrderResponse completeOrder(Long orderId) {
+
+        return orderRepository.findById(orderId).map(order -> {
+
+            order.complete();
+
+            orderEventService.publishOrderCompletedEvent(order.completedEvent());
+
+            return OrderResponse.of(order);
+        }).orElseThrow(() -> new OrderException(ErrorCode.ORDER_NOT_FOUND));
+
+    }
 
 
 

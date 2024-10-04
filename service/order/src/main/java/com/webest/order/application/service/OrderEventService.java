@@ -19,9 +19,10 @@ public class OrderEventService {
     }
 
     // 주문 완료시 발생하는 이벤트 (결제 완료까지 되었을 때)
-    public void publishOrderCompletedEvent(OrderCompletedEvent event) {
-        kafkaTemplate.send(OrderTopic.COMPLETED.getTopic(), EventSerializer.serialize(event));
+    public void publishOrderPaymentCompletedEvent(OrderPaymentCompletedEvent event) {
+        kafkaTemplate.send(OrderTopic.PAYMENT_COMPLETED.getTopic(), EventSerializer.serialize(event));
     }
+
 
     // 주문 수정시 발생하는 이벤트
     public void publishOrderUpdatedEvent(OrderUpdatedEvent event) {
@@ -33,9 +34,20 @@ public class OrderEventService {
         kafkaTemplate.send(OrderTopic.CANCELED.getTopic(), EventSerializer.serialize(event));
     }
 
+    // 주문이 준비중(PREPARING) 으로 변경되었을때 발생하는 이벤트
+    public void publishOrderPreparingEvent(OrderPreparingEvent event) {
+        kafkaTemplate.send(OrderTopic.PREPARING.getTopic(), EventSerializer.serialize(event));
+    }
+
     // 주문 -> 배달로 요청시 발생하는 이벤트
     public void publishOrderRequestEvent(OrderRequestedEvent event) {
         kafkaTemplate.send(OrderTopic.REQUEST.getTopic(), EventSerializer.serialize(event));
     }
+
+    // 주문 완료시 발생하는 이벤트 (결제 완료까지 되었을 때)
+    public void publishOrderCompletedEvent(OrderCompletedEvent event) {
+        kafkaTemplate.send(OrderTopic.PAYMENT_COMPLETED.getTopic(), EventSerializer.serialize(event));
+    }
+
 
 }
