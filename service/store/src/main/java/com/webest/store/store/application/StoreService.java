@@ -1,8 +1,8 @@
 package com.webest.store.store.application;
 
-import com.webest.store.store.api.dto.CreateStoreRequest;
-import com.webest.store.store.api.dto.StoreResponse;
-import com.webest.store.store.api.dto.UpdateStoreAddressRequest;
+import com.webest.store.store.presentation.dto.CreateStoreRequest;
+import com.webest.store.store.presentation.dto.StoreResponse;
+import com.webest.store.store.presentation.dto.UpdateStoreAddressRequest;
 import com.webest.store.store.domain.Store;
 import com.webest.store.store.domain.StoreRepository;
 import com.webest.store.store.exception.StoreErrorCode;

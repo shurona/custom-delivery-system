@@ -53,4 +53,11 @@ public class Product extends BaseEntity {
         this.status = status;
     }
 
+    // 상품 디테일 변경
+    public void updateDetails(String name, Double price, String description) {
+        this.name = name;
+        this.price = price;
+        this.description = description;
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.webest.store.product.api.dto;
+package com.webest.store.product.presentation.dto;
 
 import com.webest.store.product.domain.Product;
 import com.webest.store.product.domain.ProductStatus;
