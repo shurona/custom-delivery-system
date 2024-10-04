@@ -1,8 +1,8 @@
 package com.webest.store.store.application;
 
-import com.webest.store.store.api.dto.CreateStoreRequest;
-import com.webest.store.store.api.dto.StoreResponse;
-import com.webest.store.store.api.dto.UpdateStoreAddressRequest;
+import com.webest.store.store.presentation.dto.CreateStoreRequest;
+import com.webest.store.store.presentation.dto.StoreResponse;
+import com.webest.store.store.presentation.dto.UpdateStoreAddressRequest;
 import com.webest.store.store.domain.Store;
 import com.webest.store.store.domain.StoreRepository;
 import com.webest.store.store.exception.StoreErrorCode;
@@ -76,7 +76,7 @@ public class StoreService {
 
 
 
-    // ID로 카테고리를 찾는 공통 메서드
+    // ID로 상점을 찾는 공통 메서드
     private Store findStoreById(Long id) {
         return storeRepository.findById(id).orElseThrow(
                 () -> new StoreException(StoreErrorCode.STORE_NOT_FOUND)

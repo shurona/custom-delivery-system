@@ -1,4 +1,4 @@
-package com.webest.store.store.api.dto;
+package com.webest.store.store.presentation.dto;
 
 public record UpdateStoreAddressRequest(
         Long storeId,

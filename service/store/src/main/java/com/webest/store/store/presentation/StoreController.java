@@ -1,8 +1,8 @@
-package com.webest.store.store.api;
+package com.webest.store.store.presentation;
 
-import com.webest.store.store.api.dto.CreateStoreRequest;
-import com.webest.store.store.api.dto.StoreResponse;
-import com.webest.store.store.api.dto.UpdateStoreAddressRequest;
+import com.webest.store.store.presentation.dto.CreateStoreRequest;
+import com.webest.store.store.presentation.dto.StoreResponse;
+import com.webest.store.store.presentation.dto.UpdateStoreAddressRequest;
 import com.webest.store.store.application.StoreService;
 import com.webest.web.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class StoreController {
     }
 
     // 가게 단건 조회
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public CommonResponse<StoreResponse> getStoreById(@PathVariable("id") Long id) {
         StoreResponse response = storeService.getStoreById(id);
         return CommonResponse.success(response);
@@ -47,7 +47,7 @@ public class StoreController {
     }
 
     // 가게 삭제
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStore(@PathVariable("id") Long id) {
         storeService.deleteStore(id);
         return ResponseEntity.noContent().build();
