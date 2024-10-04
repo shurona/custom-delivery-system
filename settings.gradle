@@ -16,12 +16,13 @@ def includeModule(File moduleDir) {
     // 모듈 이름을 루트 경로에 상대적으로 계산
     def relativePath = moduleDir.absolutePath - rootDir.absolutePath
 
-//     println "Registering path: ${relativePath}"
+    // 운영체제에 맞춰서 파일 구분자 변경
+    relativePath = relativePath.replace(File.separator, "/")
 
     def moduleName = convertPathToModuleName(relativePath)
 
     // 등록된 모듈 출력 확인
-//     println "Registering module: ${moduleName}"
+    //     println "Registering module: ${moduleName}"
 
     include(moduleName)
     project(moduleName).projectDir = moduleDir
