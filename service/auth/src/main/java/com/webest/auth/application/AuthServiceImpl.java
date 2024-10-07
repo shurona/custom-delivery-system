@@ -1,5 +1,7 @@
 package com.webest.auth.application;
 
+import com.webest.app.address.csv.ReadAddressCsv;
+import com.webest.app.address.service.AddressDto;
 import com.webest.auth.common.exception.AuthErrorCode;
 import com.webest.auth.common.exception.AuthException;
 import com.webest.auth.domain.model.Auth;
@@ -23,13 +25,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final AuthRepository authRepository;
+    private final ReadAddressCsv readAddressCsv;
     private final BCryptPasswordEncoder passwordEncoder;
 
 
     @Override
-    public JoinResponse create(JoinRequest joinRequest) {
+    public JoinResponse create(JoinRequest request) {
         // TODO :: 시/구/동 주소를 통해 주소 코드 찾아내는 코드 추가할 예정
-        AuthDto dto = AuthDto.from(joinRequest,passwordEncoder.encode(joinRequest.password()),null);
+        AddressDto addressDto = readAddressCsv.findAddressByDistrict(request.city(),request.street(),request.district());
+
+        AuthDto dto = AuthDto.from(request,passwordEncoder.encode(request.password()),addressDto.code());
         authRepository.save(Auth.from(dto));
         return dto.to();
     }

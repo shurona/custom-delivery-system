@@ -11,13 +11,13 @@ public record AuthDto(
         String email,
         String phone,
         UserRole role,       // 권한 체크
-        Integer addressCode,
+        Long addressCode,
         String city,
         String street,
         String district
 ) {
     // JoinRequest -> AuthDto
-    public static AuthDto from(JoinRequest request,String pw, Integer code) {
+    public static AuthDto from(JoinRequest request,String pw, Long code) {
         return new AuthDto(
                 request.userId(),
                 pw,
