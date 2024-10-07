@@ -1,5 +1,6 @@
 package com.webest.coupon.application;
 
+import com.webest.coupon.common.aop.RedissonLock;
 import com.webest.coupon.common.exception.CouponErrorCode;
 import com.webest.coupon.common.exception.CouponException;
 import com.webest.coupon.domain.dtos.CouponByUserDto;
@@ -36,11 +37,11 @@ public class CouponUserServiceImpl implements CouponUserService {
         return couponMapper.couponByUserDtoToResponseDto(couponListByUserId);
     }
 
-    @Transactional
-    @Override
-    public boolean issueCouponToUser(Long couponId, Long userId) {
 
-        Coupon coupon = couponByIdAndCheck(couponId);
+    @RedissonLock(value = "#couponId")
+    @Transactional
+    public boolean issueCouponToUser(Long couponId, Long userId) {
+        Coupon coupon = couponByIdWithLockAndCheck(couponId);
 
         // issue coupon
         LocalDateTime expiredTime = coupon.issueCoupon();
@@ -79,8 +80,8 @@ public class CouponUserServiceImpl implements CouponUserService {
     /* ==========================================================================================
             private method
         ==========================================================================================*/
-    private Coupon couponByIdAndCheck(Long id) {
-        return couponRepository.findById(id).orElseThrow(() ->
+    private Coupon couponByIdWithLockAndCheck(Long id) {
+        return couponRepository.findCouponByCouponId(id).orElseThrow(() ->
             new CouponException(CouponErrorCode.COUPON_NOT_FOUND)
         );
     }

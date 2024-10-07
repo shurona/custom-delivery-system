@@ -38,3 +38,6 @@ out/
 
 ### INTELIJ ###
 .run
+
+### local env ###
+.env

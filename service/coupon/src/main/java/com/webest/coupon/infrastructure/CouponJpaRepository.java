@@ -19,4 +19,8 @@ public interface CouponJpaRepository extends JpaRepository<Coupon, Long> {
     @Query("select c from Coupon c left join fetch c.couponUserList cu"
         + " where cu.couponUserId = :couponUserId and cu.used = false")
     Optional<Coupon> findCouponByCouponUserId(Long couponUserId);
+
+
+    // 락은 분산락으로
+    Optional<Coupon> findCouponByCouponId(Long id);
 }
