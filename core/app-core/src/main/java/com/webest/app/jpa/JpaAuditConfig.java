@@ -13,6 +13,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Configuration
 @EnableJpaAuditing
 public class JpaAuditConfig implements AuditorAware<Long> {
+
     @Override
     public Optional<Long> getCurrentAuditor() {
 
@@ -29,8 +30,6 @@ public class JpaAuditConfig implements AuditorAware<Long> {
                 userId = Long.valueOf(userIdHeader);
             }
         }
-
-        System.out.println("유저 아이디 : " + userId);
 
         return Optional.ofNullable(userId);
     }

@@ -18,6 +18,15 @@ dependencies {
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // redis-redisson 동시성처리
+    implementation 'org.redisson:redisson-spring-boot-starter:3.36.0'
+
+    // 테스트 container
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+
     // test DB
     testRuntimeOnly 'com.h2database:h2'
 }
