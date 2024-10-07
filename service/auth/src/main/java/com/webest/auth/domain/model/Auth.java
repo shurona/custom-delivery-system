@@ -32,7 +32,7 @@ public class Auth extends BaseEntity {
     private String phone;
     @Column(nullable = false)
     private UserRole role;
-    private Integer addressCode;            // 주소 코드 번호
+    private Long addressCode;            // 주소 코드 번호
     private String city;                    // 시
     private String street;                  // 구
     private String district;                // 동

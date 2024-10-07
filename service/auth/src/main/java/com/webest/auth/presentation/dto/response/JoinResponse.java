@@ -9,6 +9,6 @@ public record JoinResponse(
         String userId,
         String userName,
         String email,
-        Integer addressCode
+        Long addressCode
 ) {
 }
