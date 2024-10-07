@@ -27,7 +27,7 @@ public class RedissonLockAspect {
     private final RedissonClient redissonClient;
 
     @Around("@annotation(com.webest.coupon.common.aop.RedissonLock)")
-    public void redissonLock(ProceedingJoinPoint joinPoint) throws Throwable {
+    public boolean redissonLock(ProceedingJoinPoint joinPoint) throws Throwable {
 
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
@@ -38,7 +38,9 @@ public class RedissonLockAspect {
                 signature.getParameterNames(),
                 joinPoint.getArgs(), lockAnnotation.value());
 
-        RLock lock = redissonClient.getLock(lockKey);
+        // 순서의 보장을 최대한 맞추기 위해 FairLock 사용
+        RLock lock = redissonClient.getFairLock(lockKey);
+        boolean output;
 
         try {
             boolean lockable = lock.tryLock(
@@ -50,16 +52,19 @@ public class RedissonLockAspect {
                 throw new CouponException(CouponErrorCode.LOCK_WAITING_TIMEOUT);
             }
 
-            joinPoint.proceed();
+            output = (boolean) joinPoint.proceed();
 
         } catch (InterruptedException e) {
-            log.error("락 얻는 과정에서 에러 발생" + e);
+            log.error("락 얻는 과정에서 에러 발생", e);
             throw e;
         } finally {
-            // 락 해제
-            lock.unlock();
+            // 락이 잠겨 있고 현재 쓰레드에 락이 걸려있는지 확인한다.
+            if (lock.isLocked() && lock.isHeldByCurrentThread()) {
+                // 락 해제
+                lock.unlock();
+            }
         }
-
+        return output;
     }
 
 }
