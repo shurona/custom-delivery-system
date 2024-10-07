@@ -17,6 +17,7 @@ public enum CouponErrorCode {
 
     // 500
     DB_CONVERTING_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "DB 타입 변환 과정에서 오류 발생"),
+    LOCK_WAITING_TIMEOUT(HttpStatus.INTERNAL_SERVER_ERROR, "락의 대기시간 초과"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류"),
 
     ;
