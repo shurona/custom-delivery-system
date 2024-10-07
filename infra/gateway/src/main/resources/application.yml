@@ -1,6 +1,28 @@
 server:
   port: 19091
+  
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:19090/eureka/
+
+
+token:
+  secret-key: ${JWT_SECRET_KEY}
 
 spring:
+  config:
+    import: optional:file:./Gateway/.env[.properties]
   application:
     name: gateway-service
+  cloud:
+    gateway:
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway Global Filter
+            preLogger: true
+            postLogger: true
+      routes:
