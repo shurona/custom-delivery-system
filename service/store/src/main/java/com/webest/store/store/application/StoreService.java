@@ -42,7 +42,7 @@ public class StoreService {
         // 네이버 Geocoding API로 위경도 가져오기
         GeoResponse geoResponse = naverGeoClient.getCoordinatesFromAddress(request.address());
         if (geoResponse.getAddresses() != null && !geoResponse.getAddresses().isEmpty()) {
-            NaverAddress addressInfo = geoResponse.getAddresses().getFirst();
+            NaverAddress addressInfo = geoResponse.getAddresses().get(0);
 
             Double latitude = Double.parseDouble(addressInfo.getY()); // 위도
             Double longitude = Double.parseDouble(addressInfo.getX()); // 경도
