@@ -10,4 +10,5 @@ dependencies {
     implementation project(":app-core")
 
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 }

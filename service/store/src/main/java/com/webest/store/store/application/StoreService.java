@@ -13,8 +13,11 @@ import com.webest.store.store.infra.naver.dto.NaverAddress;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Duration;
 
 
 @RequiredArgsConstructor
@@ -25,12 +28,21 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final NaverGeoClient naverGeoClient;
 
+    private final RedisTemplate<String, Object> storeRedisTemplate;
+    private static final String STORE_CACHE_PREFIX = "store:";
+    private static final Duration CACHE_EXPIRATION = Duration.ofMinutes(30); // 캐시 만료 시간 설정
+
     // 가게 생성
     // 가게 주소, 위경도, 배달 반경, 배달 팁은 생성 시 설정하지 않고 따로 업데이트
     @Transactional
     public StoreResponse saveStore(CreateStoreRequest request) {
         Store store = request.toEntity();
         storeRepository.save(store);
+
+        // 생성 후 캐시 업데이트
+        StoreResponse storeResponse = StoreResponse.of(store);
+        storeRedisTemplate.opsForValue().set(STORE_CACHE_PREFIX + store.getId(), storeResponse, CACHE_EXPIRATION);
+
         return StoreResponse.of(store);
     }
 
@@ -49,6 +61,10 @@ public class StoreService {
 
             store.updateAddress(request.address(), latitude, longitude);
 
+            // DTO로 변환하여 캐시 업데이트
+            StoreResponse storeResponse = StoreResponse.of(store);
+            storeRedisTemplate.opsForValue().set(STORE_CACHE_PREFIX + store.getId(), storeResponse, CACHE_EXPIRATION);
+
         } else {
             throw new StoreException(StoreErrorCode.INVALID_ADDRESS);
         }
@@ -57,9 +73,17 @@ public class StoreService {
 
     // 가게 단건 조회
     public StoreResponse getStoreById(Long id) {
-        Store store = findStoreById(id);
-        return StoreResponse.of(store);
+        StoreResponse storeResponse = (StoreResponse) storeRedisTemplate.opsForValue().get(STORE_CACHE_PREFIX + id);
+        if (storeResponse == null) {
+            Store store = findStoreById(id);
+            storeResponse = StoreResponse.of(store);
+
+            storeRedisTemplate.opsForValue().set(STORE_CACHE_PREFIX + store.getId(), storeResponse, CACHE_EXPIRATION);
+        }
+
+        return storeResponse;
     }
+
 
     // 가게 전체 조회
     public Page<StoreResponse> getAllStores(Pageable pageable) {

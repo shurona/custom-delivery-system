@@ -57,16 +57,6 @@ public class Store extends BaseEntity {
 
     private Double deliveryTip; // 배달팁
 
-    // 양방향 연관관계 설정
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Product> products = new ArrayList<>();
-
-    // 연관된 Product 추가 메서드
-    public void addProduct(Product product) {
-        products.add(product);
-        product.setStore(this); // 양방향 관계 설정
-    }
-
     public static Store of(String name, Long ownerId, Long categoryId, Integer preparationTime, Double minimumOrderAmount, String phone, LocalTime openTime, LocalTime closeTime) {
         Store store = new Store();
         store.name = name;

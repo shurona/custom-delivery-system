@@ -35,9 +35,6 @@ public class Product extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
 
-    public void setStore(Store store) {
-        this.store = store;
-    }
 
     public static Product of(Store store, String name, Double price, String description) {
         Product product = new Product();
