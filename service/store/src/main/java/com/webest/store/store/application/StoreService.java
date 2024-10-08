@@ -1,6 +1,8 @@
 package com.webest.store.store.application;
 
+import com.webest.app.address.csv.ReadAddressCsv;
 import com.webest.store.store.presentation.dto.CreateStoreRequest;
+import com.webest.store.store.presentation.dto.DeliveryAreaRequest;
 import com.webest.store.store.presentation.dto.StoreResponse;
 import com.webest.store.store.presentation.dto.UpdateStoreAddressRequest;
 import com.webest.store.store.domain.Store;
@@ -27,6 +29,7 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final NaverGeoClient naverGeoClient;
+    private final ReadAddressCsv readAddressCsv;
 
     private final RedisTemplate<String, Object> storeRedisTemplate;
     private static final String STORE_CACHE_PREFIX = "store:";
@@ -68,6 +71,26 @@ public class StoreService {
         } else {
             throw new StoreException(StoreErrorCode.INVALID_ADDRESS);
         }
+        return StoreResponse.of(store);
+    }
+
+    // 배달 가능 범위 등록 (법정동)
+    @Transactional
+    public StoreResponse updateDeliveryArea(Long storeId, DeliveryAreaRequest request) {
+
+        Store store = findStoreById(storeId);
+
+        // Address code가 존재하는 지 확인
+        request.addressCodeList().forEach(
+                (code) -> {
+                    if (readAddressCsv.findAddressByCode(code) == null) {
+                        throw new StoreException(StoreErrorCode.INVALID_ADDRESS);
+                    }
+                }
+        );
+
+        store.registerDeliveryArea(request.addressCodeList());
+
         return StoreResponse.of(store);
     }
 

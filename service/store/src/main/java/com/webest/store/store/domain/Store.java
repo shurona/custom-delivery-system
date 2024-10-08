@@ -2,6 +2,7 @@ package com.webest.store.store.domain;
 
 import com.webest.app.jpa.BaseEntity;
 import com.webest.store.product.domain.Product;
+import com.webest.store.store.domain.converter.StoreAddressConverter;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import jakarta.persistence.GeneratedValue;
@@ -57,6 +58,10 @@ public class Store extends BaseEntity {
 
     private Double deliveryTip; // 배달팁
 
+    @Column(name = "address_codes")
+    @Convert(converter = StoreAddressConverter.class)
+    private List<Long> addressCodeList = new ArrayList<>();
+
     public static Store of(String name, Long ownerId, Long categoryId, Integer preparationTime, Double minimumOrderAmount, String phone, LocalTime openTime, LocalTime closeTime) {
         Store store = new Store();
         store.name = name;
@@ -76,5 +81,9 @@ public class Store extends BaseEntity {
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public void registerDeliveryArea(List<Long> addressCodes) {
+        this.addressCodeList = addressCodes;
     }
 }

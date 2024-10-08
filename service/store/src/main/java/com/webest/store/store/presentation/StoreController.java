@@ -1,6 +1,7 @@
 package com.webest.store.store.presentation;
 
 import com.webest.store.store.presentation.dto.CreateStoreRequest;
+import com.webest.store.store.presentation.dto.DeliveryAreaRequest;
 import com.webest.store.store.presentation.dto.StoreResponse;
 import com.webest.store.store.presentation.dto.UpdateStoreAddressRequest;
 import com.webest.store.store.application.StoreService;
@@ -29,6 +30,16 @@ public class StoreController {
     @PutMapping("/address")
     public CommonResponse<StoreResponse> updateStoreAddress(@RequestBody UpdateStoreAddressRequest request) {
         StoreResponse response = storeService.updateStoreAddress(request);
+        return CommonResponse.success(response);
+    }
+
+    // 배달 범위 등록 (법정동)
+    @PutMapping("/delivery_area/{id}")
+    public CommonResponse<StoreResponse> registerDeliveryArea(
+            @PathVariable("id") Long storeId,
+            @RequestBody DeliveryAreaRequest requestDto
+    ) {
+        StoreResponse response = storeService.updateDeliveryArea(storeId, requestDto);
         return CommonResponse.success(response);
     }
 
