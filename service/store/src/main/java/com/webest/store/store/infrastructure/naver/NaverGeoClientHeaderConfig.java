@@ -1,4 +1,4 @@
-package com.webest.store.store.infra.naver;
+package com.webest.store.store.infrastructure.naver;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

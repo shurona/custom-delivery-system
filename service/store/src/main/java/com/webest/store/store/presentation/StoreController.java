@@ -13,6 +13,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/stores")
 @RequiredArgsConstructor
@@ -34,13 +36,20 @@ public class StoreController {
     }
 
     // 배달 범위 등록 (법정동)
-    @PutMapping("/delivery_area/{id}")
+    @PutMapping("/delivery-area/{id}")
     public CommonResponse<StoreResponse> registerDeliveryArea(
             @PathVariable("id") Long storeId,
             @RequestBody DeliveryAreaRequest requestDto
     ) {
         StoreResponse response = storeService.updateDeliveryArea(storeId, requestDto);
         return CommonResponse.success(response);
+    }
+
+    // 법정동으로 배달 가능 상점 검색
+    @GetMapping("/users/{addressCode}")
+    public CommonResponse<List<StoreResponse>> getStoresByAddressCode(@PathVariable("addressCode") Long addressCode) {
+        List<StoreResponse> responses = storeService.getStoresByUser(addressCode);
+        return CommonResponse.success(responses);
     }
 
     // 가게 단건 조회

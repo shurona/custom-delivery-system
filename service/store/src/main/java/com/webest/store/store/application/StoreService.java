@@ -1,17 +1,18 @@
 package com.webest.store.store.application;
 
 import com.webest.app.address.csv.ReadAddressCsv;
+import com.webest.store.store.domain.repository.CustomStoreRepository;
 import com.webest.store.store.presentation.dto.CreateStoreRequest;
 import com.webest.store.store.presentation.dto.DeliveryAreaRequest;
 import com.webest.store.store.presentation.dto.StoreResponse;
 import com.webest.store.store.presentation.dto.UpdateStoreAddressRequest;
-import com.webest.store.store.domain.Store;
-import com.webest.store.store.domain.StoreRepository;
+import com.webest.store.store.domain.model.Store;
+import com.webest.store.store.domain.repository.StoreRepository;
 import com.webest.store.store.exception.StoreErrorCode;
 import com.webest.store.store.exception.StoreException;
-import com.webest.store.store.infra.naver.NaverGeoClient;
-import com.webest.store.store.infra.naver.dto.GeoResponse;
-import com.webest.store.store.infra.naver.dto.NaverAddress;
+import com.webest.store.store.infrastructure.naver.NaverGeoClient;
+import com.webest.store.store.infrastructure.naver.dto.GeoResponse;
+import com.webest.store.store.infrastructure.naver.dto.NaverAddress;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -28,6 +30,7 @@ import java.time.Duration;
 public class StoreService {
 
     private final StoreRepository storeRepository;
+    private final CustomStoreRepository customStoreRepository;
     private final NaverGeoClient naverGeoClient;
     private final ReadAddressCsv readAddressCsv;
 
@@ -94,6 +97,8 @@ public class StoreService {
         return StoreResponse.of(store);
     }
 
+
+
     // 가게 단건 조회
     public StoreResponse getStoreById(Long id) {
         StoreResponse storeResponse = (StoreResponse) storeRedisTemplate.opsForValue().get(STORE_CACHE_PREFIX + id);
@@ -107,6 +112,9 @@ public class StoreService {
         return storeResponse;
     }
 
+    public List<StoreResponse> getStoresByUser(Long addressCode) {
+        return findStoresByAddressCode(addressCode).stream().map(StoreResponse::of).toList();
+    }
 
     // 가게 전체 조회
     public Page<StoreResponse> getAllStores(Pageable pageable) {
@@ -121,8 +129,6 @@ public class StoreService {
         storeRepository.delete(store);
     }
 
-
-
     // ID로 상점을 찾는 공통 메서드
     private Store findStoreById(Long id) {
         return storeRepository.findById(id).orElseThrow(
@@ -130,4 +136,8 @@ public class StoreService {
         );
     }
 
+    // 법정동별 상점 조회
+    private List<Store> findStoresByAddressCode(Long addressCode) {
+        return customStoreRepository.findStoresByAddressCode(addressCode);
+    }
 }

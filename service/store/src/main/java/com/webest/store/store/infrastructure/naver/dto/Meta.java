@@ -1,4 +1,4 @@
-package com.webest.store.store.infra.naver.dto;
+package com.webest.store.store.infrastructure.naver.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

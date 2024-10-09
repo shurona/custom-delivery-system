@@ -1,12 +1,12 @@
-package com.webest.store.store.infra.naver;
+package com.webest.store.store.infrastructure.naver;
 
-import com.webest.store.store.infra.naver.dto.GeoResponse;
+import com.webest.store.store.infrastructure.naver.dto.GeoResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static com.webest.store.store.infra.naver.NaverGeoClient.NAVER_GEO_API;
-import static com.webest.store.store.infra.naver.NaverGeoClient.NAVER_GEO_API_URL;
+import static com.webest.store.store.infrastructure.naver.NaverGeoClient.NAVER_GEO_API;
+import static com.webest.store.store.infrastructure.naver.NaverGeoClient.NAVER_GEO_API_URL;
 
 @FeignClient(
         name = NAVER_GEO_API,
