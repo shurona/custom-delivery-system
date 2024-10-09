@@ -1,9 +1,10 @@
 package com.webest.store.store.presentation.dto;
 
-import com.webest.store.store.domain.Store;
-import com.webest.store.store.domain.StoreStatus;
+import com.webest.store.store.domain.model.Store;
+import com.webest.store.store.domain.model.StoreStatus;
 
 import java.time.LocalTime;
+import java.util.List;
 
 public record StoreResponse(
         Long id,
@@ -20,7 +21,8 @@ public record StoreResponse(
         Double latitude,
         Double longitude,
         Double deliveryRadius,
-        Double deliveryTip
+        Double deliveryTip,
+        List<Long> addressCodeList
 ) {
     public static StoreResponse of(Store store) {
         return new StoreResponse(
@@ -38,7 +40,8 @@ public record StoreResponse(
                 store.getLatitude(),
                 store.getLongitude(),
                 store.getDeliveryRadius(),
-                store.getDeliveryTip()
+                store.getDeliveryTip(),
+                store.getAddressCodeList()
         );
     }
 }

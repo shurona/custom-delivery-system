@@ -1,6 +1,6 @@
 package com.webest.store.store.presentation.dto;
 
-import com.webest.store.store.domain.Store;
+import com.webest.store.store.domain.model.Store;
 
 import java.time.LocalTime;
 

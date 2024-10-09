@@ -1,4 +1,4 @@
-package com.webest.store.store.domain;
+package com.webest.store.store.domain.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

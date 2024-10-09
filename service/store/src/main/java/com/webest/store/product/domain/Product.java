@@ -2,7 +2,7 @@ package com.webest.store.product.domain;
 
 
 import com.webest.app.jpa.BaseEntity;
-import com.webest.store.store.domain.Store;
+import com.webest.store.store.domain.model.Store;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -35,9 +35,6 @@ public class Product extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
 
-    public void setStore(Store store) {
-        this.store = store;
-    }
 
     public static Product of(Store store, String name, Double price, String description) {
         Product product = new Product();

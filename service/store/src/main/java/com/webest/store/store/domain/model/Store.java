@@ -1,7 +1,6 @@
-package com.webest.store.store.domain;
+package com.webest.store.store.domain.model;
 
 import com.webest.app.jpa.BaseEntity;
-import com.webest.store.product.domain.Product;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import jakarta.persistence.GeneratedValue;
@@ -57,15 +56,12 @@ public class Store extends BaseEntity {
 
     private Double deliveryTip; // 배달팁
 
-    // 양방향 연관관계 설정
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Product> products = new ArrayList<>();
-
-    // 연관된 Product 추가 메서드
-    public void addProduct(Product product) {
-        products.add(product);
-        product.setStore(this); // 양방향 관계 설정
-    }
+//    @Column(name = "address_codes")
+//    @Convert(converter = StoreAddressConverter.class)
+    @ElementCollection
+    @CollectionTable(name = "store_address_codes", joinColumns = @JoinColumn(name = "store_id"))
+    @Column(name = "address_code")
+    private List<Long> addressCodeList = new ArrayList<>();
 
     public static Store of(String name, Long ownerId, Long categoryId, Integer preparationTime, Double minimumOrderAmount, String phone, LocalTime openTime, LocalTime closeTime) {
         Store store = new Store();
@@ -86,5 +82,9 @@ public class Store extends BaseEntity {
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public void registerDeliveryArea(List<Long> addressCodes) {
+        this.addressCodeList = addressCodes;
     }
 }
