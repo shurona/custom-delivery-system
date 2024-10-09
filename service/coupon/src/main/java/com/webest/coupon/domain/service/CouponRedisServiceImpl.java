@@ -1,5 +1,8 @@
 package com.webest.coupon.domain.service;
 
+import static com.webest.coupon.common.value.CouponStaticValue.COUPON_REDIS_STATUS_KEY;
+import static com.webest.coupon.common.value.CouponStaticValue.COUPON_REDIS_WAITING_KEY;
+
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -59,6 +62,9 @@ public class CouponRedisServiceImpl implements CouponRedisService {
         opsForValue.set(redisKey, wishStatus, durationHour, TimeUnit.HOURS);
     }
 
+    /**
+     * 현재 쿠폰의 상태 조회
+     */
     @Override
     public Integer checkCouponStatus(Long couponId) {
         String redisKey = convertCouponIsOpenRedisKey(couponId);
@@ -78,13 +84,13 @@ public class CouponRedisServiceImpl implements CouponRedisService {
      * 대기열을 위한 couponId를 redisKey로 변환해준다.
      */
     private String convertCouponToRedisKeyForWaiting(Long couponId) {
-        return "waiting-list:coupon" + couponId;
+        return COUPON_REDIS_WAITING_KEY + couponId;
     }
 
     /**
      * 현재 Coupon 발급 상태를 위한 키를 지정한다.
      */
     private String convertCouponIsOpenRedisKey(Long couponId) {
-        return "open-check:coupon:" + couponId;
+        return COUPON_REDIS_STATUS_KEY + couponId;
     }
 }

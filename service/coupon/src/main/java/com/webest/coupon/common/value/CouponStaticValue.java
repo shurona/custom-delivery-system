@@ -3,18 +3,10 @@ package com.webest.coupon.common.value;
 public final class CouponStaticValue {
 
     /**
-     * 쿠폰 발급 그룹 아이디
+     * 쿠폰 카프카 상태 정보
      */
     public static final String KAFKA_COUPON_ISSUE_GROUP_ID = "coupon.issue.processor.group";
-
-    /**
-     * 쿠폰 발급 토픽 아이디
-     */
     public static final String KAFKA_COUPON_ISSUE_TOPIC_ID = "coupon.issuance";
-
-    /**
-     * 쿠폰 발급 파티션 갯수
-     */
     public static final String COUPON_PARTITION_NUMBER = "3";
 
     /**
@@ -29,8 +21,15 @@ public final class CouponStaticValue {
     public static Integer COUPON_REDIS_IS_OUT_OF_STOCK = 1;
     public static Integer COUPON_REDIS_IS_CLOSE = 2;
 
+    /**
+     * 쿠폰 레디스 키
+     */
+    public static String COUPON_REDIS_WAITING_KEY = "waiting-list:coupon";
+    public static String COUPON_REDIS_STATUS_KEY = "open-check:coupon:";
+
 
     private CouponStaticValue() {
         // prevent init
+        throw new UnsupportedOperationException("이 클래스는 인스턴스 생성을 지원하지 않습니다.");
     }
 }
