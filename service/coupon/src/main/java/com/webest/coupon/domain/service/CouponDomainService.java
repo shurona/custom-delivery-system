@@ -9,4 +9,6 @@ public interface CouponDomainService {
 
     public void checkValidUpdateCoupon(CouponCheckData coupon, String content);
 
+    public void checkIssueCouponCondition(Coupon coupon);
+
 }

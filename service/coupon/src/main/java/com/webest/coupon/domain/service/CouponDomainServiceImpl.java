@@ -1,5 +1,6 @@
 package com.webest.coupon.domain.service;
 
+import static com.webest.coupon.common.value.CouponStaticValue.COUPON_REDIS_IS_OUT_OF_STOCK;
 import static com.webest.coupon.common.value.CouponStaticValue.PERCENTAGE_MAX_VALUE;
 
 import com.webest.coupon.common.exception.CouponErrorCode;
@@ -9,11 +10,15 @@ import com.webest.coupon.domain.model.Coupon;
 import com.webest.coupon.domain.model.DiscountType;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CouponDomainServiceImpl implements CouponDomainService {
+
+    private final CouponRedisService couponRedisService;
 
     /**
      * 쿠폰 생성 시 검증
@@ -48,9 +53,28 @@ public class CouponDomainServiceImpl implements CouponDomainService {
 
     }
 
+    @Override
+    public void checkIssueCouponCondition(Coupon coupon) {
+        /**
+         * 쿠폰을 발급 하면서 조건 처리한다.
+         */
+        // 현재 발급 가능 시간인지 확인한다.
+        if (LocalDateTime.now().isBefore(coupon.getStartTime())
+            || LocalDateTime.now().isAfter(coupon.getEndTime())) {
+            throw new CouponException(CouponErrorCode.COUPON_NOT_ISSUE_PERIOD);
+        }
+
+        // 현재 발급 가능한 상태인지 확인한다.
+        if (coupon.getIssuedQuantity() >= coupon.getMaxQuantity()) {
+            couponRedisService.changeCouponOpenStatus(coupon.getCouponId(),
+                COUPON_REDIS_IS_OUT_OF_STOCK, 24L);
+            throw new CouponException(CouponErrorCode.COUPON_OUT_OF_STOCK);
+        }
+    }
+
     /* =============================================================================
-        Coupon 확인 Private Method
-     =============================================================================*/
+            Coupon 확인 Private Method
+         =============================================================================*/
     // 시작 날짜가 끝 날짜 전인지 확인
     private void checkStartEndDate(LocalDateTime start, LocalDateTime end) {
         if (start.isAfter(end)) {

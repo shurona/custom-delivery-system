@@ -120,19 +120,6 @@ public class Coupon extends BaseEntity {
      * 쿠폰을 발급 하면서 조건 처리한다.
      */
     public LocalDateTime issueCoupon() {
-
-        // 현재 발급 가능 시간인지 확인한다.
-        if (LocalDateTime.now().isBefore(this.startTime)
-            || LocalDateTime.now().isAfter(this.endTime)) {
-            throw new CouponException(CouponErrorCode.COUPON_NOT_ISSUE_PERIOD);
-        }
-
-        // 현재 발급 가능한 상태인지 확인한다.
-        if (this.issuedQuantity >= this.maxQuantity) {
-            throw new CouponException(CouponErrorCode.COUPON_OUT_OF_STOCK);
-        }
-
-        //TODO: DB 정합성 문제 해결 해서 quantity를 안전하게 처리할 수 있도록 한다.
         this.issuedQuantity += 1;
 
         // 만료 날짜 계산 후 넘겨준다.
