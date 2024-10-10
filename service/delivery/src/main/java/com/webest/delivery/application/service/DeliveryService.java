@@ -24,7 +24,7 @@ public class DeliveryService {
     private final DeliveryRepository deliveryRepository;
     private final DeliveryEventService deliveryEventService;
 
-    // Controller 에서 들어온 delivery 처리
+    // controller 에서 직접 들어온 delivery 처리
     @Transactional
     public DeliveryResponse createDelivery(Long userId, UserRole userRole, DeliveryDto request) {
 
@@ -181,6 +181,7 @@ public class DeliveryService {
 
     }
 
+    // controller 에서 직접 들어온 delivery 취소 처리
     @Transactional
     public DeliveryResponse cancelDelivery(Long userid, UserRole userRole, Long orderId) {
         return deliveryRepository.findByOrderId(orderId).map(delivery -> {
@@ -192,7 +193,7 @@ public class DeliveryService {
             delivery.cancel();
 
             // 배송 취소 이벤트 추가 해야함
-            
+            deliveryEventService.publishDeliveryCanceledEvent(delivery.canceledEvent());
 
             return DeliveryResponse.of(delivery);
         }).orElseThrow(() -> new DeliveryException(ErrorCode.DELIVERY_NOT_FOUND));

@@ -29,6 +29,7 @@ public class Delivery extends BaseEntity {
 
     private String requestsToRider;
 
+    @Enumerated(EnumType.STRING)  // Enum을 문자열로 DB에 저장
     private DeliveryStatus deliveryStatus; // 배달 상태
 
     private Long storeAddressCode; // 가게 주소코드

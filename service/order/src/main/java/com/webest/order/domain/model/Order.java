@@ -2,12 +2,14 @@ package com.webest.order.domain.model;
 
 
 import com.webest.app.jpa.BaseEntity;
+import com.webest.order.application.dtos.OrderProductDto;
 import com.webest.order.domain.events.*;
-import com.webest.order.domain.service.UserService;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -144,8 +146,11 @@ public class Order extends BaseEntity {
 
     // 주문 삭제
     public void delete() {
-        this.orderStatus = OrderStatus.ORDER_CANCELED;
         this.isDeleted = true;
+    }
+
+    public void cancel() {
+        this.orderStatus = OrderStatus.CANCEL;
     }
 
     // 주문 확인중에서 음식 준비중으로 변경 (CONFIRMING_ORDER -> PREPARING)
@@ -163,7 +168,6 @@ public class Order extends BaseEntity {
     public void requestOrder() {
         this.isRequest = true;
     }
-
 
 
     public OrderCreatedEvent createdEvent() {
@@ -185,7 +189,12 @@ public class Order extends BaseEntity {
                 this.totalProductPrice,
                 this.couponAppliedAmount,
                 this.deliveryTipAmount,
-                this.totalPaymentPrice);
+                this.totalPaymentPrice,
+                this.orderProducts
+                        .stream()
+                        .map(OrderProduct::toDto)
+                        .collect(Collectors.toList()));
+
     }
 
     public OrderUpdatedEvent updatedEvent() {
@@ -236,7 +245,7 @@ public class Order extends BaseEntity {
 
 
     public OrderCanceledEvent canceledEvent() {
-        this.orderStatus = OrderStatus.ORDER_CANCELED;
+        this.orderStatus = OrderStatus.CANCEL;
         return new OrderCanceledEvent(
                 this.id);
     }
@@ -290,6 +299,29 @@ public class Order extends BaseEntity {
     public OrderCompletedEvent completedEvent() {
         this.orderStatus = OrderStatus.COMPLETE;
         return new OrderCompletedEvent(
+                this.id,
+                this.storeId,
+                this.paymentId,
+                this.couponId,
+                this.userId,
+                this.orderStatus,
+                this.isRequest,
+                this.requestsToStore,
+                this.requestsToRider,
+                this.storeAddressCode,
+                this.storeDetailAddress,
+                this.arrivalAddressCode,
+                this.arrivalDetailAddress,
+                this.totalQuantity,
+                this.totalProductPrice,
+                this.couponAppliedAmount,
+                this.deliveryTipAmount,
+                this.totalPaymentPrice);
+    }
+
+    public OrderDeletedEvent deletedEvent() {
+        this.isDeleted = true;
+        return new OrderDeletedEvent(
                 this.id,
                 this.storeId,
                 this.paymentId,

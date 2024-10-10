@@ -5,12 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class OrderCompletedEvent {
+@AllArgsConstructor
+public class OrderDeletedEvent {
 
     private Long id;
 
@@ -47,6 +45,4 @@ public class OrderCompletedEvent {
     private Double deliveryTipAmount;
 
     private Double totalPaymentPrice;
-
-
 }

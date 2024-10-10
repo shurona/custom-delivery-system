@@ -35,7 +35,7 @@ public class CouponServiceImpl implements CouponService {
     public CouponResponseDto findCouponById(Long id) {
 
         Coupon coupon = couponRepository.findById(id).orElseThrow(() ->
-            new ApplicationException(ErrorCode.NOT_FOUND)
+            new ApplicationException(ErrorCode.NOT_FOUND.getStatus(), ErrorCode.NOT_FOUND.getMessage())
         );
 
         return CouponResponseDto.from(coupon);

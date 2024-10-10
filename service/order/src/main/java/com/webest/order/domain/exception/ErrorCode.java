@@ -13,6 +13,8 @@ public enum ErrorCode {
     ORDER_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 주문입니다."),
     ORDER_CANNOT_BE_MODIFIED(HttpStatus.FORBIDDEN, "주문을 수정할 수 없습니다."),
     INVALID_ORDER_STATUS(HttpStatus.BAD_REQUEST, "주문 상태가 잘못되었습니다."),
+    CANCELLED_DELIVERY(HttpStatus.CONFLICT, "이미 취소된 배송입니다."),
+    ALREADY_CANCELLED_ORDER(HttpStatus.CONFLICT, "이미 취소된 주문 입니다."),
 
 
     // ORDER_PRODUCT 관련 에러

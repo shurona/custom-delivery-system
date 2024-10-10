@@ -12,7 +12,8 @@ public enum OrderTopic {
     CANCELED("order-canceled"),
     PREPARING("order-preparing"),
     COMPLETED("order-completed"),
-    REQUEST("order-requested");
+    REQUEST("order-requested"),
+    DELETED("order-deleted");
 
     private final String topic;
 

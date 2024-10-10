@@ -11,9 +11,20 @@ spring:
     password: postgres
     driver-class-name: org.postgresql.Driver
 
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      username: root
+      password: rootpassword
+      database: mydatabase
+      uri: mongodb://root:rootpassword@localhost:27017/mydatabase?authSource=admin
+      authentication-database: admin
+
+
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
       dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
 

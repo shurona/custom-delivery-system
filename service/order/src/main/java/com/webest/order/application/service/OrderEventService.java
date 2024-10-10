@@ -49,5 +49,13 @@ public class OrderEventService {
         kafkaTemplate.send(OrderTopic.PAYMENT_COMPLETED.getTopic(), EventSerializer.serialize(event));
     }
 
+    // 주문 삭제시 발생하는 이벤트
+    public void publishOrderDeletedEvent(OrderDeletedEvent event) {
+        kafkaTemplate.send(OrderTopic.DELETED.getTopic(), EventSerializer.serialize(event));
+    }
+
+
+
+
 
 }

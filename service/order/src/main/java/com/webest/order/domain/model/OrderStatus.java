@@ -6,5 +6,5 @@ public enum OrderStatus {
     PREPARING,            // 조리중
     DELIVERING,           // 배송중
     COMPLETE,             // 완료
-    ORDER_CANCELED       // 주문취소
+    CANCEL       // 주문취소
 }

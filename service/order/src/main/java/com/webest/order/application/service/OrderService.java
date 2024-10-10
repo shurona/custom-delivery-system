@@ -41,6 +41,8 @@ public class OrderService {
 
     private final UserService userService;
 
+
+
     /**
      * 주문 생성
      * @param request 주문 생성에 필요한 정보를 담은 OrderDto
@@ -162,8 +164,11 @@ public class OrderService {
     @Transactional
     public void deleteOrder(Long userId, UserRole userRole, Long orderId) {
         orderRepository.findById(orderId).map(order -> {
+
             order.delete();
-            orderEventService.publishOrderCanceledEvent(order.canceledEvent());
+
+            orderEventService.publishOrderDeletedEvent(order.deletedEvent());
+
             return OrderResponse.of(order);
         }).orElseThrow(() -> new OrderException(ErrorCode.ORDER_NOT_FOUND));
     }
@@ -189,6 +194,10 @@ public class OrderService {
         orderRepository.findById(orderId).map(order -> {
 
             order.preparing();
+
+            if(order.getOrderStatus() == OrderStatus.CONFIRMING_ORDER) {
+                throw new OrderException(ErrorCode.ALREADY_CANCELLED_ORDER);
+            }
 
             orderEventService.publishOrderPreparingEvent(order.preparingEvent());
 
@@ -228,6 +237,9 @@ public class OrderService {
 
         return orderRepository.findById(orderId).map(order -> {
 
+
+            // payment 기능 완료 될 시 paymentStatus에 따라 주문취소 혹은 주문완료 구현
+
             order.complete();
 
             orderEventService.publishOrderCompletedEvent(order.completedEvent());
@@ -236,6 +248,25 @@ public class OrderService {
         }).orElseThrow(() -> new OrderException(ErrorCode.ORDER_NOT_FOUND));
 
     }
+
+    /**
+     * 주문 취소
+     * @param orderId 주문 아이디 값
+     */
+    @Transactional
+    public OrderResponse cancelOrder(Long userId, UserRole userRole, Long orderId) {
+
+        return orderRepository.findById(orderId).map(order -> {
+
+            order.cancel();
+
+            orderEventService.publishOrderCanceledEvent(order.canceledEvent());
+
+            return OrderResponse.of(order);
+        }).orElseThrow(() -> new OrderException(ErrorCode.ORDER_NOT_FOUND));
+
+    }
+
 
 
 

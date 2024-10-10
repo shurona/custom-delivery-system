@@ -9,8 +9,6 @@ import com.webest.web.common.CommonStaticVariable;
 import com.webest.web.common.UserRole;
 import com.webest.web.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Order;
-import org.hibernate.query.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
@@ -107,6 +105,17 @@ public class OrderController {
 
 
     /**
+     * 주문 취소
+     */
+    @PostMapping("/{orderId}/cancel")
+    public CommonResponse<OrderResponse> cancelOrder(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+                                                     @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
+                                                     @PathVariable(name = "orderId") Long orderId) {
+
+        return CommonResponse.success(orderService.cancelOrder(userId, userRole, orderId));
+    }
+
+    /**
      * 주문 검색
      */
     @GetMapping("/search")
@@ -120,6 +129,8 @@ public class OrderController {
 
         return CommonResponse.success(orderService.searchOrders(userId, userRole, orderSearchRequest.toDto(), pageRequest));
     }
+
+
 
 
 }

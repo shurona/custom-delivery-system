@@ -15,6 +15,6 @@ public enum ErrorCode {
     INVALID_ORDER_STATUS(HttpStatus.BAD_REQUEST, "배달 상태가 잘못되었습니다.");
 
 
-    private HttpStatus status;
-    private String message;
+    private final HttpStatus status;
+    private final String message;
 }

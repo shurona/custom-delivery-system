@@ -5,6 +5,9 @@ import com.webest.delivery.domain.model.DeliveryStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor

@@ -8,12 +8,15 @@ import com.webest.order.presentation.request.orderproduct.OrderProductRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public record OrderSearchRequest(Long storeId,
+public record OrderSearchRequest(Long orderId,
+                                 Long storeId,
                                  Long paymentId,
                                  Long couponId,
                                  Long userId,
                                  OrderStatus orderStatus,
                                  Boolean isRequest,
+                                 String requestsToStore,
+                                 String requestsToRider,
                                  Integer totalQuantity,
                                  Double totalProductPrice,
                                  Double couponAppliedAmount,
@@ -22,12 +25,15 @@ public record OrderSearchRequest(Long storeId,
 
     public OrderSearchDto toDto() {
         return OrderSearchDto.create(
+                this.orderId,
                 this.storeId,
                 this.paymentId,
                 this.couponId,
                 this.userId,
                 this.orderStatus,
                 this.isRequest,
+                this.requestsToStore,
+                this.requestsToRider,
                 this.totalQuantity,
                 this.totalProductPrice,
                 this.couponAppliedAmount,

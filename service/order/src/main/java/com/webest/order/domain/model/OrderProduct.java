@@ -1,8 +1,13 @@
 package com.webest.order.domain.model;
 
 import com.webest.app.jpa.BaseEntity;
+import com.webest.order.application.dtos.OrderProductDto;
+import com.webest.order.presentation.response.OrderProductResponse;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -55,4 +60,20 @@ public class OrderProduct extends BaseEntity {
     public void delete() {
         this.isDeleted = true;
     }
+
+    public static OrderProductDto toDto(OrderProduct orderProduct) {
+        return new OrderProductDto(
+                orderProduct.getProductId(),
+                orderProduct.getQuantity(),
+                orderProduct.getPrice(),
+                orderProduct.getTotalPrice()
+        );
+    }
+
+    public static List<OrderProductDto> toDto(List<OrderProduct> orderProducts) {
+        return orderProducts.stream()
+                .map(OrderProduct::toDto)
+                .collect(Collectors.toList());
+    }
+
 }
