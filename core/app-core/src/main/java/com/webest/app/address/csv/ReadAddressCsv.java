@@ -91,7 +91,7 @@ public class ReadAddressCsv {
     public List<String> findStreetListByCity(String city) {
         checkAddressExist();
         return this.addressSetInfo.values().stream().filter(
-                addressSet -> addressSet[CITY_INDEX].equals(city)
+                addressSet -> addressSet[CITY_INDEX].equals(city.trim().strip())
                     && StringUtils.hasText(addressSet[STREET_INDEX]))
             .map(addressSet -> addressSet[STREET_INDEX]).distinct().toList();
     }
@@ -102,7 +102,7 @@ public class ReadAddressCsv {
     public List<AddressDto> findAddressListByCity(String city) {
         checkAddressExist();
         return this.addressSetInfo.values().stream()
-            .filter(addressSet -> addressSet[CITY_INDEX].equals(city))
+            .filter(addressSet -> addressSet[CITY_INDEX].equals(city.trim().strip()))
             .map(AddressDto::from).toList();
     }
 
@@ -111,9 +111,10 @@ public class ReadAddressCsv {
      */
     public List<AddressDto> findAddressByStreet(String city, String street) {
         checkAddressExist();
+
         return this.addressSetInfo.values().stream()
-            .filter(addressSet -> (addressSet[CITY_INDEX].equals(city)
-                && addressSet[STREET_INDEX].equals(street)
+            .filter(addressSet -> (addressSet[CITY_INDEX].equals(city.trim().strip())
+                && addressSet[STREET_INDEX].equals(street.trim().strip())
                 && StringUtils.hasText(addressSet[DISTRICT_INDEX])))
             .map(AddressDto::from).toList();
     }
@@ -124,9 +125,9 @@ public class ReadAddressCsv {
     public AddressDto findAddressByDistrict(String city, String street, String district) {
         checkAddressExist();
         return this.addressSetInfo.values().stream()
-            .filter(addressSet -> (addressSet[CITY_INDEX].equals(city)
-                && addressSet[STREET_INDEX].equals(street)
-                && addressSet[DISTRICT_INDEX].equals(district)))
+            .filter(addressSet -> (addressSet[CITY_INDEX].equals(city.trim().strip())
+                && addressSet[STREET_INDEX].equals(street.trim().strip())
+                && addressSet[DISTRICT_INDEX].equals(district.trim().strip())))
             .map(AddressDto::from).findFirst().orElse(null);
     }
 
