@@ -14,7 +14,8 @@ public record UserDto(
         Long addressCode,
         String city,
         String street,
-        String district
+        String district,
+        String detailAddress
 ) {
 
 
@@ -40,7 +41,8 @@ public record UserDto(
                 code,
                 request.city(),
                 request.street(),
-                request.district()
+                request.district(),
+                request.detailAddress()
         );
     }
 

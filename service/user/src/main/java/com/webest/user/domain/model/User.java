@@ -35,7 +35,7 @@ public class User extends BaseEntity {
     private String city;                    // 시
     private String street;                  // 구
     private String district;                // 동
-
+    private String detailAddress;           // 상세 주소
 
     // Auth -> Dto
     public UserDto to(){
@@ -49,7 +49,8 @@ public class User extends BaseEntity {
                 this.addressCode,
                 this.city,
                 this.street,
-                this.district
+                this.district,
+                this.detailAddress
         );
     }
 
@@ -66,11 +67,12 @@ public class User extends BaseEntity {
                 dto.addressCode(),
                 dto.city(),
                 dto.street(),
-                dto.district()
+                dto.district(),
+                dto.detailAddress()
         );
     }
 
-    public void update(UserUpdateRequest request, Integer addressCode){
+    public void update(UserUpdateRequest request, Long addressCode){
         this.password = request.password() !=null ? request.password() : this.password;
         this.userName = request.userName() !=null ? request.userName() : this.userName;
         this.email = request.email() !=null ? request.email() : this.email;
@@ -79,5 +81,6 @@ public class User extends BaseEntity {
         this.city = request.city() !=null ? request.city() : this.city;
         this.street = request.street() !=null ? request.street() : this.street;
         this.district = request.district() !=null ? request.district() : this.district;
+        this.detailAddress = request.detailAddress() !=null ? request.detailAddress() : this.detailAddress;
     }
 }

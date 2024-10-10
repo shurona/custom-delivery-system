@@ -33,30 +33,12 @@ public class UserServiceImpl implements UserService {
     // 유저 생성
     @Override
     public UserResponse create(UserJoinRequest request) {
+        // TODO :: null 일때 에러 처리 필요
         AddressDto addressDto = readAddressCsv.findAddressByDistrict(request.city(),request.street(),request.district());
         UserDto dto = UserDto.from(request,bCryptPasswordEncoder.encode(request.password()),addressDto.code());
         userRepository.save(User.from(dto));
         return dto.to();
     }
-
-//    @Override
-//    public UserDto getUserDetailsByUserId(String userName) {
-//        User user = userRepository.findByUserId(userName)
-//                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
-//        return user.to();
-//    }
-//
-//    @Override
-//    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-//        User auth = userRepository.findByUserId(userName)
-//                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
-//
-//        // UserRole을 List<GrantedAuthority>로 변환
-//        List<GrantedAuthority> authorities = new ArrayList<>();
-//        authorities.add(new UserRoleCustom(auth.getRole())); // UserRole을 GrantedAuthority로 추가
-//
-//        return new org.springframework.security.core.userdetails.User(auth.getUserId(), auth.getPassword(), true,true,true,true,authorities);    // new ArrayList -> 권한 추가
-//    }
 
     // 유저 마이페이지 데이터 호출
     @Override
@@ -70,8 +52,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse update(String userId, UserUpdateRequest request) {
         User user = findByUserId(userId);
-        // TODO :: 주소 변경에 따른 코드 번호 받아오는 로직 작성할 예정
-        user.update(request,null);
+
+        String city = user.getCity();
+        String street = user.getStreet();
+        String district = user.getDistrict();
+
+        if(request.city()!=null){
+            city = request.city();
+        }
+        if(request.street()!=null){
+            street = request.street();
+        }
+        if(request.district()!=null){
+            district = request.district();
+        }
+
+        AddressDto addressDto = readAddressCsv.findAddressByDistrict(city,street,district);
+        user.update(request,addressDto.code());
 
         return user.to().to();
     }

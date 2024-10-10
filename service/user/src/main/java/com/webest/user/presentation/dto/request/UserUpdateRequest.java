@@ -24,6 +24,7 @@ public record UserUpdateRequest(
 
         String street,
 
-        String district
+        String district,
+        String detailAddress
 ) {
 }

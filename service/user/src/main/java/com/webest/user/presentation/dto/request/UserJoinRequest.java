@@ -37,7 +37,10 @@ public record UserJoinRequest(
         String street,
 
         @NotNull(message = "district cannot be null")
-        String district
+        String district,
+
+        @NotNull(message = "district cannot be null")
+        String detailAddress
 ) {
 
 
