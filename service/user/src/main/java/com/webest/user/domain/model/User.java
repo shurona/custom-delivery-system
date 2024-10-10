@@ -31,16 +31,15 @@ public class User extends BaseEntity {
     private String phone;
     @Column(nullable = false)
     private UserRole role;
-    private Integer addressCode;            // 주소 코드 번호
+    private Long addressCode;            // 주소 코드 번호
     private String city;                    // 시
     private String street;                  // 구
     private String district;                // 동
-
+    private String detailAddress;           // 상세 주소
 
     // Auth -> Dto
     public UserDto to(){
         return new UserDto(
-                this.id,
                 this.userId,
                 this.password,
                 this.userName,
@@ -50,11 +49,30 @@ public class User extends BaseEntity {
                 this.addressCode,
                 this.city,
                 this.street,
-                this.district
+                this.district,
+                this.detailAddress
         );
     }
 
-    public void update(UserUpdateRequest request, Integer addressCode){
+    // Dto -> Auth
+    public static User from(UserDto dto){
+        return new User(
+                null,
+                dto.userId(),
+                dto.password(),
+                dto.userName(),
+                dto.email(),
+                dto.phone(),
+                dto.role(),
+                dto.addressCode(),
+                dto.city(),
+                dto.street(),
+                dto.district(),
+                dto.detailAddress()
+        );
+    }
+
+    public void update(UserUpdateRequest request, Long addressCode){
         this.password = request.password() !=null ? request.password() : this.password;
         this.userName = request.userName() !=null ? request.userName() : this.userName;
         this.email = request.email() !=null ? request.email() : this.email;
@@ -63,5 +81,6 @@ public class User extends BaseEntity {
         this.city = request.city() !=null ? request.city() : this.city;
         this.street = request.street() !=null ? request.street() : this.street;
         this.district = request.district() !=null ? request.district() : this.district;
+        this.detailAddress = request.detailAddress() !=null ? request.detailAddress() : this.detailAddress;
     }
 }

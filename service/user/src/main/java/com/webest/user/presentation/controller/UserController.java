@@ -1,9 +1,11 @@
 package com.webest.user.presentation.controller;
 
 import com.webest.user.application.service.UserService;
+import com.webest.user.presentation.dto.request.UserJoinRequest;
 import com.webest.user.presentation.dto.request.UserUpdateRequest;
 import com.webest.user.presentation.dto.response.UserResponse;
 import com.webest.web.response.CommonResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,13 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
+    // 유저 생성
+    @PostMapping("/signUp")
+    public UserResponse createUser(@RequestBody @Valid UserJoinRequest request) {
+        UserResponse response = userService.create(request);
+
+        return response;
+    }
 
     // 유저 전체 출력
     @GetMapping()
