@@ -24,6 +24,12 @@ dependencies {
     // redis-redisson 동시성처리
     implementation 'org.redisson:redisson-spring-boot-starter:3.36.0'
 
+    // kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    // 테스트 카프카
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+
     // 테스트 container
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
 
