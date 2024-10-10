@@ -97,7 +97,7 @@ public class KafkaConfig {
      * 특정 토픽의 파티션의 크기를 지정하기 위함
      */
     @Bean
-    public NewTopic myTopic() {
+    public NewTopic couponIssueTopic() {
         return TopicBuilder.name(KAFKA_COUPON_ISSUE_TOPIC_ID)
             .partitions(Integer.parseInt(COUPON_PARTITION_NUMBER))
             .replicas(1)

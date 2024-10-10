@@ -11,7 +11,7 @@ public interface CouponRedisService {
     // 남은 순서를 확인한다.
     public Long checkCurrentOffset(Long couponId, Long userId);
 
-    public void changeCouponOpenStatus(Long couponId, Integer wishStatus, Long durationHour);
+    public void changeCouponOpenStatus(Long couponId, Integer wishStatus, long durationHour);
 
     public Integer checkCouponStatus(Long couponId);
 }

@@ -1,7 +1,7 @@
 package com.webest.coupon.application;
 
-import static com.webest.coupon.common.value.CouponStaticValue.COUPON_REDIS_IS_CLOSE;
-import static com.webest.coupon.common.value.CouponStaticValue.COUPON_REDIS_IS_OUT_OF_STOCK;
+import static com.webest.coupon.common.value.CouponRedisStatus.CLOSE;
+import static com.webest.coupon.common.value.CouponRedisStatus.OUT_OF_STOCK;
 import static com.webest.coupon.common.value.CouponStaticValue.KAFKA_COUPON_ISSUE_TOPIC_ID;
 
 import com.webest.coupon.common.aop.RedissonLock;
@@ -174,9 +174,11 @@ public class CouponUserServiceImpl implements CouponUserService {
             couponDomainService.checkIssueCouponCondition(coupon);
         }
 
-        if (currentStatus != null && currentStatus.equals(COUPON_REDIS_IS_OUT_OF_STOCK)) {
+        if (currentStatus != null && currentStatus.equals(
+            OUT_OF_STOCK.getValue())) {
             throw new CouponException(CouponErrorCode.COUPON_OUT_OF_STOCK);
-        } else if (currentStatus != null && currentStatus.equals(COUPON_REDIS_IS_CLOSE)) {
+        } else if (currentStatus != null && currentStatus.equals(
+            CLOSE.getValue())) {
             throw new CouponException(CouponErrorCode.COUPON_CLOSED);
         }
 

@@ -3,6 +3,8 @@ package com.webest.coupon.domain.service;
 import static com.webest.coupon.common.value.CouponStaticValue.COUPON_REDIS_STATUS_KEY;
 import static com.webest.coupon.common.value.CouponStaticValue.COUPON_REDIS_WAITING_KEY;
 
+import com.webest.coupon.common.exception.CouponErrorCode;
+import com.webest.coupon.common.exception.CouponException;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -52,8 +54,12 @@ public class CouponRedisServiceImpl implements CouponRedisService {
      * 쿠폰의 상태 조정
      */
     @Override
-    public void changeCouponOpenStatus(Long couponId, Integer wishStatus, Long durationHour) {
+    public void changeCouponOpenStatus(Long couponId, Integer wishStatus, long durationHour) {
         String redisKey = convertCouponIsOpenRedisKey(couponId);
+
+        if (durationHour <= 0) {
+            throw new CouponException(CouponErrorCode.INVALID_INPUT);
+        }
 
         ValueOperations<String, Integer> opsForValue =
             redisIntegerTemplate.opsForValue();

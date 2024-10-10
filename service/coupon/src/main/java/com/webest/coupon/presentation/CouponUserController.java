@@ -43,8 +43,11 @@ public class CouponUserController {
         return CommonResponse.success(couponListByUser);
     }
 
+    /**
+     * 대기중인 유저의 현재 위치 조회
+     */
     @GetMapping("/users/position")
-    public CommonResponse<CouponOffsetResponseDto> currentOffsetInWaiting(
+    public CommonResponse<CouponOffsetResponseDto> getCurrentOffsetInWaiting(
         @RequestParam("couponId") Long couponId,
         @RequestParam("userId") Long userId
     ) {
@@ -73,8 +76,11 @@ public class CouponUserController {
         return CommonResponse.success(success);
     }
 
+    /**
+     * 비동기로 쿠폰 발급
+     */
     @PostMapping("/{couponId}/users/{userId}/queue")
-    public CommonResponse<CouponIssueResponseDto> issueCouponWithQueue(
+    public CommonResponse<CouponIssueResponseDto> queueCouponIssuance(
         @PathVariable("couponId") Long couponId,
         @PathVariable("userId") Long userId
     ) {

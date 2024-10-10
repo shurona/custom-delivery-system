@@ -1,6 +1,6 @@
 package com.webest.coupon.domain.service;
 
-import static com.webest.coupon.common.value.CouponStaticValue.COUPON_REDIS_IS_OUT_OF_STOCK;
+import static com.webest.coupon.common.value.CouponRedisStatus.OUT_OF_STOCK;
 import static com.webest.coupon.common.value.CouponStaticValue.PERCENTAGE_MAX_VALUE;
 
 import com.webest.coupon.common.exception.CouponErrorCode;
@@ -67,7 +67,7 @@ public class CouponDomainServiceImpl implements CouponDomainService {
         // 현재 발급 가능한 상태인지 확인한다.
         if (coupon.getIssuedQuantity() >= coupon.getMaxQuantity()) {
             couponRedisService.changeCouponOpenStatus(coupon.getCouponId(),
-                COUPON_REDIS_IS_OUT_OF_STOCK, 24L);
+                OUT_OF_STOCK.getValue(), 24L);
             throw new CouponException(CouponErrorCode.COUPON_OUT_OF_STOCK);
         }
     }
