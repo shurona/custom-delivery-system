@@ -33,14 +33,6 @@ public class FilterConfig {
                         .uri("lb://AUTH-SERVICE"))
 
 
-                .route("user-login-route", r -> r.path("/user-service/api/users/signUp")
-                        .and()
-                        .method("POST")
-                        .filters(f -> f
-                                .removeRequestHeader("Cookie")
-                                .rewritePath("/user-service/(?<segment>.*)", "/${segment}"))
-                        .uri("lb://USER-SERVICE"))
-
 
                 .route("user-get-all-route", r -> r.path("/api/users/**")
                         .and()

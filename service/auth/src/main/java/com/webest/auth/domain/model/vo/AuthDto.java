@@ -1,6 +1,6 @@
 package com.webest.auth.domain.model.vo;
 
-import com.webest.auth.presentation.dto.request.JoinRequest;
+import com.webest.auth.presentation.dto.request.UserJoinRequest;
 import com.webest.auth.presentation.dto.response.JoinResponse;
 import com.webest.web.common.UserRole;
 
@@ -17,7 +17,7 @@ public record AuthDto(
         String district
 ) {
     // JoinRequest -> AuthDto
-    public static AuthDto from(JoinRequest request,String pw, Long code) {
+    public static AuthDto from(UserJoinRequest request, String pw, Long code) {
         return new AuthDto(
                 request.userId(),
                 pw,

@@ -5,11 +5,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
-import lombok.Getter;
 
 
-public record JoinRequest(
+public record UserJoinRequest(
         @NotNull(message = "UserId cannot be null")
         String userId,
 
@@ -39,7 +37,10 @@ public record JoinRequest(
         String street,
 
         @NotNull(message = "district cannot be null")
-        String district
+        String district,
+
+        @NotNull(message = "district cannot be null")
+        String detailAddress
 ) {
 
 
