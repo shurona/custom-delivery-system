@@ -4,7 +4,8 @@ import com.webest.auth.application.AuthService;
 import com.webest.auth.infrastructure.email.MailSendService;
 import com.webest.auth.infrastructure.email.dto.EmailCheckDto;
 import com.webest.auth.infrastructure.email.dto.EmailRequest;
-import com.webest.auth.presentation.dto.request.JoinRequest;
+import com.webest.auth.presentation.dto.request.RiderCreateRequestDto;
+import com.webest.auth.presentation.dto.request.UserJoinRequest;
 import com.webest.auth.presentation.dto.response.JoinResponse;
 import com.webest.web.response.CommonResponse;
 import jakarta.validation.Valid;
@@ -22,19 +23,28 @@ public class AuthController {
     private final AuthService authService;
     private final MailSendService mailService;
 
+    // 회원 가입
     @PostMapping("/signUp")
-    public CommonResponse<JoinResponse> createUser(@RequestBody @Valid JoinRequest joinRequest) {
-        JoinResponse response = authService.create(joinRequest);
+    public CommonResponse<JoinResponse> createUser(@RequestBody @Valid UserJoinRequest userJoinRequest) {
+        JoinResponse response = authService.create(userJoinRequest);
 
         return CommonResponse.success(response);
     }
 
+    // 라이더 회원 가입
+    @PostMapping("/riderSignUp")
+    public CommonResponse<Long> createRider(@RequestBody @Valid RiderCreateRequestDto requestDto) {
+        Long riderId = authService.createRider(requestDto);
+
+        return CommonResponse.success(riderId);
+    }
 
     @PostMapping ("/mailSend")
     public String mailSend(@RequestBody @Valid EmailRequest emailDto){
         System.out.println("이메일 인증 요청이 들어옴");
         System.out.println("이메일 인증 이메일 :"+emailDto.email());
-        return mailService.joinEmail(emailDto.email());
+        mailService.joinEmail(emailDto.email());
+        return "인증번호가 전송되었습니다";
     }
 
     @PostMapping("/mailCheck")
