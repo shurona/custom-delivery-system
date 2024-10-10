@@ -31,7 +31,7 @@ public class User extends BaseEntity {
     private String phone;
     @Column(nullable = false)
     private UserRole role;
-    private Integer addressCode;            // 주소 코드 번호
+    private Long addressCode;            // 주소 코드 번호
     private String city;                    // 시
     private String street;                  // 구
     private String district;                // 동
@@ -40,7 +40,6 @@ public class User extends BaseEntity {
     // Auth -> Dto
     public UserDto to(){
         return new UserDto(
-                this.id,
                 this.userId,
                 this.password,
                 this.userName,
@@ -51,6 +50,23 @@ public class User extends BaseEntity {
                 this.city,
                 this.street,
                 this.district
+        );
+    }
+
+    // Dto -> Auth
+    public static User from(UserDto dto){
+        return new User(
+                null,
+                dto.userId(),
+                dto.password(),
+                dto.userName(),
+                dto.email(),
+                dto.phone(),
+                dto.role(),
+                dto.addressCode(),
+                dto.city(),
+                dto.street(),
+                dto.district()
         );
     }
 

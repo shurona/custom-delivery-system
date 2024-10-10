@@ -1,13 +1,17 @@
 package com.webest.user.application.service;
 
+import com.webest.app.address.csv.ReadAddressCsv;
+import com.webest.app.address.service.AddressDto;
 import com.webest.user.domain.model.User;
 import com.webest.user.domain.model.vo.UserDto;
 import com.webest.user.domain.repository.UserRepository;
 import com.webest.user.exception.UserErrorCode;
 import com.webest.user.exception.UserException;
+import com.webest.user.presentation.dto.request.UserJoinRequest;
 import com.webest.user.presentation.dto.request.UserUpdateRequest;
 import com.webest.user.presentation.dto.response.UserResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,13 +21,42 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-
+    private final ReadAddressCsv readAddressCsv;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     // findByUserId
     public User findByUserId(String userId){
         return userRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
     }
+
+    // 유저 생성
+    @Override
+    public UserResponse create(UserJoinRequest request) {
+        AddressDto addressDto = readAddressCsv.findAddressByDistrict(request.city(),request.street(),request.district());
+        UserDto dto = UserDto.from(request,bCryptPasswordEncoder.encode(request.password()),addressDto.code());
+        userRepository.save(User.from(dto));
+        return dto.to();
+    }
+
+//    @Override
+//    public UserDto getUserDetailsByUserId(String userName) {
+//        User user = userRepository.findByUserId(userName)
+//                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+//        return user.to();
+//    }
+//
+//    @Override
+//    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+//        User auth = userRepository.findByUserId(userName)
+//                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+//
+//        // UserRole을 List<GrantedAuthority>로 변환
+//        List<GrantedAuthority> authorities = new ArrayList<>();
+//        authorities.add(new UserRoleCustom(auth.getRole())); // UserRole을 GrantedAuthority로 추가
+//
+//        return new org.springframework.security.core.userdetails.User(auth.getUserId(), auth.getPassword(), true,true,true,true,authorities);    // new ArrayList -> 권한 추가
+//    }
 
     // 유저 마이페이지 데이터 호출
     @Override

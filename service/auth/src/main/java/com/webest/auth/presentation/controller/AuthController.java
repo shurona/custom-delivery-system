@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final MailSendService mailService;
 
     @PostMapping("/signUp")
     public CommonResponse<JoinResponse> createUser(@RequestBody @Valid JoinRequest joinRequest) {
@@ -28,7 +29,6 @@ public class AuthController {
         return CommonResponse.success(response);
     }
 
-    private final MailSendService mailService;
 
     @PostMapping ("/mailSend")
     public String mailSend(@RequestBody @Valid EmailRequest emailDto){
@@ -41,7 +41,7 @@ public class AuthController {
     public String AuthCheck(@RequestBody @Valid EmailCheckDto dto){
         Boolean Checked=mailService.CheckAuthNum(dto.email(),dto.authNum());
         if(Checked){
-            return "ok";
+            return "인증이 완료되었습니다.";
         }
         else{
             throw new NullPointerException("인증 정보가 잘 못 되었습니다 다시 인증해주세요");

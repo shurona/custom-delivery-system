@@ -9,6 +9,8 @@ dependencies {
     implementation project(":web-core")
     implementation project(":app-core")
 
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
