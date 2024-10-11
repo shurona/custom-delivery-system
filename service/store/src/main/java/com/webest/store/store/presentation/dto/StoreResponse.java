@@ -1,6 +1,7 @@
 package com.webest.store.store.presentation.dto;
 
 import com.webest.store.store.domain.model.Store;
+import com.webest.store.store.domain.model.StoreAddress;
 import com.webest.store.store.domain.model.StoreStatus;
 
 import java.time.LocalTime;
@@ -17,7 +18,7 @@ public record StoreResponse(
         String phone,
         LocalTime openTime,
         LocalTime closeTime,
-        String address,
+        StoreAddress storeAddress,
         Double latitude,
         Double longitude,
         Double deliveryRadius,
@@ -36,7 +37,7 @@ public record StoreResponse(
                 store.getPhone(),
                 store.getOpenTime(),
                 store.getCloseTime(),
-                store.getAddress(),
+                store.getStoreAddress(),
                 store.getLatitude(),
                 store.getLongitude(),
                 store.getDeliveryRadius(),

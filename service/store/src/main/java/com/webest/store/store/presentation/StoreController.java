@@ -5,6 +5,7 @@ import com.webest.store.store.presentation.dto.DeliveryAreaRequest;
 import com.webest.store.store.presentation.dto.StoreResponse;
 import com.webest.store.store.presentation.dto.UpdateStoreAddressRequest;
 import com.webest.store.store.application.StoreService;
+import com.webest.web.common.UserRole;
 import com.webest.web.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -65,6 +66,15 @@ public class StoreController {
         Page<StoreResponse> responses = storeService.getAllStores(pageable);
         return CommonResponse.success(responses);
     }
+
+//    @GetMapping("/user")
+//    public CommonResponse<List<StoreResponse>> getStoresByUserRole(
+//            @RequestHeader("X-UserId") Long userId,
+//            @RequestHeader("X-Role") UserRole role
+//    ) {
+//        List<StoreResponse> responses = storeService.getStoresByUserRole(userId, role);
+//        return CommonResponse.success(responses);
+//    }
 
     // 가게 삭제
     @DeleteMapping("/{id}")

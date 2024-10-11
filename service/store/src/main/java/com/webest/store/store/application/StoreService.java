@@ -1,6 +1,8 @@
 package com.webest.store.store.application;
 
 import com.webest.app.address.csv.ReadAddressCsv;
+import com.webest.app.address.service.AddressDto;
+import com.webest.store.store.domain.model.StoreAddress;
 import com.webest.store.store.domain.repository.CustomStoreRepository;
 import com.webest.store.store.presentation.dto.CreateStoreRequest;
 import com.webest.store.store.presentation.dto.DeliveryAreaRequest;
@@ -13,6 +15,7 @@ import com.webest.store.store.exception.StoreException;
 import com.webest.store.store.infrastructure.naver.NaverGeoClient;
 import com.webest.store.store.infrastructure.naver.dto.GeoResponse;
 import com.webest.store.store.infrastructure.naver.dto.NaverAddress;
+import com.webest.web.common.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,29 +55,32 @@ public class StoreService {
         return StoreResponse.of(store);
     }
 
-    // 가게 주소로 위 경도 등록
+    // 가게 주소 등록
     @Transactional
     public StoreResponse updateStoreAddress(UpdateStoreAddressRequest request) {
         Store store = findStoreById(request.storeId());
 
-        // 네이버 Geocoding API로 위경도 가져오기
-        GeoResponse geoResponse = naverGeoClient.getCoordinatesFromAddress(request.address());
-        if (geoResponse.getAddresses() != null && !geoResponse.getAddresses().isEmpty()) {
-            NaverAddress addressInfo = geoResponse.getAddresses().get(0);
+        // 주소로 법정동 코드 받아오기
+        AddressDto addressDto = readAddressCsv.findAddressByDistrict(request.city(), request.street(), request.district());
+        StoreAddress storeAddress = StoreAddress.from(addressDto, request.detailAddress());
 
-            Double latitude = Double.parseDouble(addressInfo.getY()); // 위도
-            Double longitude = Double.parseDouble(addressInfo.getX()); // 경도
+        // 주소 조합 (시, 구, 동, 상세주소)
+        String fullAddress = request.city() + " " + request.street() + " " + request.district() + " " + request.detailAddress();
 
-            store.updateAddress(request.address(), latitude, longitude);
 
-            // DTO로 변환하여 캐시 업데이트
-            StoreResponse storeResponse = StoreResponse.of(store);
-            storeRedisTemplate.opsForValue().set(STORE_CACHE_PREFIX + store.getId(), storeResponse, CACHE_EXPIRATION);
+        // 주소로 위경도 받아오기
+        GeoResponse geoResponse = fetchGeoCoordinates(fullAddress);
+        NaverAddress addressInfo = geoResponse.getAddresses().get(0);
 
-        } else {
-            throw new StoreException(StoreErrorCode.INVALID_ADDRESS);
-        }
-        return StoreResponse.of(store);
+        // 위경도 파싱
+        Double latitude = Double.parseDouble(addressInfo.getY()); // 위도
+        Double longitude = Double.parseDouble(addressInfo.getX()); // 경도
+
+        // 가게 정보 업데이트
+        store.updateAddress(storeAddress, latitude, longitude);
+
+        // 캐시 업데이트
+        return updateStoreCache(store);
     }
 
     // 배달 가능 범위 등록 (법정동)
@@ -112,6 +118,7 @@ public class StoreService {
         return storeResponse;
     }
 
+    // 가게 법정동별 조회
     public List<StoreResponse> getStoresByUser(Long addressCode) {
         return findStoresByAddressCode(addressCode).stream().map(StoreResponse::of).toList();
     }
@@ -121,6 +128,12 @@ public class StoreService {
         Page<Store> stores = storeRepository.findAll(pageable);
         return stores.map(StoreResponse::of);
     }
+
+
+    // 가게 유저 역할별 조회
+//    public List<StoreResponse> getStoresByUserRole(Long userId, UserRole role) {
+//
+//    }
 
     // 가게 삭제
     @Transactional
@@ -140,4 +153,22 @@ public class StoreService {
     private List<Store> findStoresByAddressCode(Long addressCode) {
         return customStoreRepository.findStoresByAddressCode(addressCode);
     }
+
+    // 주소로 위경도 가져오기
+    private GeoResponse fetchGeoCoordinates(String address) {
+        GeoResponse geoResponse = naverGeoClient.getCoordinatesFromAddress(address);
+        if (geoResponse.getAddresses() == null || geoResponse.getAddresses().isEmpty()) {
+            throw new StoreException(StoreErrorCode.INVALID_ADDRESS);
+        }
+
+        return geoResponse;
+    }
+
+    // 가게 캐시 업데이트 메서드
+    private StoreResponse updateStoreCache(Store store) {
+        StoreResponse storeResponse = StoreResponse.of(store);
+        storeRedisTemplate.opsForValue().set(STORE_CACHE_PREFIX + store.getId(), storeResponse, CACHE_EXPIRATION);
+        return storeResponse;
+    }
+
 }

@@ -2,5 +2,8 @@ package com.webest.store.store.presentation.dto;
 
 public record UpdateStoreAddressRequest(
         Long storeId,
-        String address // 주소를 입력받는 필드
+        String city,                    // 시
+        String street,                 // 구
+        String district,              // 동
+        String detailAddress
 ) {}
