@@ -4,6 +4,8 @@ import com.webest.app.address.csv.ReadAddressCsv;
 import com.webest.app.address.service.AddressDto;
 import com.webest.store.store.domain.model.StoreAddress;
 import com.webest.store.store.domain.repository.CustomStoreRepository;
+import com.webest.store.store.infrastructure.user.UserClient;
+import com.webest.store.store.infrastructure.user.dto.UserResponse;
 import com.webest.store.store.presentation.dto.CreateStoreRequest;
 import com.webest.store.store.presentation.dto.DeliveryAreaRequest;
 import com.webest.store.store.presentation.dto.StoreResponse;
@@ -35,6 +37,7 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final CustomStoreRepository customStoreRepository;
     private final NaverGeoClient naverGeoClient;
+    private final UserClient userClient;
     private final ReadAddressCsv readAddressCsv;
 
     private final RedisTemplate<String, Object> storeRedisTemplate;
@@ -119,8 +122,9 @@ public class StoreService {
     }
 
     // 가게 법정동별 조회
-    public List<StoreResponse> getStoresByUser(Long addressCode) {
-        return findStoresByAddressCode(addressCode).stream().map(StoreResponse::of).toList();
+    public List<StoreResponse> getStoresByUser(String userId) {
+        UserResponse userResponse = userClient.getUser(userId).getData();
+        return findStoresByAddressCode(userResponse.addressCode()).stream().map(StoreResponse::of).toList();
     }
 
     // 가게 전체 조회
@@ -131,7 +135,8 @@ public class StoreService {
 
 
     // 가게 유저 역할별 조회
-//    public List<StoreResponse> getStoresByUserRole(Long userId, UserRole role) {
+//    public List<StoreResponse> getStoresByUserRole(Long userId) {
+//
 //
 //    }
 
