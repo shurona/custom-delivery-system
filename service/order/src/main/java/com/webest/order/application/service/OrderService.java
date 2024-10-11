@@ -75,6 +75,7 @@ public class OrderService {
         // 주문 저장
         orderRepository.save(order);
 
+
         // 주문 생성시 이벤트 발생
         orderEventService.publishOrderCreatedEvent(order.createdEvent());
 

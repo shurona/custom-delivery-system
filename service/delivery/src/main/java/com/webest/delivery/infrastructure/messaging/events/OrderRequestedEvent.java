@@ -50,7 +50,7 @@ public class OrderRequestedEvent {
 
     private Double totalPaymentPrice;
 
-    public DeliveryDto toDto() {
+    public DeliveryDto toDeliveryDto() {
         return DeliveryDto.create(
                 this.id,
                 null, // 요청때는 라이더 id 없음

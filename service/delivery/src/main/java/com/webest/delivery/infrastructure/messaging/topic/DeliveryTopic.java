@@ -8,7 +8,7 @@ public enum DeliveryTopic {
     CREATED("delivery-created"),
     UPDATED("delivery-updated"),
     DISPATCHED("delivery-dispatched"),
-    DEPARTED("delivery-departure"),
+    DEPARTED("delivery-departed"),
     COMPLETED("delivery-completed"),
     CANCELED("delivery-canceled");
 

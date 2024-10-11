@@ -1,6 +1,9 @@
 package com.webest.delivery.domain.events;
 
+import com.webest.delivery.application.dtos.DeliveryDto;
+import com.webest.delivery.application.dtos.DeliveryRecordDto;
 import com.webest.delivery.domain.model.DeliveryStatus;
+import com.webest.delivery.presentation.reqeust.DeliveryCreateRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,4 +32,17 @@ public class DeliveryCreatedEvent {
     private String arrivalDetailAddress; // 도착 상세주소
 
     private Double deliveryFeeAmount; // 배달료
+
+    public static DeliveryRecordDto toDeliveryRecordDto(DeliveryCreatedEvent deliveryCreatedEvent) {
+        return DeliveryRecordDto.create(
+                deliveryCreatedEvent.getId(),
+                deliveryCreatedEvent.getRiderId(),
+                deliveryCreatedEvent.getOrderId(),
+                deliveryCreatedEvent.getDeliveryStatus(),
+                deliveryCreatedEvent.getDeliveryFeeAmount()
+        );
+    }
+
+
+
 }

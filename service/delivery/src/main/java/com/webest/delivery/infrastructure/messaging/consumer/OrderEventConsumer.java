@@ -17,7 +17,7 @@ public class OrderEventConsumer {
     @KafkaListener(topics = "order-requested", groupId = "delivery-group")
     public void handleOrderCompletedEvent(String message) {
         OrderRequestedEvent orderEvent = EventSerializer.deserialize(message, OrderRequestedEvent.class);
-        deliveryService.createDelivery(orderEvent.toDto());
+        deliveryService.createDelivery(orderEvent.toDeliveryDto());
     }
 
     @KafkaListener(topics = "order-canceled", groupId = "delivery-group")
