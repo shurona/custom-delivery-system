@@ -80,6 +80,8 @@ public class CouponServiceImpl implements CouponService {
             requestDto.startTime().atStartOfDay(),
             requestDto.endTime().atStartOfDay(),
             requestDto.maxQuantity()
+        Coupon coupon = couponRepository.findById(id).orElseThrow(() ->
+            new ApplicationException(ErrorCode.NOT_FOUND.getStatus(), ErrorCode.NOT_FOUND.getMessage())
         );
 
         return couponMapper.couponToDto(coupon);
