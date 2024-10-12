@@ -2,7 +2,6 @@ package com.webest.store.store.infrastructure.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.webest.store.store.application.GeoOperation;
 import com.webest.store.store.presentation.dto.StoreResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +11,6 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.GeoOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
@@ -55,7 +53,7 @@ public class RedisCacheConfig {
         return redisTemplate;
     }
 
-    // geo 캐싱용
+    // geo
     @Bean(name = "geoRedisTemplate")
     public RedisTemplate<String, String> geoRedisTemplate() {
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();

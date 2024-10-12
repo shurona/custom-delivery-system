@@ -14,7 +14,6 @@ import com.webest.store.store.exception.StoreException;
 import com.webest.store.store.infrastructure.naver.NaverGeoClient;
 import com.webest.store.store.infrastructure.naver.dto.GeoResponse;
 import com.webest.store.store.infrastructure.naver.dto.NaverAddress;
-import com.webest.web.common.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

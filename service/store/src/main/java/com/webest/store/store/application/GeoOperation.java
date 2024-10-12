@@ -1,17 +1,14 @@
 package com.webest.store.store.application;
 
 import jakarta.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.*;
 import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.GeoOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.domain.geo.GeoLocation;
 import org.springframework.data.redis.domain.geo.Metrics;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Component
