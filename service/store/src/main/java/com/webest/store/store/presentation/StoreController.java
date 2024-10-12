@@ -1,9 +1,6 @@
 package com.webest.store.store.presentation;
 
-import com.webest.store.store.presentation.dto.CreateStoreRequest;
-import com.webest.store.store.presentation.dto.DeliveryAreaRequest;
-import com.webest.store.store.presentation.dto.StoreResponse;
-import com.webest.store.store.presentation.dto.UpdateStoreAddressRequest;
+import com.webest.store.store.presentation.dto.*;
 import com.webest.store.store.application.StoreService;
 import com.webest.web.common.UserRole;
 import com.webest.web.response.CommonResponse;
@@ -47,11 +44,11 @@ public class StoreController {
     }
 
     // 법정동으로 배달 가능 상점 검색
-    @GetMapping("/users/{addressCode}")
-    public CommonResponse<List<StoreResponse>> getStoresByAddressCode(@PathVariable("addressCode") Long addressCode) {
-        List<StoreResponse> responses = storeService.getStoresByUser(addressCode);
-        return CommonResponse.success(responses);
-    }
+//    @GetMapping("/users")
+//    public CommonResponse<List<StoreResponse>> getStoresByAddressCode(@PathVariable("addressCode") Long addressCode) {
+//        List<StoreResponse> responses = storeService.getStoresByUser(addressCode);
+//        return CommonResponse.success(responses);
+//    }
 
     // 가게 단건 조회
     @GetMapping("/{id}")
@@ -67,14 +64,19 @@ public class StoreController {
         return CommonResponse.success(responses);
     }
 
-//    @GetMapping("/user")
-//    public CommonResponse<List<StoreResponse>> getStoresByUserRole(
-//            @RequestHeader("X-UserId") Long userId,
-//            @RequestHeader("X-Role") UserRole role
-//    ) {
-//        List<StoreResponse> responses = storeService.getStoresByUserRole(userId, role);
-//        return CommonResponse.success(responses);
-//    }
+    @GetMapping("/user")
+    public CommonResponse<List<StoreResponse>> getStoresByUserAddressCode(
+            @RequestHeader("X-UserId") String userId
+    ) {
+        List<StoreResponse> responses = storeService.getStoresByUserAddressCode(userId);
+        return CommonResponse.success(responses);
+    }
+
+    @GetMapping("/coordinates")
+    public CommonResponse<List<StoreResponse>> getStoreByCoordinates(@RequestBody Coordinates coordinates) {
+        List<StoreResponse> responses = storeService.getStoresByCoordinates(coordinates);
+        return CommonResponse.success(responses);
+    }
 
     // 가게 삭제
     @DeleteMapping("/{id}")

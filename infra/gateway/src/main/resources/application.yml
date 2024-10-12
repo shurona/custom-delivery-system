@@ -30,3 +30,7 @@ spring:
           uri: lb://user-service
           predicates:
             - Path=/api/users/**
+        - id: store-service
+          uri: lb://store-service
+          predicates:
+            - Path=/api/v1/stores/**, /api/v1/products/**, /api/v1/categories/**
