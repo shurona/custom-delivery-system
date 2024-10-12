@@ -1,9 +1,6 @@
 package com.webest.store.store.presentation;
 
-import com.webest.store.store.presentation.dto.CreateStoreRequest;
-import com.webest.store.store.presentation.dto.DeliveryAreaRequest;
-import com.webest.store.store.presentation.dto.StoreResponse;
-import com.webest.store.store.presentation.dto.UpdateStoreAddressRequest;
+import com.webest.store.store.presentation.dto.*;
 import com.webest.store.store.application.StoreService;
 import com.webest.web.common.UserRole;
 import com.webest.web.response.CommonResponse;
@@ -68,10 +65,16 @@ public class StoreController {
     }
 
     @GetMapping("/user")
-    public CommonResponse<List<StoreResponse>> getStoresByUserRole(
+    public CommonResponse<List<StoreResponse>> getStoresByUserAddressCode(
             @RequestHeader("X-UserId") String userId
     ) {
-        List<StoreResponse> responses = storeService.getStoresByUser(userId);
+        List<StoreResponse> responses = storeService.getStoresByUserAddressCode(userId);
+        return CommonResponse.success(responses);
+    }
+
+    @GetMapping("/coordinates")
+    public CommonResponse<List<StoreResponse>> getStoreByCoordinates(@RequestBody Coordinates coordinates) {
+        List<StoreResponse> responses = storeService.getStoresByCoordinates(coordinates);
         return CommonResponse.success(responses);
     }
 

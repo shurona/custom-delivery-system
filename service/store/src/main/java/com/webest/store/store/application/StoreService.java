@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -71,6 +73,7 @@ public class StoreService {
         // 가게 정보 업데이트
         store.updateAddress(storeAddress, latitude, longitude);
 
+        // 가게 위치 Geo 업데이트
         updateLocationToGeoCache(store);
 
         // 캐시 업데이트
@@ -97,8 +100,6 @@ public class StoreService {
         return updateStoreCache(store);
     }
 
-
-
     // 가게 단건 조회
     public StoreResponse getStoreById(Long id) {
         StoreResponse storeResponse = storeCacheService.getCachedStore(id);
@@ -115,18 +116,22 @@ public class StoreService {
         return findStoresByAddressCode(userResponse.addressCode()).stream().map(StoreResponse::of).toList();
     }
 
+    // 유저 근처 상점 조회
+    public List<StoreResponse> getStoresByCoordinates(Coordinates coordinates) {
+        List<String> storeIds = geoOperation.findNearByStores(coordinates.longitude(), coordinates.latitude(), coordinates.radius());
+        return storeIds.stream()
+                .map(storeId -> storeRepository.findById(Long.parseLong(storeId))
+                        .map(StoreResponse::of)  // Store 객체를 StoreResponse로 변환
+                        .orElse(null))  // 없으면 null 반환
+                .filter(Objects::nonNull)  // null 제거
+                .collect(Collectors.toList());
+    }
+
     // 가게 전체 조회
     public Page<StoreResponse> getAllStores(Pageable pageable) {
         Page<Store> stores = storeRepository.findAll(pageable);
         return stores.map(StoreResponse::of);
     }
-
-
-    // 가게 유저 역할별 조회
-//    public List<StoreResponse> getStoresByUserRole(Long userId) {
-//
-//
-//    }
 
     // 가게 삭제
     @Transactional
@@ -135,6 +140,14 @@ public class StoreService {
         storeRepository.delete(store);
         storeCacheService.deleteStoreCache(store.getId());
     }
+
+
+
+
+
+
+
+
 
     // ID로 상점을 찾는 공통 메서드
     private Store findStoreById(Long id) {
@@ -169,8 +182,4 @@ public class StoreService {
     private void updateLocationToGeoCache(Store store) {
         geoOperation.add(store.getLongitude(), store.getLatitude(), String.valueOf(store.getId()));
     }
-
-//    public List<StoreResponse> getStoresByCoordinates(Coordinates coordinates) {
-//
-//    }
 }

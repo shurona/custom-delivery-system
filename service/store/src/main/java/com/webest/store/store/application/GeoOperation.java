@@ -35,5 +35,4 @@ public class GeoOperation {
                 .map(GeoLocation::getName)
                 .collect(Collectors.toList());
     }
-
 }
