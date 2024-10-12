@@ -33,11 +33,9 @@ out/
 /nbdist/
 /.nb-gradle/
 
-### VS Code ###
-.vscode/
-
 ### INTELIJ ###
 .run
 
 ### local env ###
-.env
+.env*
+!.env.example
