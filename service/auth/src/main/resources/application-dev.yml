@@ -45,4 +45,3 @@ token:
 google:
   email: ${GOOGLE_EMAIL}
   secret-key: ${GOOGLE_SECRET_KEY}
-

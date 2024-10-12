@@ -19,14 +19,13 @@ spring:
       password: ${MONGO_DB_PASSWORD}
       database: ${MONGO_DB_DATABASE}
       uri: ${MONGO_DB_URI}
-      authentication-database: admin
+      authentication-database: ${MONGO_DB_AUTH}
 
 
   jpa:
     hibernate:
       ddl-auto: update
     #      dialect: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
 
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
