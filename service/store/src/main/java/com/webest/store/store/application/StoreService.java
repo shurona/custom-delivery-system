@@ -6,10 +6,7 @@ import com.webest.store.store.domain.model.StoreAddress;
 import com.webest.store.store.domain.repository.CustomStoreRepository;
 import com.webest.store.store.infrastructure.user.UserClient;
 import com.webest.store.store.infrastructure.user.dto.UserResponse;
-import com.webest.store.store.presentation.dto.CreateStoreRequest;
-import com.webest.store.store.presentation.dto.DeliveryAreaRequest;
-import com.webest.store.store.presentation.dto.StoreResponse;
-import com.webest.store.store.presentation.dto.UpdateStoreAddressRequest;
+import com.webest.store.store.presentation.dto.*;
 import com.webest.store.store.domain.model.Store;
 import com.webest.store.store.domain.repository.StoreRepository;
 import com.webest.store.store.exception.StoreErrorCode;
@@ -21,11 +18,9 @@ import com.webest.web.common.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.util.List;
 
 
@@ -40,22 +35,14 @@ public class StoreService {
     private final UserClient userClient;
     private final ReadAddressCsv readAddressCsv;
 
-    private final RedisTemplate<String, Object> storeRedisTemplate;
-    private static final String STORE_CACHE_PREFIX = "store:";
-    private static final Duration CACHE_EXPIRATION = Duration.ofMinutes(30); // 캐시 만료 시간 설정
-
+    private final StoreCacheService storeCacheService;
     // 가게 생성
     // 가게 주소, 위경도, 배달 반경, 배달 팁은 생성 시 설정하지 않고 따로 업데이트
     @Transactional
     public StoreResponse saveStore(CreateStoreRequest request) {
         Store store = request.toEntity();
         storeRepository.save(store);
-
-        // 생성 후 캐시 업데이트
-        StoreResponse storeResponse = StoreResponse.of(store);
-        storeRedisTemplate.opsForValue().set(STORE_CACHE_PREFIX + store.getId(), storeResponse, CACHE_EXPIRATION);
-
-        return StoreResponse.of(store);
+        return updateStoreCache(store);
     }
 
     // 가게 주소 등록
@@ -103,26 +90,23 @@ public class StoreService {
 
         store.registerDeliveryArea(request.addressCodeList());
 
-        return StoreResponse.of(store);
+        return updateStoreCache(store);
     }
 
 
 
     // 가게 단건 조회
     public StoreResponse getStoreById(Long id) {
-        StoreResponse storeResponse = (StoreResponse) storeRedisTemplate.opsForValue().get(STORE_CACHE_PREFIX + id);
+        StoreResponse storeResponse = storeCacheService.getCachedStore(id);
         if (storeResponse == null) {
             Store store = findStoreById(id);
-            storeResponse = StoreResponse.of(store);
-
-            storeRedisTemplate.opsForValue().set(STORE_CACHE_PREFIX + store.getId(), storeResponse, CACHE_EXPIRATION);
+            storeResponse = updateStoreCache(store);
         }
-
         return storeResponse;
     }
 
     // 가게 법정동별 조회
-    public List<StoreResponse> getStoresByUser(String userId) {
+    public List<StoreResponse> getStoresByUserAddressCode(String userId) {
         UserResponse userResponse = userClient.getUser(userId).getData();
         return findStoresByAddressCode(userResponse.addressCode()).stream().map(StoreResponse::of).toList();
     }
@@ -172,8 +156,11 @@ public class StoreService {
     // 가게 캐시 업데이트 메서드
     private StoreResponse updateStoreCache(Store store) {
         StoreResponse storeResponse = StoreResponse.of(store);
-        storeRedisTemplate.opsForValue().set(STORE_CACHE_PREFIX + store.getId(), storeResponse, CACHE_EXPIRATION);
+        storeCacheService.cacheStore(store.getId(), storeResponse);
         return storeResponse;
     }
 
+//    public List<StoreResponse> getStoresByCoordinates(Coordinates coordinates) {
+//
+//    }
 }
