@@ -36,6 +36,8 @@ public class StoreService {
     private final ReadAddressCsv readAddressCsv;
 
     private final StoreCacheService storeCacheService;
+    private final GeoOperation geoOperation;
+
     // 가게 생성
     // 가게 주소, 위경도, 배달 반경, 배달 팁은 생성 시 설정하지 않고 따로 업데이트
     @Transactional
@@ -68,6 +70,8 @@ public class StoreService {
 
         // 가게 정보 업데이트
         store.updateAddress(storeAddress, latitude, longitude);
+
+        updateLocationToGeoCache(store);
 
         // 캐시 업데이트
         return updateStoreCache(store);
@@ -129,6 +133,7 @@ public class StoreService {
     public void deleteStore(Long id) {
         Store store = findStoreById(id);
         storeRepository.delete(store);
+        storeCacheService.deleteStoreCache(store.getId());
     }
 
     // ID로 상점을 찾는 공통 메서드
@@ -158,6 +163,11 @@ public class StoreService {
         StoreResponse storeResponse = StoreResponse.of(store);
         storeCacheService.cacheStore(store.getId(), storeResponse);
         return storeResponse;
+    }
+
+    // 가게 위치 Geo 업데이트 메서드
+    private void updateLocationToGeoCache(Store store) {
+        geoOperation.add(store.getLongitude(), store.getLatitude(), String.valueOf(store.getId()));
     }
 
 //    public List<StoreResponse> getStoresByCoordinates(Coordinates coordinates) {
