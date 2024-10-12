@@ -12,6 +12,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.security.Key;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,25 +25,17 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.io.IOException;
-import java.security.Key;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-
 @Slf4j
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private String secretKey;
-
-    private String tokenTime;
-
-    private AuthService authService;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-
+    private String secretKey;
+    private String tokenTime;
+    private AuthService authService;
     private Key key;
 
-    public AuthenticationFilter(AuthenticationManager authenticationManager, AuthService authService,String secretKey,String tokenTime) {
+    public AuthenticationFilter(AuthenticationManager authenticationManager,
+        AuthService authService, String secretKey, String tokenTime) {
         super(authenticationManager);
         this.authService = authService;
         this.secretKey = secretKey;
@@ -52,19 +49,20 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
      */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request
-            , HttpServletResponse response) throws AuthenticationException {
-        try{
-            LoginRequest loginRequest = new ObjectMapper().readValue(request.getInputStream(), LoginRequest.class);     // 로그인 데이터를 LoginRequest 형태로 맵핑
+        , HttpServletResponse response) throws AuthenticationException {
+        try {
+            LoginRequest loginRequest = new ObjectMapper().readValue(request.getInputStream(),
+                LoginRequest.class);     // 로그인 데이터를 LoginRequest 형태로 맵핑
             // 인증 정보
             // 유저에게 입력받은 email과 password를 UsernamePasswordAuthenticationToken를 입혀서 인증검사를 대신 해주는 getAuthenticationManager로 보내 검사 진행
             return getAuthenticationManager().authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequest.userId(),
-                            loginRequest.password(),
-                            new ArrayList<>())
+                new UsernamePasswordAuthenticationToken(
+                    loginRequest.userId(),
+                    loginRequest.password(),
+                    new ArrayList<>())
             );
 
-        }catch (IOException e){
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
@@ -74,15 +72,14 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     // 인증 성공했을때 반환 값
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
-                                            HttpServletResponse response,
-                                            FilterChain chain,
-                                            Authentication authResult) throws IOException, ServletException {
-
+        HttpServletResponse response,
+        FilterChain chain,
+        Authentication authResult) throws IOException, ServletException {
 
         byte[] bytes = Base64.getDecoder().decode(secretKey);
         key = Keys.hmacShaKeyFor(bytes);
 
-        String userName = (((User)authResult.getPrincipal()).getUsername());
+        String userName = (((User) authResult.getPrincipal()).getUsername());
         AuthDto userDetails = authService.getUserDetailsByUserId(userName);
 
         Claims claims = Jwts.claims().setSubject(String.valueOf(userDetails.userId()));
@@ -93,11 +90,11 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         Date validity = new Date(now.getTime() + Long.parseLong(tokenTime));
 
         String token = Jwts.builder()
-                        .setClaims(claims)
-                        .setIssuedAt(now)
-                        .setExpiration(validity)
-                        .signWith(key, signatureAlgorithm)
-                        .compact();
+            .setClaims(claims)
+            .setIssuedAt(now)
+            .setExpiration(validity)
+            .signWith(key, signatureAlgorithm)
+            .compact();
 
         response.addHeader("token", "Bearer " + token);
     }
