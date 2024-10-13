@@ -20,7 +20,7 @@ on:
       - build.gradle
       - gradlew.bat
       - settings.gradle
-    branches: [ "main" ]
+    branches: [ "dev" ]
 
 jobs:
   build:
@@ -65,7 +65,9 @@ jobs:
           DB_URL: ${{ secrets.DB_URL }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          EUREKA_SERVER_URL: ${{ env.EUREKA_SERVER_URL }}
+          EUREKA_SERVER_URL: ${{ vars.EUREKA_SERVER_URL }}
+          ECR_REGISTRY: ${{ vars.ECR_REGISTRY }}
+          ECR_NAMESPACE: ${{ vars.ECR_NAMESPACE }}
 
 
 

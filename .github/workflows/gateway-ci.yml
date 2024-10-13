@@ -18,7 +18,7 @@ on:
       - build.gradle
       - gradlew.bat
       - settings.gradle
-    branches: [ "main" ]
+    branches: [ "dev" ]
 
 jobs:
   build:
@@ -58,9 +58,11 @@ jobs:
           docker compose build gateway-service  
           ./push_to_ecr.sh gateway
         env:
-          EUREKA_SERVER_URL: ${{ env.EUREKA_SERVER_URL }}
+          EUREKA_SERVER_URL: ${{ vars.EUREKA_SERVER_URL }}
           JWT_TOKEN_EXPIRE: ${{ secrets.JWT_TOKEN_EXPIRE }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          ECR_REGISTRY: ${{ vars.ECR_REGISTRY }}
+          ECR_NAMESPACE: ${{ vars.ECR_NAMESPACE }}
 
 
 

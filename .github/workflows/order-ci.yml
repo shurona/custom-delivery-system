@@ -20,7 +20,7 @@ on:
       - build.gradle
       - gradlew.bat
       - settings.gradle
-    branches: [ "main" ]
+    branches: [ "dev" ]
 
 jobs:
   build:
@@ -65,14 +65,16 @@ jobs:
           DB_URL: ${{ secrets.DB_URL }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          EUREKA_SERVER_URL: ${{ env.EUREKA_SERVER_URL }}
+          EUREKA_SERVER_URL: ${{ vars.EUREKA_SERVER_URL }}
           KAFKA_BOOTSTRAP_SERVERS: ${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}
-          MONGO_DB_HOST: ${{ env.MONGO_DB_HOST }}
-          MONGO_DB_PORT: ${{ env.MONGO_DB_PORT }}
+          MONGO_DB_HOST: ${{ vars.MONGO_DB_HOST }}
+          MONGO_DB_PORT: ${{ vars.MONGO_DB_PORT }}
           MONGO_DB_USERNAME: ${{ secrets.MONGO_DB_USERNAME }}
           MONGO_DB_PASSWORD: ${{ secrets.MONGO_DB_PASSWORD }}
           MONGO_DB_DATABASE: ${{ secrets.MONGO_DB_DATABASE }}
           MONGO_DB_URI: ${{ secrets.MONGO_DB_URI }}
+          ECR_REGISTRY: ${{ vars.ECR_REGISTRY }}
+          ECR_NAMESPACE: ${{ vars.ECR_NAMESPACE }}
 
 
 
