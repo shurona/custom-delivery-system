@@ -15,18 +15,24 @@ build_service() {
   echo "${service} service build completed!"
 }
 
-# List of services to build
-services=(
-  "eureka"
-  "gateway"
-  "user"
-  "auth"
-  "coupon"
-  "store"
-  "order"
-  "delivery"
-  "rider"
-)
+# Check if services were passed as arguments, otherwise use default
+if [ "$#" -gt 0 ]; then
+  services=("$@")
+else
+  # Default list of services
+  services=(
+    "eureka"
+    "gateway"
+    "user"
+    "auth"
+    "coupon"
+    "store"
+    "order"
+    "delivery"
+    "rider"
+  )
+fi
+
 
 # Build all services
 for service in "${services[@]}"; do
