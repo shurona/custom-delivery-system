@@ -39,3 +39,6 @@ out/
 ### local env ###
 .env*
 !.env.example
+
+### act env ###
+act-secret

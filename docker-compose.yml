@@ -1,6 +1,7 @@
 name: msa-final-project
 services:
   eureka-server:
+    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/eureka
     build: ./infra/eureka/.
     ports:
       - "19090:19090"
@@ -9,6 +10,7 @@ services:
     restart: always
 
   gateway-service:
+    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/gateway
     build: ./infra/gateway/.
     ports:
       - "19091:19091"
@@ -23,6 +25,7 @@ services:
       - eureka-server
 
   user-service:
+    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/user
     build: ./service/user/.
     ports:
       - "19092:19092"
@@ -38,6 +41,7 @@ services:
       - eureka-server
 
   auth-service:
+    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/auth
     build: ./service/auth/.
     ports:
       - "19100:19100"
@@ -60,6 +64,7 @@ services:
       - user-service
 
   store-service:
+    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/store
     build: ./service/store/.
     ports:
       - "19093:19093"
@@ -80,6 +85,7 @@ services:
       - user-service
 
   order-service:
+    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/order
     build: ./service/order/.
     ports:
       - "19094:19094"
@@ -102,6 +108,7 @@ services:
       - eureka-server
 
   coupon-service:
+    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/coupon
     build: ./service/coupon/.
     ports:
       - "19097:19097"
@@ -121,6 +128,7 @@ services:
       - user-service
 
   rider-service:
+    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/rider
     build: ./service/rider/.
     ports:
       - "19099:19099"
@@ -136,6 +144,7 @@ services:
       - eureka-server
 
   delivery-service:
+    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/delivery
     build: ./service/delivery
     ports:
       - "19095:19095"
