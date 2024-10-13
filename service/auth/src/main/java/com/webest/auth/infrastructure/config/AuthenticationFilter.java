@@ -2,7 +2,11 @@ package com.webest.auth.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webest.auth.application.AuthService;
+import com.webest.auth.application.JwtTokenService;
+import com.webest.auth.domain.model.TokenStatus;
 import com.webest.auth.domain.model.vo.AuthDto;
+import com.webest.auth.domain.model.vo.RefreshTokenDto;
+import com.webest.auth.infrastructure.redis.RedisUtil;
 import com.webest.auth.presentation.dto.request.LoginRequest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -29,20 +33,21 @@ import java.util.Date;
 @Slf4j
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private String secretKey;
+    private final String accessTokenTime;
+    private final RedisUtil redisUtil;
+    private final AuthService authService;
+    private final JwtTokenService jwtTokenService;
 
-    private String tokenTime;
-
-    private AuthService authService;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
     private Key key;
 
-    public AuthenticationFilter(AuthenticationManager authenticationManager, AuthService authService,String secretKey,String tokenTime) {
+    public AuthenticationFilter(AuthenticationManager authenticationManager, AuthService authService, String tokenTime, RedisUtil redisUtil, JwtTokenService jwtTokenService) {
         super(authenticationManager);
         this.authService = authService;
-        this.secretKey = secretKey;
-        this.tokenTime = tokenTime;
+        this.accessTokenTime = tokenTime;
+        this.redisUtil = redisUtil;
+        this.jwtTokenService = jwtTokenService;
     }
 
     /*
@@ -53,6 +58,13 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request
             , HttpServletResponse response) throws AuthenticationException {
+
+        // 특정 엔드포인트를 제외
+        if (request.getRequestURI().startsWith("/api/auth/refresh")) {
+            return null; // 필터를 건너뜀
+        }
+
+
         try{
             LoginRequest loginRequest = new ObjectMapper().readValue(request.getInputStream(), LoginRequest.class);     // 로그인 데이터를 LoginRequest 형태로 맵핑
             // 인증 정보
@@ -67,7 +79,6 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         }catch (IOException e){
             throw new RuntimeException(e);
         }
-
     }
 
 
@@ -79,26 +90,17 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                                             Authentication authResult) throws IOException, ServletException {
 
 
-        byte[] bytes = Base64.getDecoder().decode(secretKey);
-        key = Keys.hmacShaKeyFor(bytes);
-
         String userName = (((User)authResult.getPrincipal()).getUsername());
         AuthDto userDetails = authService.getUserDetailsByUserId(userName);
 
-        Claims claims = Jwts.claims().setSubject(String.valueOf(userDetails.userId()));
-        claims.put("userId", userDetails.userId());
-        claims.put("role", userDetails.role());
+        // 엑세스 토큰 생성 및 header 추가 , 만료시간 10분
+        String accessToken = jwtTokenService.createToken(userDetails,Long.parseLong(accessTokenTime));
+        response.addHeader("Authorization", "Bearer " + accessToken);
 
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + Long.parseLong(tokenTime));
-
-        String token = Jwts.builder()
-                        .setClaims(claims)
-                        .setIssuedAt(now)
-                        .setExpiration(validity)
-                        .signWith(key, signatureAlgorithm)
-                        .compact();
-
-        response.addHeader("token", "Bearer " + token);
+        // 리프레시 토큰 생성 및 redis 저장 , 만료시간 1시간
+        String refreshToken = jwtTokenService.createToken(userDetails,Long.parseLong(accessTokenTime)*6);
+        RefreshTokenDto refreshTokenDto = new RefreshTokenDto(userDetails.userId(),refreshToken, TokenStatus.ACTIVE);
+        redisUtil.setDataRefreshToken(refreshTokenDto);
     }
+
 }
