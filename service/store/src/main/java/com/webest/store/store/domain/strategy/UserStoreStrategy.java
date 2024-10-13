@@ -1,5 +1,6 @@
 package com.webest.store.store.domain.strategy;
 
+import com.webest.store.store.application.GeoOperation;
 import com.webest.store.store.domain.repository.CustomStoreRepository;
 import com.webest.store.store.infrastructure.user.UserClient;
 import com.webest.store.store.infrastructure.user.dto.UserResponse;
@@ -16,6 +17,7 @@ public class UserStoreStrategy implements StoreStrategy {
 
     private final CustomStoreRepository customStoreRepository;
     private final UserClient userClient;
+    private final GeoOperation geoOperation;
 
     @Override
     public List<StoreResponse> getDeliveryStores(String userId) {
@@ -28,6 +30,8 @@ public class UserStoreStrategy implements StoreStrategy {
 
     @Override
     public List<StoreResponse> getTakeOutStores(String userId) {
+        UserResponse user = userClient.getUser(userId).getData();
+        //List<String> storeIds = geoOperation.findNearByStores();
         return List.of();
     }
 

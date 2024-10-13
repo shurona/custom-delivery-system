@@ -126,12 +126,6 @@ public class StoreService {
                 .collect(Collectors.toList());
     }
 
-    // 가게 전체 조회
-    public Page<StoreResponse> getAllStores(Pageable pageable) {
-        Page<Store> stores = storeRepository.findAll(pageable);
-        return stores.map(StoreResponse::of);
-    }
-
     // 가게 삭제
     @Transactional
     public void deleteStore(Long id) {

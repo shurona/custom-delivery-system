@@ -11,9 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.webest.web.common.CommonStaticVariable.X_USER_ID;
-import static com.webest.web.common.CommonStaticVariable.X_USER_ROLE;
-
 @RestController
 @RequestMapping("/api/v1/stores")
 @RequiredArgsConstructor
@@ -45,13 +42,6 @@ public class StoreController {
         return CommonResponse.success(response);
     }
 
-    // 법정동으로 배달 가능 상점 검색
-//    @GetMapping("/users")
-//    public CommonResponse<List<StoreResponse>> getStoresByAddressCode(@PathVariable("addressCode") Long addressCode) {
-//        List<StoreResponse> responses = storeService.getStoresByUser(addressCode);
-//        return CommonResponse.success(responses);
-//    }
-
     // 가게 단건 조회
     @GetMapping("/{id}")
     public CommonResponse<StoreResponse> getStoreById(@PathVariable("id") Long id) {
@@ -59,17 +49,30 @@ public class StoreController {
         return CommonResponse.success(response);
     }
 
-    // 가게 전체 조회 (MASTER 권한)
+    // 배달 가게 목록 조회 (MASTER - 전체 / OWNER & USER - 법정동 코드로 배달 가능한 가게만 조회)
     @GetMapping
-    public CommonResponse<List<StoreResponse>> getAllStores(
+    public CommonResponse<List<StoreResponse>> getDeliveryStores(
             @RequestHeader("X-UserId") String userId,
             @RequestHeader("X-Role") String role
     ) {
         // String을 UserRole로 변환
         UserRole userRole = UserRole.valueOf(role);
-        List<StoreResponse> responses = storeStrategyContext.getAllStores(userId, userRole);
+        List<StoreResponse> responses = storeStrategyContext.getDeliveryStores(userId, userRole);
         return CommonResponse.success(responses);
     }
+
+    // 포장 가게 목록 조회 (MASTER - 전체 / OWNER & USER - REDIS GEO로 반경내 가게만 조회)
+//    @GetMapping("/take-out/{radius}")
+//    public CommonResponse<List<StoreResponse>> getTakeOutStores(
+//            @RequestHeader("X-UserId") String userId,
+//            @RequestHeader("X-Role") String role,
+//            @PathVariable("radius") Double radius
+//    ) {
+//        // String을 UserRole로 변환
+//        UserRole userRole = UserRole.valueOf(role);
+//
+//
+//    }
 
     @GetMapping("/user")
     public CommonResponse<List<StoreResponse>> getStoresByUserAddressCode(
