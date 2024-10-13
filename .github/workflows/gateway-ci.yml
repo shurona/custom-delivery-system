@@ -18,7 +18,7 @@ on:
       - build.gradle
       - gradlew.bat
       - settings.gradle
-    branches: [ "dev" ]
+    branches: [ "main" ]
 
 jobs:
   build:
