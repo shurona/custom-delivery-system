@@ -1,23 +1,25 @@
 package com.webest.store.store.presentation;
 
+import com.webest.store.store.application.context.StoreStrategyContext;
 import com.webest.store.store.presentation.dto.*;
 import com.webest.store.store.application.StoreService;
 import com.webest.web.common.UserRole;
 import com.webest.web.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.webest.web.common.CommonStaticVariable.X_USER_ID;
+import static com.webest.web.common.CommonStaticVariable.X_USER_ROLE;
 
 @RestController
 @RequestMapping("/api/v1/stores")
 @RequiredArgsConstructor
 public class StoreController {
     private final StoreService storeService;
+    private final StoreStrategyContext storeStrategyContext;
 
     // 가게 생성
     @PostMapping
@@ -59,8 +61,13 @@ public class StoreController {
 
     // 가게 전체 조회 (MASTER 권한)
     @GetMapping
-    public CommonResponse<Page<StoreResponse>> getAllStores(@PageableDefault() Pageable pageable) {
-        Page<StoreResponse> responses = storeService.getAllStores(pageable);
+    public CommonResponse<List<StoreResponse>> getAllStores(
+            @RequestHeader("X-UserId") String userId,
+            @RequestHeader("X-Role") String role
+    ) {
+        // String을 UserRole로 변환
+        UserRole userRole = UserRole.valueOf(role);
+        List<StoreResponse> responses = storeStrategyContext.getAllStores(userId, userRole);
         return CommonResponse.success(responses);
     }
 
