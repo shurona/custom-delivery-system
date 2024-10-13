@@ -61,7 +61,7 @@ services:
       - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
     restart: always
     depends_on:
-      - user-service
+      - eureka-server
 
   store-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/store
@@ -82,7 +82,7 @@ services:
       - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
     restart: always
     depends_on:
-      - user-service
+      - eureka-server
 
   order-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/order
@@ -125,7 +125,7 @@ services:
       - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
     restart: always
     depends_on:
-      - user-service
+      - eureka-server
 
   rider-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/rider

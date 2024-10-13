@@ -13,7 +13,7 @@ on:
     paths:
       - service/delivery/**
       - core/**
-      - .github/**
+      - .github/workflows/delivery-ci.yml
       - gradlew
       - build_service.sh
       - push_to_ecr.sh

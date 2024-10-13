@@ -13,7 +13,7 @@ on:
     paths:
       - service/auth/**
       - core/**
-      - .github/**
+      - .github/workflows/auth-ci.yml
       - gradlew
       - build_service.sh
       - push_to_ecr.sh

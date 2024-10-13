@@ -11,12 +11,12 @@ on:
   push:
     paths:
       - ./infra/eureka/**
-      - .github/**
+      - .github/workflows/eureka-ci.yml
       - gradlew
       - build.gradle
       - gradlew.bat
       - settings.gradle
-    branches: [ "main" ]
+    branches: [ "dev" ]
 
 jobs:
   build:

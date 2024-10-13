@@ -12,7 +12,7 @@ on:
     paths:
       - service/user/**
       - core/**
-      - .github/**
+      - .github/workflows/user-ci.yml
       - gradlew
       - build_service.sh
       - push_to_ecr.sh
