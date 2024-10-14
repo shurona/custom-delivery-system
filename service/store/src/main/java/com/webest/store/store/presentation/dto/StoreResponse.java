@@ -21,7 +21,6 @@ public record StoreResponse(
         StoreAddress storeAddress,
         Double latitude,
         Double longitude,
-        Double deliveryRadius,
         Double deliveryTip,
         List<Long> addressCodeList
 ) {
@@ -40,7 +39,6 @@ public record StoreResponse(
                 store.getStoreAddress(),
                 store.getLatitude(),
                 store.getLongitude(),
-                store.getDeliveryRadius(),
                 store.getDeliveryTip(),
                 store.getAddressCodeList()
         );

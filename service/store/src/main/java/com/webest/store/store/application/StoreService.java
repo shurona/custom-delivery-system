@@ -41,7 +41,7 @@ public class StoreService {
     private final GeoOperation geoOperation;
 
     // 가게 생성
-    // 가게 주소, 위경도, 배달 반경, 배달 팁은 생성 시 설정하지 않고 따로 업데이트
+    // 가게 주소, 위경도는 생성 시 설정하지 않고 따로 업데이트
     @Transactional
     public StoreResponse saveStore(CreateStoreRequest request, String userId, UserRole role) {
 

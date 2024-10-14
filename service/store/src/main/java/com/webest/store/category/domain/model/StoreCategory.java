@@ -1,4 +1,4 @@
-package com.webest.store.category.domain;
+package com.webest.store.category.domain.model;
 
 import com.webest.app.jpa.BaseEntity;
 import jakarta.persistence.*;

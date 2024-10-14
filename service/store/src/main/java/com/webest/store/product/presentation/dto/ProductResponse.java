@@ -1,6 +1,6 @@
 package com.webest.store.product.presentation.dto;
 
-import com.webest.store.product.domain.Product;
+import com.webest.store.product.domain.model.Product;
 import com.webest.store.product.domain.ProductStatus;
 
 public record ProductResponse(
