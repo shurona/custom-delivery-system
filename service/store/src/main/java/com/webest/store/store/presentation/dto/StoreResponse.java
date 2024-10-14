@@ -10,7 +10,7 @@ import java.util.List;
 public record StoreResponse(
         Long id,
         String name,
-        Long ownerId,
+        String ownerId,
         Long categoryId,
         Integer preparationTime,
         Double minimumOrderAmount,
