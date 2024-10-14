@@ -1,6 +1,0 @@
-server:
-  port: 19096
-
-spring:
-  application:
-    name: payment-service

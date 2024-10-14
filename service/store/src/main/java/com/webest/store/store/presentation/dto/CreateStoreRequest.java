@@ -6,7 +6,6 @@ import java.time.LocalTime;
 
 public record CreateStoreRequest(
         String name,
-        Long ownerId,
         Long categoryId,
         Integer preparationTime,
         Double minimumOrderAmount,
@@ -14,7 +13,7 @@ public record CreateStoreRequest(
         LocalTime openTime,
         LocalTime closeTime
 ) {
-    public Store toEntity() {
+    public Store toEntity(String ownerId) {
         return Store.of(name, ownerId, categoryId, preparationTime, minimumOrderAmount, phone, openTime, closeTime);
     }
 }

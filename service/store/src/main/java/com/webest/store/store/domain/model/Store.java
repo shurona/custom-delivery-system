@@ -29,7 +29,7 @@ public class Store extends BaseEntity {
     @Column(nullable = false)
     private String name; // 가게 이름
 
-    private Long ownerId; // 가게 주인 ID
+    private String ownerId; // 가게 주인 ID
 
     private Long categoryId; // 카테고리 ID, FK
 
@@ -46,7 +46,8 @@ public class Store extends BaseEntity {
 
     private LocalTime closeTime; // 클로즈 시간
 
-    private String address; // 주소
+    @Embedded
+    private StoreAddress storeAddress;
 
     private Double latitude; // 위도
 
@@ -56,14 +57,12 @@ public class Store extends BaseEntity {
 
     private Double deliveryTip; // 배달팁
 
-//    @Column(name = "address_codes")
-//    @Convert(converter = StoreAddressConverter.class)
     @ElementCollection
     @CollectionTable(name = "store_address_codes", joinColumns = @JoinColumn(name = "store_id"))
     @Column(name = "address_code")
     private List<Long> addressCodeList = new ArrayList<>();
 
-    public static Store of(String name, Long ownerId, Long categoryId, Integer preparationTime, Double minimumOrderAmount, String phone, LocalTime openTime, LocalTime closeTime) {
+    public static Store of(String name, String ownerId, Long categoryId, Integer preparationTime, Double minimumOrderAmount, String phone, LocalTime openTime, LocalTime closeTime) {
         Store store = new Store();
         store.name = name;
         store.ownerId = ownerId;
@@ -78,8 +77,8 @@ public class Store extends BaseEntity {
     }
 
     // 주소, 위도, 경도 업데이트 메서드
-    public void updateAddress(String address, Double latitude, Double longitude) {
-        this.address = address;
+    public void updateAddress(StoreAddress storeAddress, Double latitude, Double longitude) {
+        this.storeAddress = storeAddress;
         this.latitude = latitude;
         this.longitude = longitude;
     }

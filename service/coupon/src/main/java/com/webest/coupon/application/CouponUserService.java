@@ -9,6 +9,10 @@ public interface CouponUserService {
 
     public boolean issueCouponToUser(Long couponId, Long userId);
 
+    public boolean issueCouponWithQueue(Long couponId, Long userId);
+
+    public Long checkCurrentOffsetInWaiting(Long couponId, Long userId);
+
     public boolean useCouponByUser(Long userCouponId, Long couponId, Long userId);
 
 }

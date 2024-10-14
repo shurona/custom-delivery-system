@@ -30,7 +30,6 @@ spring:
           uri: lb://user-service
           predicates:
             - Path=/api/users/**
-
   redis:
     data:
       host: localhost

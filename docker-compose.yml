@@ -1,0 +1,166 @@
+name: msa-final-project
+services:
+  eureka-server:
+    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/eureka
+    build: ./infra/eureka/.
+    ports:
+      - "19090:19090"
+    networks:
+      - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
+    restart: always
+
+  gateway-service:
+    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/gateway
+    build: ./infra/gateway/.
+    ports:
+      - "19091:19091"
+    environment:
+      - EUREKA_SERVER_URL=${EUREKA_SERVER_URL}
+      - JWT_TOKEN_EXPIRE=${JWT_TOKEN_EXPIRE}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+    networks:
+      - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
+    restart: always
+    depends_on:
+      - eureka-server
+
+  user-service:
+    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/user
+    build: ./service/user/.
+    ports:
+      - "19092:19092"
+    environment:
+      - DB_URL=${DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - EUREKA_SERVER_URL=${EUREKA_SERVER_URL}
+    networks:
+      - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
+    restart: always
+    depends_on:
+      - eureka-server
+
+  auth-service:
+    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/auth
+    build: ./service/auth/.
+    ports:
+      - "19100:19100"
+    environment:
+      - DB_URL=${DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - EUREKA_SERVER_URL=${EUREKA_SERVER_URL}
+      - DEV_REDIS_HOST=${DEV_REDIS_HOST}
+      - DEV_REDIS_PASSWORD=${DEV_REDIS_PASSWORD}
+      - DEV_REDIS_USERNAME=${DEV_REDIS_USERNAME}
+      - JWT_TOKEN_EXPIRE=${JWT_TOKEN_EXPIRE}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - GOOGLE_EMAIL=${GOOGLE_EMAIL}
+      - GOOGLE_SECRET_KEY=${GOOGLE_SECRET_KEY}
+    networks:
+      - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
+    restart: always
+    depends_on:
+      - eureka-server
+
+  store-service:
+    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/store
+    build: ./service/store/.
+    ports:
+      - "19093:19093"
+    environment:
+      - DB_URL=${DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - EUREKA_SERVER_URL=${EUREKA_SERVER_URL}
+      - DEV_REDIS_HOST=${DEV_REDIS_HOST}
+      - DEV_REDIS_PASSWORD=${DEV_REDIS_PASSWORD}
+      - DEV_REDIS_USERNAME=${DEV_REDIS_USERNAME}
+      - NAVER_CLIENT_ID=${NAVER_CLIENT_ID}
+      - NAVER_CLIENT_SECRET=${NAVER_CLIENT_SECRET}
+    networks:
+      - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
+    restart: always
+    depends_on:
+      - eureka-server
+
+  order-service:
+    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/order
+    build: ./service/order/.
+    ports:
+      - "19094:19094"
+    environment:
+      - DB_URL=${DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - EUREKA_SERVER_URL=${EUREKA_SERVER_URL}
+      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+      - MONGO_DB_HOST=${MONGO_DB_HOST}
+      - MONGO_DB_PORT=${MONGO_DB_PORT}
+      - MONGO_DB_USERNAME=${MONGO_DB_USERNAME}
+      - MONGO_DB_PASSWORD=${MONGO_DB_PASSWORD}
+      - MONGO_DB_DATABASE=${MONGO_DB_DATABASE}
+      - MONGO_DB_URI=${MONGO_DB_URI}
+    networks:
+      - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
+    restart: always
+    depends_on:
+      - eureka-server
+
+  coupon-service:
+    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/coupon
+    build: ./service/coupon/.
+    ports:
+      - "19097:19097"
+    environment:
+      - DB_URL=${DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - EUREKA_SERVER_URL=${EUREKA_SERVER_URL}
+      - DEV_REDIS_HOST=${DEV_REDIS_HOST}
+      - DEV_REDIS_PASSWORD=${DEV_REDIS_PASSWORD}
+      - DEV_REDIS_USERNAME=${DEV_REDIS_USERNAME}
+      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+    networks:
+      - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
+    restart: always
+    depends_on:
+      - eureka-server
+
+  rider-service:
+    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/rider
+    build: ./service/rider/.
+    ports:
+      - "19099:19099"
+    environment:
+      - DB_URL=${DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - EUREKA_SERVER_URL=${EUREKA_SERVER_URL}
+    networks:
+      - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
+    restart: always
+    depends_on:
+      - eureka-server
+
+  delivery-service:
+    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/delivery
+    build: ./service/delivery
+    ports:
+      - "19095:19095"
+    environment:
+      - DB_URL=${DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - EUREKA_SERVER_URL=${EUREKA_SERVER_URL}
+      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+    networks:
+      - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
+    restart: always
+    depends_on:
+      - eureka-server
+
+networks:
+  spring-network:
+    name: spring-network
+    driver: bridge
