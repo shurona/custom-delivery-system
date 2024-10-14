@@ -31,7 +31,7 @@ public class StoreController {
     }
 
     // 가게 주소 등록
-    @PostMapping("/address")
+    @PutMapping("/address")
     public CommonResponse<StoreResponse> updateStoreAddress(
             @RequestBody UpdateStoreAddressRequest request,
             @RequestHeader("X-UserId") String userId,
