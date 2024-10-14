@@ -1,7 +1,8 @@
-package com.webest.store.product.domain;
+package com.webest.store.product.domain.model;
 
 
 import com.webest.app.jpa.BaseEntity;
+import com.webest.store.product.domain.ProductStatus;
 import com.webest.store.store.domain.model.Store;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
