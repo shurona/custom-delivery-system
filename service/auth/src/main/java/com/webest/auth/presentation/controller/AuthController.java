@@ -1,6 +1,7 @@
 package com.webest.auth.presentation.controller;
 
 import com.webest.auth.application.AuthService;
+import com.webest.auth.application.KakaoService;
 import com.webest.auth.infrastructure.email.MailSendService;
 import com.webest.auth.infrastructure.email.dto.EmailCheckDto;
 import com.webest.auth.infrastructure.email.dto.EmailRequest;
@@ -12,6 +13,8 @@ import com.webest.web.response.CommonResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +24,13 @@ public class AuthController {
 
     private final AuthService authService;
     private final MailSendService mailService;
+    private final KakaoService kakaoService;
+
+    @Value("${kakao.client_id}")
+    private String client_id;
+
+    @Value("${kakao.redirect_uri}")
+    private String redirect_uri;
 
     // 회원 가입
     @PostMapping("/signUp")
@@ -70,5 +80,12 @@ public class AuthController {
     public CommonResponse<String> logout(@PathVariable(name = "userId") String userId){
         authService.logout(userId);
         return CommonResponse.success(userId + "의 유저가 로그아웃되었습니다.");
+    }
+
+    // kakao login
+    @GetMapping("/kakao/callback")
+    public CommonResponse<?> callback(@RequestParam("code") String code) {
+        String accessToken = kakaoService.getAccessTokenFromKakao(code);
+        return CommonResponse.success("success");
     }
 }

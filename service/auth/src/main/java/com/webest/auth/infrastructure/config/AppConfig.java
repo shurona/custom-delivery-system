@@ -23,17 +23,24 @@ public class AppConfig {
 //        return template;
 //    }
 
-    @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
+    @Bean(name = "customStringRedisTemplate")
+    public RedisTemplate<String, String> stringRedisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
-        // Key와 Value 직렬화 설정
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new StringRedisSerializer());
+
+        return template;
+    }
+
+    @Bean(name = "customRefreshTokenRedisTemplate")
+    public RedisTemplate<String, RefreshTokenDto> refreshTokenRedisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, RefreshTokenDto> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new Jackson2JsonRedisSerializer<>(RefreshTokenDto.class));
-        template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(new Jackson2JsonRedisSerializer<>(RefreshTokenDto.class));
-
 
         return template;
     }

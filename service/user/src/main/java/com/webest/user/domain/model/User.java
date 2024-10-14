@@ -37,6 +37,8 @@ public class User extends BaseEntity {
     private String district;                // 동
     private String detailAddress;           // 상세 주소
 
+    private double latitude;            // 위도
+    private double longitude;           // 경도
     // Auth -> Dto
     public UserDto to(){
         return new UserDto(
@@ -50,7 +52,9 @@ public class User extends BaseEntity {
                 this.city,
                 this.street,
                 this.district,
-                this.detailAddress
+                this.detailAddress,
+                this.latitude,
+                this.longitude
         );
     }
 
@@ -68,7 +72,9 @@ public class User extends BaseEntity {
                 dto.city(),
                 dto.street(),
                 dto.district(),
-                dto.detailAddress()
+                dto.detailAddress(),
+                dto.latitude(),
+                dto.longitude()
         );
     }
 

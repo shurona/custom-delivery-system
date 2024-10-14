@@ -45,3 +45,7 @@ google:
   email: ${GOOGLE_EMAIL}
   secret-key: ${GOOGLE_EMAIL_SECRET_KEY}
 
+
+kakao:
+  client_id: ${REST_API_KEY}
+  redirect_uri: http://localhost:8080/api/auth/kakao/callback
