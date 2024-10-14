@@ -85,7 +85,7 @@ public class FilterConfig {
                     .removeRequestHeader("Cookie")
                     .filter(authorizationHeaderFilter.apply(
                         new AuthorizationHeaderFilter.Config())))  // 필터 팩토리로 필터 생성
-                .uri("lb://PRODUCT-SERVICE"))
+                .uri("lb://STORE-SERVICE"))
 
             .route("user-get-all-route", r -> r.path("/api/v1/coupons/**")
                 .and()
