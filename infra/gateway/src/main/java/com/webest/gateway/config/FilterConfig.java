@@ -62,7 +62,7 @@ public class FilterConfig {
 
             .route("user-get-all-route", r -> r.path("/api/v1/stores/**")
                 .and()
-                .method("GET", "POST", "PATCH", "DELETE")
+                .method("GET", "POST", "PATCH", "DELETE", "PUT")
                 .filters(f -> f
                     .removeRequestHeader("Cookie")
                     .filter(authorizationHeaderFilter.apply(
@@ -71,7 +71,7 @@ public class FilterConfig {
 
             .route("user-get-all-route", r -> r.path("/api/v1/categories/**")
                 .and()
-                .method("GET", "POST", "PATCH", "DELETE")
+                .method("GET", "POST", "PATCH", "DELETE", "PUT")
                 .filters(f -> f
                     .removeRequestHeader("Cookie")
                     .filter(authorizationHeaderFilter.apply(
@@ -80,7 +80,7 @@ public class FilterConfig {
 
             .route("user-get-all-route", r -> r.path("/api/v1/products/**")
                 .and()
-                .method("GET", "POST", "PATCH", "DELETE")
+                .method("GET", "POST", "PATCH", "DELETE", "PUT")
                 .filters(f -> f
                     .removeRequestHeader("Cookie")
                     .filter(authorizationHeaderFilter.apply(
