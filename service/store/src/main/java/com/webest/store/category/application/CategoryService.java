@@ -1,10 +1,10 @@
 package com.webest.store.category.application;
 
-import com.webest.store.category.api.dto.CategoryResponse;
-import com.webest.store.category.api.dto.CreateCategoryRequest;
-import com.webest.store.category.api.dto.UpdateCategoryRequest;
-import com.webest.store.category.domain.StoreCategory;
-import com.webest.store.category.domain.CategoryRepository;
+import com.webest.store.category.presentation.dto.CategoryResponse;
+import com.webest.store.category.presentation.dto.CreateCategoryRequest;
+import com.webest.store.category.presentation.dto.UpdateCategoryRequest;
+import com.webest.store.category.domain.model.StoreCategory;
+import com.webest.store.category.domain.repository.CategoryRepository;
 import com.webest.store.category.exception.CategoryErrorCode;
 import com.webest.store.category.exception.CategoryException;
 import lombok.RequiredArgsConstructor;
