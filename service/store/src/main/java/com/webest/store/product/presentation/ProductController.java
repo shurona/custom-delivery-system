@@ -5,6 +5,8 @@ import com.webest.store.product.presentation.dto.ProductResponse;
 import com.webest.store.product.application.ProductService;
 import com.webest.store.product.presentation.dto.UpdateProductDetailsRequest;
 import com.webest.store.product.presentation.dto.UpdateProductStatusRequest;
+import com.webest.store.store.presentation.dto.CreateStoreRequest;
+import com.webest.web.common.UserRole;
 import com.webest.web.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,8 +23,13 @@ public class ProductController {
 
     // 상품 생성
     @PostMapping
-    public CommonResponse<ProductResponse> saveProduct(@RequestBody CreateProductRequest request) {
-        ProductResponse response = productService.saveProduct(request);
+    public CommonResponse<ProductResponse> saveProduct(
+            @RequestBody CreateProductRequest request,
+            @RequestHeader("X-UserId") String userId,
+            @RequestHeader("X-Role") String role
+    ) {
+        UserRole userRole = UserRole.valueOf(role);
+        ProductResponse response = productService.saveProduct(request, userId, userRole);
         return CommonResponse.success(response);
     }
 
@@ -49,22 +56,37 @@ public class ProductController {
 
     // 상품 status 변경
     @PutMapping("/status")
-    public CommonResponse<ProductResponse> updateStatus(@RequestBody UpdateProductStatusRequest request) {
-        ProductResponse response = productService.updateStatus(request);
+    public CommonResponse<ProductResponse> updateStatus(
+            @RequestBody UpdateProductStatusRequest request,
+            @RequestHeader("X-UserId") String userId,
+            @RequestHeader("X-Role") String role
+    ) {
+        UserRole userRole = UserRole.valueOf(role);
+        ProductResponse response = productService.updateStatus(request, userId, userRole);
         return CommonResponse.success(response);
     }
 
     // 상품 이름, 가격, 설명 변경
     @PutMapping("/details")
-    public CommonResponse<ProductResponse> updateDetails(@RequestBody UpdateProductDetailsRequest request) {
-        ProductResponse response = productService.updateDetails(request);
+    public CommonResponse<ProductResponse> updateDetails(
+            @RequestBody UpdateProductDetailsRequest request,
+            @RequestHeader("X-UserId") String userId,
+            @RequestHeader("X-Role") String role
+    ) {
+        UserRole userRole = UserRole.valueOf(role);
+        ProductResponse response = productService.updateDetails(request, userId, userRole);
         return CommonResponse.success(response);
     }
 
     // 상품 삭제
     @DeleteMapping("/{id}")
-    public CommonResponse<Long> deleteProduct(@PathVariable("id") Long id) {
-        productService.deleteProduct(id);
+    public CommonResponse<Long> deleteProduct(
+            @PathVariable("id") Long id,
+            @RequestHeader("X-UserId") String userId,
+            @RequestHeader("X-Role") String role
+    ) {
+        UserRole userRole = UserRole.valueOf(role);
+        productService.deleteProduct(id, userId, userRole);
         return CommonResponse.success(id);
     }
 }
