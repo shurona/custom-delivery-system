@@ -49,13 +49,8 @@ public class CategoryController {
     @PutMapping
     @RoleCheck(requiredRole = UserRole.MASTER)
     public CommonResponse<CategoryResponse> updateCategory(
-            @RequestBody UpdateCategoryRequest updateCategoryRequest,
-            @RequestHeader("X-Role") String role
+            @RequestBody UpdateCategoryRequest updateCategoryRequest
     ) {
-        UserRole userRole = UserRole.valueOf(role);
-        if (userRole != UserRole.MASTER) {
-            throw new StoreException(StoreErrorCode.UNAUTHORIZED_ACCESS);
-        }
         CategoryResponse categoryResponse = categoryService.updateCategoryValue(updateCategoryRequest);
         return CommonResponse.success(categoryResponse);
     }

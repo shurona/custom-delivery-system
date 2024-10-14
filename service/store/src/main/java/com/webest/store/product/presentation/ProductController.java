@@ -5,7 +5,6 @@ import com.webest.store.product.presentation.dto.ProductResponse;
 import com.webest.store.product.application.ProductService;
 import com.webest.store.product.presentation.dto.UpdateProductDetailsRequest;
 import com.webest.store.product.presentation.dto.UpdateProductStatusRequest;
-import com.webest.store.store.presentation.dto.CreateStoreRequest;
 import com.webest.web.common.UserRole;
 import com.webest.web.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
