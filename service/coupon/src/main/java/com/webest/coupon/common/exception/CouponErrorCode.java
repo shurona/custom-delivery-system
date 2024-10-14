@@ -18,6 +18,10 @@ public enum CouponErrorCode {
     COUPON_PERCENTAGE_OVER_90(HttpStatus.BAD_REQUEST, "퍼센트 쿠폰은 90을 넘길 수 없습니다."),
     CHECK_UNDER_ZERO(HttpStatus.BAD_REQUEST, "기간과 발급 최대 수량은 0 이상이어야 합니다.."),
 
+    // 403
+    FORBIDDEN_INPUT(HttpStatus.FORBIDDEN, "권한이 부족합니다."),
+
+
     // 404
     COUPON_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 쿠폰 정보입니다."),
 

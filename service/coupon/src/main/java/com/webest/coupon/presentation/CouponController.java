@@ -1,10 +1,14 @@
 package com.webest.coupon.presentation;
 
 import com.webest.coupon.application.CouponService;
+import com.webest.coupon.common.exception.CouponErrorCode;
+import com.webest.coupon.common.exception.CouponException;
 import com.webest.coupon.domain.model.CouponSearchCondition;
 import com.webest.coupon.presentation.dtos.request.CouponCreateRequestDto;
 import com.webest.coupon.presentation.dtos.request.CouponUpdateRequestDto;
 import com.webest.coupon.presentation.dtos.response.CouponResponseDto;
+import com.webest.web.common.CommonStaticVariable;
+import com.webest.web.common.UserRole;
 import com.webest.web.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,8 +38,14 @@ public class CouponController {
      */
     @PostMapping
     public CommonResponse<Long> createCoupon(
+        @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
         @Validated @RequestBody CouponCreateRequestDto requestDto
     ) {
+        // 쿠폰 생성은 마스터만 가능
+        if (!userRole.equals(UserRole.MASTER)) {
+            throw new CouponException(CouponErrorCode.FORBIDDEN_INPUT);
+        }
+
         Long couponId = couponService.createCoupon(requestDto);
         return CommonResponse.success(couponId);
     }
@@ -44,9 +55,10 @@ public class CouponController {
      */
     @GetMapping("/{id}")
     public CommonResponse<CouponResponseDto> findCouponById(
+        @RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
+        @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
         @PathVariable("id") Long id
     ) {
-
         CouponResponseDto coupon = couponService.findCouponById(id);
 
         return CommonResponse.success(coupon);
@@ -57,9 +69,14 @@ public class CouponController {
      */
     @GetMapping
     public CommonResponse<Page<CouponResponseDto>> findCouponList(
+        @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
         @PageableDefault(size = 10, page = 0) Pageable pageable,
         @ModelAttribute CouponSearchCondition condition
     ) {
+        // 쿠폰 조회는 마스터만 가능
+        if (!userRole.equals(UserRole.MASTER)) {
+            throw new CouponException(CouponErrorCode.FORBIDDEN_INPUT);
+        }
 
         Page<CouponResponseDto> couponList = couponService.findCouponList(condition, pageable);
 
@@ -71,9 +88,14 @@ public class CouponController {
      */
     @PatchMapping("/{id}")
     public CommonResponse<CouponResponseDto> updateCouponInfo(
+        @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
         @RequestBody CouponUpdateRequestDto requestDto,
         @PathVariable("id") Long id
     ) {
+        // 쿠폰 정보 수정은 마스터만 가능
+        if (!userRole.equals(UserRole.MASTER)) {
+            throw new CouponException(CouponErrorCode.FORBIDDEN_INPUT);
+        }
 
         CouponResponseDto couponResponseDto = couponService.updateCouponById(requestDto, id);
 
@@ -85,8 +107,13 @@ public class CouponController {
      */
     @DeleteMapping("/{id}")
     public CommonResponse<Long> deleteCouponById(
+        @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
         @PathVariable("id") Long id
     ) {
+        // 쿠폰 정보 수정은 마스터만 가능
+        if (!userRole.equals(UserRole.MASTER)) {
+            throw new CouponException(CouponErrorCode.FORBIDDEN_INPUT);
+        }
 
         Long couponId = couponService.deleteCouponById(id);
 

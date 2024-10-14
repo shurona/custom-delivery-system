@@ -8,8 +8,11 @@ import com.webest.coupon.presentation.dtos.request.CouponUsedRequestDto;
 import com.webest.coupon.presentation.dtos.response.CouponByUserResponseDto;
 import com.webest.coupon.presentation.dtos.response.CouponIssueResponseDto;
 import com.webest.coupon.presentation.dtos.response.CouponOffsetResponseDto;
+import com.webest.web.common.CommonStaticVariable;
+import com.webest.web.common.UserRole;
 import com.webest.web.response.CommonResponse;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,9 +37,12 @@ public class CouponUserController {
      */
     @GetMapping("/users/{userId}")
     public CommonResponse<List<CouponByUserResponseDto>> findCouponByUserId(
-        @PathVariable("userId") Long userId,
+        @PathVariable("userId") String userId,
+        @RequestHeader(name = CommonStaticVariable.X_USER_ID) String xUserId,
+        @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
         @RequestParam(value = "used", required = false) Boolean used
     ) {
+        checkRequestUserIsSame(userRole, userId, xUserId);
 
         List<CouponByUserResponseDto> couponListByUser = couponUserService.findCouponListByUser(
             userId, used);
@@ -48,9 +55,12 @@ public class CouponUserController {
      */
     @GetMapping("/users/position")
     public CommonResponse<CouponOffsetResponseDto> getCurrentOffsetInWaiting(
+        @RequestHeader(name = CommonStaticVariable.X_USER_ID) String xUserId,
+        @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
         @RequestParam("couponId") Long couponId,
-        @RequestParam("userId") Long userId
+        @RequestParam("userId") String userId
     ) {
+        checkRequestUserIsSame(userRole, userId, xUserId);
 
         Long offset = couponUserService.checkCurrentOffsetInWaiting(couponId, userId);
 
@@ -66,10 +76,12 @@ public class CouponUserController {
      */
     @PostMapping("/{couponId}/users/{userId}")
     public CommonResponse<Boolean> issueCoupon(
+        @RequestHeader(name = CommonStaticVariable.X_USER_ID) String xUserId,
+        @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
         @PathVariable("couponId") Long couponId,
-        @PathVariable("userId") Long userId
+        @PathVariable("userId") String userId
     ) {
-        //TODO: Header의 userId와 비교
+        checkRequestUserIsSame(userRole, userId, xUserId);
 
         boolean success = couponUserService.issueCouponToUser(couponId, userId);
 
@@ -81,9 +93,12 @@ public class CouponUserController {
      */
     @PostMapping("/{couponId}/users/{userId}/queue")
     public CommonResponse<CouponIssueResponseDto> queueCouponIssuance(
+        @RequestHeader(name = CommonStaticVariable.X_USER_ID) String xUserId,
+        @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
         @PathVariable("couponId") Long couponId,
-        @PathVariable("userId") Long userId
+        @PathVariable("userId") String userId
     ) {
+        checkRequestUserIsSame(userRole, userId, xUserId);
 
         boolean alreadyWaiting = couponUserService.issueCouponWithQueue(couponId, userId);
         CouponIssueResponseDto responseDto;
@@ -103,9 +118,11 @@ public class CouponUserController {
      */
     @PatchMapping("/used")
     public CommonResponse<Boolean> useCoupon(
+        @RequestHeader(name = CommonStaticVariable.X_USER_ID) String xUserId,
+        @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
         @Validated @RequestBody CouponUsedRequestDto requestDto
     ) {
-        // TODO: Header의 userId와 비교
+        checkRequestUserIsSame(userRole, requestDto.userId(), xUserId);
 
         boolean success = couponUserService.useCouponByUser(
             requestDto.userCouponId(),
@@ -113,6 +130,25 @@ public class CouponUserController {
             requestDto.userId());
 
         return CommonResponse.success(success);
+    }
+
+    /* ========================================================================
+     Private method
+     ======================================================================== */
+
+    /**
+     * 요청한 유저와 수행되는 유저가 같은 지 확인한다.
+     */
+    private void checkRequestUserIsSame(UserRole role, String userId, String xUserId) {
+        // 마스터면 모두 가능
+        if (role.equals(UserRole.MASTER)) {
+            return;
+        }
+
+        // 요청 유저와 수행 유저가 다름.
+        if (!Objects.equals(userId, xUserId)) {
+            throw new CouponException(CouponErrorCode.FORBIDDEN_INPUT);
+        }
     }
 
 }

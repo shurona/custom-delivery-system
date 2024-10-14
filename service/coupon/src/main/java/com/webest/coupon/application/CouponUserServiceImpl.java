@@ -4,6 +4,7 @@ import static com.webest.coupon.common.value.CouponRedisStatus.CLOSE;
 import static com.webest.coupon.common.value.CouponRedisStatus.OUT_OF_STOCK;
 import static com.webest.coupon.common.value.CouponStaticValue.KAFKA_COUPON_ISSUE_TOPIC_ID;
 
+import com.webest.coupon.application.client.UserClient;
 import com.webest.coupon.common.aop.RedissonLock;
 import com.webest.coupon.common.exception.CouponErrorCode;
 import com.webest.coupon.common.exception.CouponException;
@@ -33,19 +34,25 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CouponUserServiceImpl implements CouponUserService {
 
-    //
+    // repository
     private final CouponRepository couponRepository;
     private final CouponQueryRepository couponQueryRepository;
 
+    // domain
     private final CouponRedisService couponRedisService;
     private final CouponDomainService couponDomainService;
 
+    // mapper
     private final CouponMapper couponMapper;
 
+    // client
+    private final UserClient userClient;
+
+    // kafka
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Override
-    public List<CouponByUserResponseDto> findCouponListByUser(Long userId, Boolean used) {
+    public List<CouponByUserResponseDto> findCouponListByUser(String userId, Boolean used) {
 
         List<CouponByUserDto> couponListByUserId =
             couponQueryRepository.findCouponListByUserId(userId, used);
@@ -54,7 +61,7 @@ public class CouponUserServiceImpl implements CouponUserService {
     }
 
     @Override
-    public Long checkCurrentOffsetInWaiting(Long couponId, Long userId) {
+    public Long checkCurrentOffsetInWaiting(Long couponId, String userId) {
         Coupon coupon = couponByIdWithLockAndCheck(couponId);
         // 현재 쿠폰이 열려있는지 확인한다.
         checkCouponIsOpen(coupon);
@@ -65,8 +72,11 @@ public class CouponUserServiceImpl implements CouponUserService {
 
     @RedissonLock(value = "#couponId")
     @Transactional
-    public boolean issueCouponToUser(Long couponId, Long userId) {
+    public boolean issueCouponToUser(Long couponId, String userId) {
         Coupon coupon = couponByIdWithLockAndCheck(couponId);
+
+        // user가 존재하는 지 확인한다.
+        userClient.findUserById(userId);
 
         // 쿠폰 발급이 가능한지 확인한다.
         couponDomainService.checkIssueCouponCondition(coupon);
@@ -81,7 +91,7 @@ public class CouponUserServiceImpl implements CouponUserService {
     }
 
     @Override
-    public boolean issueCouponWithQueue(Long couponId, Long userId) {
+    public boolean issueCouponWithQueue(Long couponId, String userId) {
         Coupon coupon = couponByIdWithLockAndCheck(couponId);
         // 현재 쿠폰이 열려있는지 확인한다.
         checkCouponIsOpen(coupon);
@@ -106,7 +116,10 @@ public class CouponUserServiceImpl implements CouponUserService {
 
     @Transactional
     @Override
-    public boolean useCouponByUser(Long userCouponId, Long couponId, Long userId) {
+    public boolean useCouponByUser(Long userCouponId, Long couponId, String userId) {
+
+        // user가 존재하는 지 확인한다.
+        userClient.findUserById(userId);
 
         Coupon coupon = findCouponByUserCouponId(userCouponId);
 
@@ -147,7 +160,7 @@ public class CouponUserServiceImpl implements CouponUserService {
     /**
      * 쿠폰과 유저 아이디의 기준으로 쿠폰 조회
      */
-    private Coupon couponByIdWithCouponUser(Long couponId, Long userId) {
+    private Coupon couponByIdWithCouponUser(Long couponId, String userId) {
         return couponRepository.findCouponByCouponIdAndUserId(couponId, userId)
             .orElseThrow(() ->
                 new CouponException(CouponErrorCode.NOT_OWNED_COUPON)

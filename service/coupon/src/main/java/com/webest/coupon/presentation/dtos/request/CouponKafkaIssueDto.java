@@ -2,7 +2,7 @@ package com.webest.coupon.presentation.dtos.request;
 
 public record CouponKafkaIssueDto(
     Long couponId,
-    Long userId
+    String userId
 ) {
 
     @Override

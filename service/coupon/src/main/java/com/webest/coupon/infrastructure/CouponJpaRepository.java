@@ -13,7 +13,7 @@ public interface CouponJpaRepository extends JpaRepository<Coupon, Long> {
     @Query("select coupon from Coupon as coupon left join fetch coupon.couponUserList as cu"
         + " where coupon.id = :couponId and cu.userId = :userId and cu.used = false"
         + " order by cu.createdAt")
-    Optional<Coupon> findCouponByCouponIdAndUserId(Long couponId, Long userId);
+    Optional<Coupon> findCouponByCouponIdAndUserId(Long couponId, String userId);
 
 
     @Query("select c from Coupon c left join fetch c.couponUserList cu"

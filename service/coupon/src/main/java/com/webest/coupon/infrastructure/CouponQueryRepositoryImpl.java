@@ -61,7 +61,7 @@ public class CouponQueryRepositoryImpl implements CouponQueryRepository {
     }
 
     @Override
-    public List<CouponByUserDto> findCouponListByUserId(Long userId, Boolean used) {
+    public List<CouponByUserDto> findCouponListByUserId(String userId, Boolean used) {
 
         BooleanBuilder builder = new BooleanBuilder();
 

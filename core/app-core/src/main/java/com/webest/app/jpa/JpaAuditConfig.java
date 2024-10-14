@@ -12,22 +12,21 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Configuration
 @EnableJpaAuditing
-public class JpaAuditConfig implements AuditorAware<Long> {
+public class JpaAuditConfig implements AuditorAware<String> {
 
     @Override
-    public Optional<Long> getCurrentAuditor() {
+    public Optional<String> getCurrentAuditor() {
 
         ServletRequestAttributes attributes
             = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
         //TODO: null일 때 어떻게 처리해야 하지
-        Long userId = null;
+        String userId = null;
         if (attributes != null) {
             HttpServletRequest request = attributes.getRequest();
-            String userIdHeader = request.getHeader(
-                X_USER_ID);
+            String userIdHeader = request.getHeader(X_USER_ID);
             if (userIdHeader != null) {
-                userId = Long.valueOf(userIdHeader);
+                userId = userIdHeader;
             }
         }
 
