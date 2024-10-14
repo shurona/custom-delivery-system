@@ -2,7 +2,11 @@ package com.webest.auth.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webest.auth.application.AuthService;
+import com.webest.auth.application.JwtTokenService;
+import com.webest.auth.domain.model.TokenStatus;
 import com.webest.auth.domain.model.vo.AuthDto;
+import com.webest.auth.domain.model.vo.RefreshTokenDto;
+import com.webest.auth.infrastructure.redis.RedisUtil;
 import com.webest.auth.presentation.dto.request.LoginRequest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -12,11 +16,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.security.Key;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,21 +24,30 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.io.IOException;
+import java.security.Key;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
+
 @Slf4j
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
+    private final String accessTokenTime;
+    private final RedisUtil redisUtil;
+    private final AuthService authService;
+    private final JwtTokenService jwtTokenService;
+
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-    private String secretKey;
-    private String tokenTime;
-    private AuthService authService;
+
     private Key key;
 
-    public AuthenticationFilter(AuthenticationManager authenticationManager,
-        AuthService authService, String secretKey, String tokenTime) {
+    public AuthenticationFilter(AuthenticationManager authenticationManager, AuthService authService, String tokenTime, RedisUtil redisUtil, JwtTokenService jwtTokenService) {
         super(authenticationManager);
         this.authService = authService;
-        this.secretKey = secretKey;
-        this.tokenTime = tokenTime;
+        this.accessTokenTime = tokenTime;
+        this.redisUtil = redisUtil;
+        this.jwtTokenService = jwtTokenService;
     }
 
     /*
@@ -49,53 +57,50 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
      */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request
-        , HttpServletResponse response) throws AuthenticationException {
-        try {
-            LoginRequest loginRequest = new ObjectMapper().readValue(request.getInputStream(),
-                LoginRequest.class);     // 로그인 데이터를 LoginRequest 형태로 맵핑
+            , HttpServletResponse response) throws AuthenticationException {
+
+        // 특정 엔드포인트를 제외
+        if (request.getRequestURI().startsWith("/api/auth/refresh")) {
+            return null; // 필터를 건너뜀
+        }
+
+
+        try{
+            LoginRequest loginRequest = new ObjectMapper().readValue(request.getInputStream(), LoginRequest.class);     // 로그인 데이터를 LoginRequest 형태로 맵핑
             // 인증 정보
             // 유저에게 입력받은 email과 password를 UsernamePasswordAuthenticationToken를 입혀서 인증검사를 대신 해주는 getAuthenticationManager로 보내 검사 진행
             return getAuthenticationManager().authenticate(
-                new UsernamePasswordAuthenticationToken(
-                    loginRequest.userId(),
-                    loginRequest.password(),
-                    new ArrayList<>())
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.userId(),
+                            loginRequest.password(),
+                            new ArrayList<>())
             );
 
-        } catch (IOException e) {
+        }catch (IOException e){
             throw new RuntimeException(e);
         }
-
     }
 
 
     // 인증 성공했을때 반환 값
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
-        HttpServletResponse response,
-        FilterChain chain,
-        Authentication authResult) throws IOException, ServletException {
+                                            HttpServletResponse response,
+                                            FilterChain chain,
+                                            Authentication authResult) throws IOException, ServletException {
 
-        byte[] bytes = Base64.getDecoder().decode(secretKey);
-        key = Keys.hmacShaKeyFor(bytes);
 
-        String userName = (((User) authResult.getPrincipal()).getUsername());
+        String userName = (((User)authResult.getPrincipal()).getUsername());
         AuthDto userDetails = authService.getUserDetailsByUserId(userName);
 
-        Claims claims = Jwts.claims().setSubject(String.valueOf(userDetails.userId()));
-        claims.put("userId", userDetails.userId());
-        claims.put("role", userDetails.role());
+        // 엑세스 토큰 생성 및 header 추가 , 만료시간 10분
+        String accessToken = jwtTokenService.createToken(userDetails,Long.parseLong(accessTokenTime));
+        response.addHeader("Authorization", "Bearer " + accessToken);
 
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + Long.parseLong(tokenTime));
-
-        String token = Jwts.builder()
-            .setClaims(claims)
-            .setIssuedAt(now)
-            .setExpiration(validity)
-            .signWith(key, signatureAlgorithm)
-            .compact();
-
-        response.addHeader("token", "Bearer " + token);
+        // 리프레시 토큰 생성 및 redis 저장 , 만료시간 1시간
+        String refreshToken = jwtTokenService.createToken(userDetails,Long.parseLong(accessTokenTime)*6);
+        RefreshTokenDto refreshTokenDto = new RefreshTokenDto(userDetails.userId(),refreshToken, TokenStatus.ACTIVE);
+        redisUtil.setDataRefreshToken(refreshTokenDto);
     }
+
 }

@@ -1,5 +1,8 @@
 package com.webest.gateway.filter;
 
+import com.webest.gateway.redis.RedisUtil;
+import com.webest.gateway.vo.RefreshTokenDto;
+import com.webest.gateway.vo.TokenStatus;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -17,6 +20,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.Base64;
+import java.util.Date;
 
 @Component
 @Slf4j
@@ -25,9 +29,14 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
     @Value("${token.secret-key}")
     private String secretKey;
 
-    public AuthorizationHeaderFilter(){
+    private final RedisUtil redisUtil;
+
+
+    public AuthorizationHeaderFilter(RedisUtil redisUtil) {
         super(Config.class);
+        this.redisUtil = redisUtil;
     }
+
     public static class Config{
 
     }
@@ -49,7 +58,23 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 
             String token = extractToken(exchange);
 
-            if(!validateToken(token,exchange)){
+            Claims claims = extractClaims(token);
+
+            // access 토큰 만료 시간 검사
+            Date expiration = claims.getExpiration();
+            if(expiration.before(new Date())){
+                return onError(exchange, "토큰 시간 만료, RefreshToken을 같이 보내주세요", HttpStatus.UNAUTHORIZED);
+            }
+
+            // Redis에 저장되어 있는 토큰 값 가져옴
+            RefreshTokenDto dto = redisUtil.getRefreshToken(claims.get("userId").toString());
+
+            // 현재 토큰의 상태가 비활성화 일경우(로그아웃 상태)
+            if(dto.status() == TokenStatus.DEACTIVATE){
+                return onError(exchange, "로그아웃 된 계정입니다 재로그인 해주세요", HttpStatus.UNAUTHORIZED);
+            }
+
+            if(!validateToken(claims,exchange)){
                 return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
             }
 
@@ -66,21 +91,25 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         return null;
     }
 
-    // 토큰 검증
-    // ServerWebExchange : 현재 HTTP 요청/응답 교환을 나타내는 객체로 요청 헤더를 수정할 수 있음
-    private boolean validateToken(String token, ServerWebExchange exchange) {
-        try {
-            byte[] bytes = Base64.getDecoder().decode(secretKey);
-            var secretKeyBytes = Keys.hmacShaKeyFor(bytes);
+    // 토큰 암호화 제거
+    private Claims extractClaims(String token) {
+        byte[] bytes = Base64.getDecoder().decode(secretKey);
+        var secretKeyBytes = Keys.hmacShaKeyFor(bytes);
 //            SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(secretKey));
 
+        Jws<Claims> claimsJws = Jwts.parserBuilder()
+                .setSigningKey(secretKeyBytes)
+                .build()
+                .parseClaimsJws(token);
 
-            Jws<Claims> claimsJws = Jwts.parserBuilder()
-                    .setSigningKey(secretKeyBytes)
-                    .build()
-                    .parseClaimsJws(token);
+        return claimsJws.getBody();
+    }
 
-            Claims claims = claimsJws.getBody();
+    // 토큰 검증
+    // ServerWebExchange : 현재 HTTP 요청/응답 교환을 나타내는 객체로 요청 헤더를 수정할 수 있음
+    private boolean validateToken(Claims claims, ServerWebExchange exchange) {
+        try {
+
             log.info("#####payload :: " + claims.toString());
 
 
