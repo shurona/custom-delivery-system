@@ -25,7 +25,8 @@ public record UserDto(
                 this.userId,
                 this.userName,
                 this.email,
-                this.addressCode
+                this.addressCode,
+                this.detailAddress
         );
     }
 

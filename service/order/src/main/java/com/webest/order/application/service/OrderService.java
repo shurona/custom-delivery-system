@@ -41,15 +41,18 @@ public class OrderService {
 
     private final UserService userService;
 
-
-
     /**
      * 주문 생성
      * @param request 주문 생성에 필요한 정보를 담은 OrderDto
      * @return 저장된 주문 데이터를 담은 OrderResponse
      */
     @Transactional
-    public OrderResponse createOrder(Long userId, UserRole userRole, OrderDto request) {
+    public OrderResponse createOrder(String userId, UserRole userRole, OrderDto request) {
+
+
+        UserResponse userResponse = userService.getUser(userId);
+
+        System.out.println("userResponse :" + userResponse.detailAddress());
 
         // 주문 상품 create
         List<OrderProduct> orderProducts =
@@ -64,6 +67,8 @@ public class OrderService {
                 request.isRequest(),
                 request.requestsToStore(),
                 request.requestsToRider(),
+                userResponse.addressCode(),
+                userResponse.detailAddress(),
                 request.totalQuantity(),
                 request.totalProductPrice(),
                 request.couponAppliedAmount(),
@@ -130,7 +135,7 @@ public class OrderService {
      * @return 수정된 주문 데이터를 담은 OrderResponse
      */
     @Transactional
-    public OrderResponse updateOrder(Long userId, UserRole userRole, Long orderId, OrderUpdateDto request) {
+    public OrderResponse updateOrder(String userId, UserRole userRole, Long orderId, OrderUpdateDto request) {
 
 
         return orderRepository.findById(orderId).map(order -> {
@@ -163,7 +168,7 @@ public class OrderService {
      * @param orderId 삭제할 주문의 ID
      */
     @Transactional
-    public void deleteOrder(Long userId, UserRole userRole, Long orderId) {
+    public void deleteOrder(String userId, UserRole userRole, Long orderId) {
         orderRepository.findById(orderId).map(order -> {
 
             order.delete();
@@ -180,7 +185,7 @@ public class OrderService {
      * @param userId 유저 아이디 값
      */
     @Transactional
-    public Page<OrderResponse> searchOrders(Long userId, UserRole userRole, OrderSearchDto request, PageRequest pageRequest) {
+    public Page<OrderResponse> searchOrders(String userId, UserRole userRole, OrderSearchDto request, PageRequest pageRequest) {
 
         return orderRepository.searchOrders(request, pageRequest)
                 .map(OrderResponse::of);
@@ -191,7 +196,7 @@ public class OrderService {
      * @param orderId 주문 아이디 값
      */
     @Transactional
-    public void preparing(Long userId, UserRole userRole, Long orderId) {
+    public void preparing(String userId, UserRole userRole, Long orderId) {
         orderRepository.findById(orderId).map(order -> {
 
             order.preparing();
@@ -211,7 +216,7 @@ public class OrderService {
      * @param orderId 배달 요청할 주문의 ID
      */
     @Transactional
-    public OrderResponse requestOrder(Long userId, UserRole userRole, Long orderId) {
+    public OrderResponse requestOrder(String userId, UserRole userRole, Long orderId) {
 
        return orderRepository.findById(orderId).map(order -> {
 
@@ -255,7 +260,7 @@ public class OrderService {
      * @param orderId 주문 아이디 값
      */
     @Transactional
-    public OrderResponse cancelOrder(Long userId, UserRole userRole, Long orderId) {
+    public OrderResponse cancelOrder(String userId, UserRole userRole, Long orderId) {
 
         return orderRepository.findById(orderId).map(order -> {
 
@@ -267,8 +272,6 @@ public class OrderService {
         }).orElseThrow(() -> new OrderException(ErrorCode.ORDER_NOT_FOUND));
 
     }
-
-
 
 
 }

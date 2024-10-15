@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public record OrderUpdateRequest(Long storeId,
                                  Long paymentId,
                                  Long couponId,
-                                 Long userId,
+                                 String userId,
                                  OrderStatus orderStatus,
                                  Boolean isRequest,
                                  String requestsToStore,

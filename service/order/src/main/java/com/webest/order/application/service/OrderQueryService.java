@@ -5,6 +5,7 @@ import com.webest.order.domain.events.OrderCreatedEvent;
 import com.webest.order.domain.exception.ErrorCode;
 import com.webest.order.domain.exception.OrderException;
 import com.webest.order.domain.model.OrderStatus;
+import com.webest.order.domain.service.UserService;
 import com.webest.order.infrastructure.model.OrderQuery;
 import com.webest.order.domain.repository.order.OrderQueryRepository;
 import com.webest.order.presentation.response.OrderQueryResponse;
@@ -23,7 +24,6 @@ import java.util.List;
 public class OrderQueryService {
 
     private final OrderQueryRepository orderQueryRepository;
-
 
     @Transactional
     public void createOrderQuery(OrderCreatedEvent event) {
@@ -51,14 +51,14 @@ public class OrderQueryService {
 
 
     @Transactional
-    public OrderQueryResponse getOrderQuery(Long orderId) {
+    public OrderQueryResponse getOrderQuery(String userId, UserRole userRole, Long orderId) {
 
         return OrderQueryResponse.of(orderQueryRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new OrderException(ErrorCode.ORDER_NOT_FOUND)));
     }
 
     @Transactional
-    public List<OrderQueryResponse> getAllOrderQueries() {
+    public List<OrderQueryResponse> getAllOrderQueries(String userId, UserRole userRole) {
 
         List<OrderQuery> orderQueries = orderQueryRepository.findAll();
 
@@ -70,7 +70,7 @@ public class OrderQueryService {
      * @param userId 유저 아이디 값
      */
     @Transactional
-    public Page<OrderQueryResponse> searchOrders(Long userId, UserRole userRole, OrderSearchDto request, PageRequest pageRequest) {
+    public Page<OrderQueryResponse> searchOrders(String userId, UserRole userRole, OrderSearchDto request, PageRequest pageRequest) {
 
         return orderQueryRepository.searchOrders(request, pageRequest)
                 .map(OrderQueryResponse::of);

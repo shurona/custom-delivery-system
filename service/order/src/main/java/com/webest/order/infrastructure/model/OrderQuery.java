@@ -29,7 +29,7 @@ public class OrderQuery extends BaseDocument {
 
     private Long couponId;
 
-    private Long userId;
+    private String userId;
 
     @Enumerated(EnumType.STRING)  // Enum을 문자열로 DB에 저장
     private OrderStatus orderStatus;
@@ -67,7 +67,7 @@ public class OrderQuery extends BaseDocument {
                                     Long storeId,
                                     Long paymentId,
                                     Long couponId,
-                                    Long userId,
+                                    String userId,
                                     OrderStatus orderStatus,
                                     Boolean isRequest,
                                     String requestsToStore,

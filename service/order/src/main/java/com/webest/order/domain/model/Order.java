@@ -31,7 +31,7 @@ public class Order extends BaseEntity {
 
     private Long couponId;
 
-    private Long userId;
+    private String userId;
 
     @Enumerated(EnumType.STRING)  // Enum을 문자열로 DB에 저장
     private OrderStatus orderStatus;
@@ -68,11 +68,13 @@ public class Order extends BaseEntity {
     public static Order create(Long storeId,
                                Long paymentId,
                                Long couponId,
-                               Long userId,
+                               String userId,
                                OrderStatus orderStatus,
                                Boolean isRequest,
                                String requestsToStore,
                                String requestsToRider,
+                               Long arrivalAddressCode,
+                               String arrivalDetailAddress,
                                Integer totalQuantity,
                                Double totalProductPrice,
                                Double couponAppliedAmount,
@@ -90,6 +92,10 @@ public class Order extends BaseEntity {
         order.isRequest = isRequest;
         order.requestsToStore = requestsToStore;
         order.requestsToRider = requestsToRider;
+
+        order.arrivalAddressCode = arrivalAddressCode;
+
+        order.arrivalDetailAddress = arrivalDetailAddress;
 
         order.totalQuantity = calculateTotalQuantity(orderProducts);
 
@@ -111,7 +117,7 @@ public class Order extends BaseEntity {
     public void update(Long storeId,
                        Long paymentId,
                        Long couponId,
-                       Long userId,
+                       String userId,
                        OrderStatus orderStatus,
                        Boolean isRequest,
                        String requestsToStore,
