@@ -6,17 +6,14 @@ import com.webest.delivery.domain.exception.DeliveryException;
 import com.webest.delivery.domain.exception.ErrorCode;
 import com.webest.delivery.domain.model.DeliveryRecord;
 import com.webest.delivery.domain.repository.DeliveryRecordRepository;
-import com.webest.delivery.presentation.reqeust.DeliveryRecordSearchRequest;
 import com.webest.delivery.presentation.response.DeliveryRecordResponse;
-import com.webest.delivery.presentation.response.DeliveryResponse;
 import com.webest.web.common.UserRole;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,11 +25,11 @@ public class DeliveryRecordService {
     public DeliveryRecordResponse createDeliveryRecord(DeliveryRecordDto request) {
 
         DeliveryRecord deliveryRecord = DeliveryRecord.create(
-                request.deliveryId(),
-                request.riderId(),
-                request.orderId(),
-                request.deliveryStatus(),
-                request.deliveryFeeAmount()
+            request.deliveryId(),
+            request.riderId(),
+            request.orderId(),
+            request.deliveryStatus(),
+            request.deliveryFeeAmount()
         );
 
         // 배달 저장
@@ -43,15 +40,16 @@ public class DeliveryRecordService {
 
 
     @Transactional
-    public DeliveryRecordResponse updateDeliveryRecord(Long deliveryRecordId, DeliveryRecordDto request) {
+    public DeliveryRecordResponse updateDeliveryRecord(Long deliveryRecordId,
+        DeliveryRecordDto request) {
 
         return deliveryRecordRepository.findById(deliveryRecordId).map(deliveryRecord -> {
             deliveryRecord.update(
-                    request.deliveryId(),
-                    request.riderId(),
-                    request.orderId(),
-                    request.deliveryStatus(),
-                    request.deliveryFeeAmount()
+                request.deliveryId(),
+                request.riderId(),
+                request.orderId(),
+                request.deliveryStatus(),
+                request.deliveryFeeAmount()
             );
             return DeliveryRecordResponse.of(deliveryRecord);
 
@@ -60,10 +58,11 @@ public class DeliveryRecordService {
     }
 
     @Transactional
-    public DeliveryRecordResponse getDeliveryRecord(Long userId, UserRole userRole, Long deliveryRecordId) {
+    public DeliveryRecordResponse getDeliveryRecord(Long userId, UserRole userRole,
+        Long deliveryRecordId) {
 
         return DeliveryRecordResponse.of(deliveryRecordRepository.findById(deliveryRecordId)
-                .orElseThrow(() -> new DeliveryException(ErrorCode.DELIVERY_RECORD_NOT_FOUND)));
+            .orElseThrow(() -> new DeliveryException(ErrorCode.DELIVERY_RECORD_NOT_FOUND)));
     }
 
     @Transactional
@@ -73,13 +72,12 @@ public class DeliveryRecordService {
     }
 
     @Transactional
-    public Page<DeliveryRecordResponse> searchDeliveryRecord(Long userId, UserRole userRole, DeliveryRecordSearchDto request, PageRequest pageRequest) {
+    public Page<DeliveryRecordResponse> searchDeliveryRecord(String userId, UserRole userRole,
+        DeliveryRecordSearchDto request, PageRequest pageRequest) {
 
         return deliveryRecordRepository.searchDeliveryRecord(request, pageRequest)
-                .map(DeliveryRecordResponse::of);
+            .map(DeliveryRecordResponse::of);
     }
-
-
 
 
 }
