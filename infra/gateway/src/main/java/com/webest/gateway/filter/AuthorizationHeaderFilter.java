@@ -4,6 +4,7 @@ import com.webest.gateway.redis.RedisUtil;
 import com.webest.gateway.vo.RefreshTokenDto;
 import com.webest.gateway.vo.TokenStatus;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -62,7 +63,14 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 
             String token = extractToken(exchange);
 
-            Claims claims = extractClaims(token);
+            Claims claims;
+            try {
+                claims = extractClaims(token);
+            } catch (ExpiredJwtException e) {
+                return onError(exchange, "토큰 시간 만료이 만료되었습니다.", HttpStatus.UNAUTHORIZED);
+            } catch (Exception e) {
+                return onError(exchange, "잘못된 토큰입니다.", HttpStatus.UNAUTHORIZED);
+            }
 
             // access 토큰 만료 시간 검사
             Date expiration = claims.getExpiration();
