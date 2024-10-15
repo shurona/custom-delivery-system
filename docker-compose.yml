@@ -3,6 +3,8 @@ services:
   eureka-server:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/eureka
     build: ./infra/eureka/.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "19090:19090"
     environment:
@@ -14,6 +16,8 @@ services:
   gateway-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/gateway
     build: ./infra/gateway/.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "19091:19091"
     environment:
@@ -30,12 +34,15 @@ services:
   user-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/user
     build: ./service/user/.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "19092:19092"
     environment:
       - DB_URL=${DB_URL}
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
+      - DEV_REDIS_HOST=${DEV_REDIS_HOST}
       - EUREKA_SERVER_URL=${EUREKA_SERVER_URL}
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
     networks:
@@ -45,6 +52,8 @@ services:
   auth-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/auth
     build: ./service/auth/.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "19100:19100"
     environment:
@@ -67,6 +76,8 @@ services:
   store-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/store
     build: ./service/store/.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "19093:19093"
     environment:
@@ -86,6 +97,8 @@ services:
   order-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/order
     build: ./service/order/.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "19094:19094"
     environment:
@@ -107,6 +120,8 @@ services:
   coupon-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/coupon
     build: ./service/coupon/.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "19097:19097"
     environment:
@@ -125,6 +140,8 @@ services:
   rider-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/rider
     build: ./service/rider/.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "19099:19099"
     environment:
@@ -139,6 +156,8 @@ services:
   delivery-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/delivery
     build: ./service/delivery
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "19095:19095"
     environment:
