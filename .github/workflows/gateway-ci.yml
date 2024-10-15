@@ -10,7 +10,7 @@ name: Webest gateway Image CI/CD with ECR
 on:
   push:
     paths:
-      - ./infra/gateway/**
+      - infra/gateway/**
       - .github/workflows/gateway-ci.yml
       - gradlew
       - build_service.sh
