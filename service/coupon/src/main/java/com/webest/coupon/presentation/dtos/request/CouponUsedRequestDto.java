@@ -6,7 +6,7 @@ public record CouponUsedRequestDto(
     @NotNull
     Long userCouponId,
     @NotNull
-    Long userId,
+    String userId,
     @NotNull
     Long couponId
 ) {

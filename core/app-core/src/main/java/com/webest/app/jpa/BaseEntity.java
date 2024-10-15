@@ -24,14 +24,14 @@ public class BaseEntity {
 
     @CreatedBy
     @Column(updatable = false)
-    protected Long createdBy;
+    protected String createdBy;
 
     @Column(name = "updated_at")
     @LastModifiedDate
     protected LocalDateTime updatedAt;
 
     @LastModifiedBy
-    protected Long updatedBy;
+    protected String updatedBy;
 
     @Column(name = "is_deleted")
     protected Boolean isDeleted = false;

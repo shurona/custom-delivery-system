@@ -7,6 +7,9 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: ${EUREKA_SERVER_URL}
+  instance:
+    prefer-ip-address: true
+
 
 
 token:
@@ -29,7 +32,9 @@ spring:
           predicates:
             - Path=/api/users/**
 
-  redis:
-    data:
-      host: localhost
+  data:
+    redis:
+      host: ${DEV_REDIS_HOST}
       port: 6379
+      username: ${DEV_REDIS_USERNAME}
+      password: ${DEV_REDIS_PASSWORD}

@@ -5,6 +5,8 @@ services:
     build: ./infra/eureka/.
     ports:
       - "19090:19090"
+    environment:
+      - EUREKA_SERVER_URL=${EUREKA_SERVER_URL}
     networks:
       - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
     restart: always
@@ -18,11 +20,12 @@ services:
       - EUREKA_SERVER_URL=${EUREKA_SERVER_URL}
       - JWT_TOKEN_EXPIRE=${JWT_TOKEN_EXPIRE}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - DEV_REDIS_HOST=${DEV_REDIS_HOST}
+      - DEV_REDIS_PASSWORD=${DEV_REDIS_PASSWORD}
+      - DEV_REDIS_USERNAME=${DEV_REDIS_USERNAME}
     networks:
       - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
     restart: always
-    depends_on:
-      - eureka-server
 
   user-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/user
@@ -38,8 +41,6 @@ services:
     networks:
       - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
     restart: always
-    depends_on:
-      - eureka-server
 
   auth-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/auth
@@ -62,8 +63,6 @@ services:
     networks:
       - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
     restart: always
-    depends_on:
-      - eureka-server
 
   store-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/store
@@ -83,8 +82,6 @@ services:
     networks:
       - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
     restart: always
-    depends_on:
-      - eureka-server
 
   order-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/order
@@ -106,8 +103,6 @@ services:
     networks:
       - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
     restart: always
-    depends_on:
-      - eureka-server
 
   coupon-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/coupon
@@ -126,8 +121,6 @@ services:
     networks:
       - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
     restart: always
-    depends_on:
-      - eureka-server
 
   rider-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/rider
@@ -142,8 +135,6 @@ services:
     networks:
       - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
     restart: always
-    depends_on:
-      - eureka-server
 
   delivery-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/delivery
@@ -159,8 +150,6 @@ services:
     networks:
       - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
     restart: always
-    depends_on:
-      - eureka-server
 
 networks:
   spring-network:

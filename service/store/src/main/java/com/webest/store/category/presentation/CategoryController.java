@@ -1,9 +1,13 @@
-package com.webest.store.category.api;
+package com.webest.store.category.presentation;
 
-import com.webest.store.category.api.dto.CategoryResponse;
-import com.webest.store.category.api.dto.CreateCategoryRequest;
-import com.webest.store.category.api.dto.UpdateCategoryRequest;
+import com.webest.store.common.aop.RoleCheck;
+import com.webest.store.category.presentation.dto.CategoryResponse;
+import com.webest.store.category.presentation.dto.CreateCategoryRequest;
+import com.webest.store.category.presentation.dto.UpdateCategoryRequest;
 import com.webest.store.category.application.CategoryService;
+import com.webest.store.store.exception.StoreErrorCode;
+import com.webest.store.store.exception.StoreException;
+import com.webest.web.common.UserRole;
 import com.webest.web.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +23,10 @@ public class CategoryController {
 
     // 카테고리 생성
     @PostMapping
-    public CommonResponse<CategoryResponse> saveCategory(@RequestBody CreateCategoryRequest createCategoryRequest) {
+    @RoleCheck(requiredRole = UserRole.MASTER)
+    public CommonResponse<CategoryResponse> saveCategory(
+            @RequestBody CreateCategoryRequest createCategoryRequest
+    ) {
          CategoryResponse categoryResponse = categoryService.saveCategory(createCategoryRequest);
         return CommonResponse.success(categoryResponse);
     }
@@ -40,14 +47,20 @@ public class CategoryController {
 
     // 카테고리 수정
     @PutMapping
-    public CommonResponse<CategoryResponse> updateCategory(@RequestBody UpdateCategoryRequest updateCategoryRequest) {
+    @RoleCheck(requiredRole = UserRole.MASTER)
+    public CommonResponse<CategoryResponse> updateCategory(
+            @RequestBody UpdateCategoryRequest updateCategoryRequest
+    ) {
         CategoryResponse categoryResponse = categoryService.updateCategoryValue(updateCategoryRequest);
         return CommonResponse.success(categoryResponse);
     }
 
     // 카테고리 삭제
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable("id") Long id) {
+    @RoleCheck(requiredRole = UserRole.MASTER)
+    public ResponseEntity<Void> deleteCategory(
+            @PathVariable("id") Long id
+    ) {
         categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }

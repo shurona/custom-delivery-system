@@ -22,7 +22,7 @@ public class CouponRedisServiceImpl implements CouponRedisService {
      * zSet에서 데이터 추가
      */
     @Override
-    public void addCouponToQueue(Long couponId, Long userId) {
+    public void addCouponToQueue(Long couponId, String userId) {
 
         String redisKey = convertCouponToRedisKeyForWaiting(couponId);
 
@@ -34,7 +34,7 @@ public class CouponRedisServiceImpl implements CouponRedisService {
      * zSet에서 데이터 삭제
      */
     @Override
-    public void popCouponFromQueue(Long couponId, Long userId) {
+    public void popCouponFromQueue(Long couponId, String userId) {
         String redisKey = convertCouponToRedisKeyForWaiting(couponId);
 
         redisTemplate.opsForZSet().remove(redisKey, userId);
@@ -44,7 +44,7 @@ public class CouponRedisServiceImpl implements CouponRedisService {
      * zSet에서 현재 위치 조회
      */
     @Override
-    public Long checkCurrentOffset(Long couponId, Long userId) {
+    public Long checkCurrentOffset(Long couponId, String userId) {
         String redisKey = convertCouponToRedisKeyForWaiting(couponId);
 
         return redisTemplate.opsForZSet().rank(redisKey, userId);

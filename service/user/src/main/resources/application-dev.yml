@@ -29,8 +29,10 @@ eureka:
   client:
     service-url:
       defaultZone: ${EUREKA_SERVER_URL}
-
 google:
   map:
     key: ${GOOGLE_API_KEY}
+
+  instance:
+    prefer-ip-address: true
 
