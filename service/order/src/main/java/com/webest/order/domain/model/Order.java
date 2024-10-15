@@ -6,6 +6,8 @@ import com.webest.order.application.dtos.OrderProductDto;
 import com.webest.order.domain.events.*;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 import java.util.stream.Collector;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@SQLDelete(sql = "UPDATE p_store SET is_deleted = true WHERE id = ?")
+@SQLRestriction("is_deleted = false")
 @Table(name = "orders")
 public class Order extends BaseEntity {
 

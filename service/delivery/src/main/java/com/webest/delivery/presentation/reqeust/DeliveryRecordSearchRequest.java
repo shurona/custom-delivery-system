@@ -8,7 +8,7 @@ import com.webest.delivery.domain.model.DeliveryStatus;
 import java.time.LocalDateTime;
 
 public record DeliveryRecordSearchRequest(Long deliveryId,
-                                          Long riderId,
+                                          String riderId,
                                           Long orderId,
                                           DeliveryStatus deliveryStatus,
                                           Double deliveryFeeAmount,
@@ -18,8 +18,8 @@ public record DeliveryRecordSearchRequest(Long deliveryId,
     public DeliveryRecordSearchDto toDto() {
         return DeliveryRecordSearchDto.create(
                 this.deliveryId,
-                this.orderId,
                 this.riderId,
+                this.orderId,
                 this.deliveryStatus,
                 this.deliveryFeeAmount,
                 this.createdAt,

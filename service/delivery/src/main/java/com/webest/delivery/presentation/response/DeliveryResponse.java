@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public record DeliveryResponse(Long id,
                                Long orderId,
-                               Long riderId,
+                               String riderId,
                                String requestsToRider,
                                DeliveryStatus deliveryStatus,
                                Long storeAddressCode,

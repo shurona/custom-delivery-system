@@ -5,7 +5,7 @@ import com.webest.delivery.domain.model.DeliveryStatus;
 import java.util.List;
 
 public record DeliveryDto(Long orderId,
-                          Long riderId,
+                          String riderId,
                           String requestsToRider,
                           DeliveryStatus deliveryStatus,
                           Long storeAddressCode,
@@ -15,7 +15,7 @@ public record DeliveryDto(Long orderId,
                           Double deliveryFeeAmount) {
 
     public static DeliveryDto create(Long orderId,
-                                     Long riderId,
+                                     String riderId,
                                      String requestsToRider,
                                      DeliveryStatus deliveryStatus,
                                      Long storeAddressCode,

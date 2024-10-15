@@ -26,7 +26,7 @@ public class DeliveryService {
 
     // controller 에서 직접 들어온 delivery 처리
     @Transactional
-    public DeliveryResponse createDelivery(Long userId, UserRole userRole, DeliveryDto request) {
+    public DeliveryResponse createDelivery(String userId, UserRole userRole, DeliveryDto request) {
 
         Delivery delivery = Delivery.create(
                 request.orderId(),
@@ -76,21 +76,21 @@ public class DeliveryService {
     }
 
     @Transactional
-    public DeliveryResponse getDelivery(Long userId, UserRole userRole, Long deliveryId) {
+    public DeliveryResponse getDelivery(String userId, UserRole userRole, Long deliveryId) {
 
         return DeliveryResponse.of(deliveryRepository.findById(deliveryId)
                 .orElseThrow(() -> new DeliveryException(ErrorCode.DELIVERY_NOT_FOUND)));
     }
 
     @Transactional
-    public List<DeliveryResponse> getAllDeliveries(Long userId, UserRole userRole) {
+    public List<DeliveryResponse> getAllDeliveries(String userId, UserRole userRole) {
 
         return DeliveryResponse.of(deliveryRepository.findAll());
     }
 
 
     @Transactional
-    public DeliveryResponse updateDelivery(Long userId, UserRole userRole, Long deliveryId, DeliveryDto request) {
+    public DeliveryResponse updateDelivery(String userId, UserRole userRole, Long deliveryId, DeliveryDto request) {
             
         return deliveryRepository.findById(deliveryId).map(delivery -> {
             delivery.update(
@@ -112,7 +112,7 @@ public class DeliveryService {
     }
 
     @Transactional
-    public void deleteDelivery(Long userId, UserRole userRole, Long deliveryId) {
+    public void deleteDelivery(String userId, UserRole userRole, Long deliveryId) {
         deliveryRepository.findById(deliveryId).map(delivery -> {
             
             delivery.delete();
@@ -124,17 +124,17 @@ public class DeliveryService {
 
 
     @Transactional
-    public Page<DeliveryResponse> searchDeliveries(Long userId, UserRole userRole, DeliveryDto request, PageRequest pageRequest) {
+    public Page<DeliveryResponse> searchDeliveries(String userId, UserRole userRole, DeliveryDto request, PageRequest pageRequest) {
 
         return deliveryRepository.searchDelivery(request, pageRequest)
                 .map(DeliveryResponse::of);
     }
 
     @Transactional
-    public DeliveryResponse dispatchDelivery(Long userId, UserRole userRole, Long deliveryId) {
+    public DeliveryResponse dispatchDelivery(String userId, UserRole userRole, Long deliveryId) {
         return deliveryRepository.findById(deliveryId).map(delivery -> {
 
-            delivery.dispatch();
+            delivery.dispatch(userId);
 
             deliveryEventService.publishDeliveryDispatchedEvent(delivery.dispatchedEvent());
 
@@ -143,7 +143,7 @@ public class DeliveryService {
     }
 
     @Transactional
-    public DeliveryResponse departureDelivery(Long userId, UserRole userRole, Long deliveryId) {
+    public DeliveryResponse departureDelivery(String userId, UserRole userRole, Long deliveryId) {
         return deliveryRepository.findById(deliveryId).map(delivery -> {
 
             delivery.departure();
@@ -155,7 +155,7 @@ public class DeliveryService {
     }
 
     @Transactional
-    public DeliveryResponse completeDelivery(Long userId, UserRole userRole, Long deliveryId) {
+    public DeliveryResponse completeDelivery(String userId, UserRole userRole, Long deliveryId) {
         return deliveryRepository.findById(deliveryId).map(delivery -> {
 
             delivery.complete();
@@ -183,11 +183,11 @@ public class DeliveryService {
 
     // controller 에서 직접 들어온 delivery 취소 처리
     @Transactional
-    public DeliveryResponse cancelDelivery(Long userid, UserRole userRole, Long orderId) {
+    public DeliveryResponse cancelDelivery(String userid, UserRole userRole, Long orderId) {
         return deliveryRepository.findByOrderId(orderId).map(delivery -> {
 
             if(delivery.getDeliveryStatus() != DeliveryStatus.REQUEST) {
-                throw new RuntimeException("이미 배차가 됬거나 완료가 된 배달건입니다.");
+                throw new DeliveryException(ErrorCode.INVALID_ORDER_STATUS);
             }
 
             delivery.cancel();

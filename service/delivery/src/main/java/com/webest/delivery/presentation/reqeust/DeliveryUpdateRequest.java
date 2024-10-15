@@ -4,7 +4,7 @@ import com.webest.delivery.application.dtos.DeliveryDto;
 import com.webest.delivery.domain.model.DeliveryStatus;
 
 public record DeliveryUpdateRequest(Long orderId,
-                                    Long riderId,
+                                    String riderId,
                                     String requestsToRider,
                                     DeliveryStatus deliveryStatus,
                                     Long storeAddressCode,

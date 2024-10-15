@@ -6,7 +6,7 @@ import com.webest.delivery.domain.model.DeliveryStatus;
 import java.util.stream.Collectors;
 
 public record DeliveryCreateRequest(Long orderId,
-                                    Long riderId,
+                                    String riderId,
                                     String requestsToRider,
                                     DeliveryStatus deliveryStatus,
                                     Long storeAddressCode,

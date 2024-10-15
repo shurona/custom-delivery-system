@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public record DeliveryRecordResponse(Long id,
                                      Long deliveryId,
-                                     Long riderId,
+                                     String riderId,
                                      Long orderId,
                                      DeliveryStatus deliveryStatus,
                                      Double deliveryFeeAmount,
