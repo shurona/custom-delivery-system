@@ -1,0 +1,14 @@
+plugins {
+
+}
+
+group = 'com.webest'
+version = '0.0.1-SNAPSHOT'
+
+
+dependencies {
+	// eureka
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+
+}
+

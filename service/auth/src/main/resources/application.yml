@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: auth-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3310/userdb
+    username: master
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true # sql 로깅
+        format_sql: true # SQL 문 정렬하여 출력
+        highlight_sql: true # SQL 문 색 부여
+  #        use_sql_comments: true # 콘솔에 표시되는 쿼리문 위에 어떤 실행을 하려는지 HINT 표시
+  redis:
+    data:
+      host: localhost
+      port: 6379
+
+
+server:
+  port: 19100
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:19090/eureka/
+
+logging:
+  level:
+    com.example.user : DEBUG
+
+token:
+  expiration-time: ${JWT_EXPIRATION_TIME}
+  secret-key: ${JWT_SECRET_KEY}
+
+google:
+  email: ${GOOGLE_EMAIL}
+  secret-key: ${GOOGLE_EMAIL_SECRET_KEY}
+
+
+kakao:
+  client_id: ${KAKAO_API_KEY}
+  redirect_uri: http://localhost:8080/api/auth/kakao/callback

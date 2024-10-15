@@ -1,0 +1,25 @@
+plugins {
+
+}
+
+group = 'com.webest'
+version = '0.0.1-SNAPSHOT'
+
+dependencies {
+    implementation project(":web-core")
+    implementation project(":app-core")
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // QueryDSL
+    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    runtimeOnly 'com.h2database:h2' // H2 Database
+
+}
+
+clean {
+    delete file('src/main/generated')
+}

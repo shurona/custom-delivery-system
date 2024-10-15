@@ -1,0 +1,15 @@
+plugins {
+    id 'java-library'
+}
+
+group = 'com.webest'
+version = '0.0.1-SNAPSHOT'
+
+dependencies {
+
+    //web
+    api 'org.springframework.boot:spring-boot-starter-web'
+
+    //validation
+    api 'org.springframework.boot:spring-boot-starter-validation'
+}

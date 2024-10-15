@@ -1,0 +1,43 @@
+rootProject.name = 'webest'
+
+registerModules(rootDir)
+
+// build.gradle이 있는 폴더만 모듈로 등록하는 함수
+def registerModules(File directory) {
+    directory.eachDirRecurse { dir ->
+        if (new File(dir, 'build.gradle').exists()) {
+            includeModule(dir)
+        }
+    }
+}
+
+// 모듈 등록 함수
+def includeModule(File moduleDir) {
+    // 모듈 이름을 루트 경로에 상대적으로 계산
+    def relativePath = moduleDir.absolutePath - rootDir.absolutePath
+
+    // 운영체제에 맞춰서 파일 구분자 변경
+    relativePath = relativePath.replace(File.separator, "/")
+
+    def moduleName = convertPathToModuleName(relativePath)
+
+    // 등록된 모듈 출력 확인
+    //     println "Registering module: ${moduleName}"
+
+    include(moduleName)
+    project(moduleName).projectDir = moduleDir
+}
+
+// 경로를 Gradle 모듈 경로로 변환하는 함수
+def convertPathToModuleName(String relativePath) {
+    // 파일 구분자를 ':'로 변환하고 불필요한 앞부분 ':' 제거
+    def parts = relativePath.tokenize("/")
+
+    // 두 번째 경로를 모듈로 추출
+    if (parts.size() > 1) {
+        return ":${parts[1]}"
+    } else {
+        // 두 번째 세그먼트가 없을 경우 빈 문자열 반환 (경로가 "/service"일 때)
+        return ""
+    }
+}
