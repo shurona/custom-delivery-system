@@ -19,7 +19,7 @@ spring:
 
   redis:
     data:
-      host: localhost
+      host: ${DEV_REDIS_HOST}
       port: 6379
 
 server:
