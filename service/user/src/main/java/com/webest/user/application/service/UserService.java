@@ -17,5 +17,5 @@ public interface UserService{
 
     UserResponse update(String userId, UserUpdateRequest request);
 
-    void delete(String userId);
+    void delete(Long userId,String xUserId);
 }
