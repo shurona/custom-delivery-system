@@ -22,4 +22,9 @@ public final class CommonStaticVariable {
      */
     public static final String ADDRESS_CSV = "csv/address_20240802.csv";
 
+    /**
+     * Swagger Title
+     */
+    public static final String SWAGGER_TITLE = "WeBest Delivery";
+
 }
