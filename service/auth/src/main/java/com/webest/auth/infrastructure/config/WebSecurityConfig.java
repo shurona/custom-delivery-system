@@ -60,7 +60,13 @@ public class WebSecurityConfig{
         http
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
 //                        .requestMatchers(new AntPathRequestMatcher("/api/users/{userId}")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/**"))
+                        .permitAll()
+                        .requestMatchers(
+                            "/auth-service/v3/api-docs/**"
+                            , "/auth-service/swagger-ui.html"
+                            , "/auth-service/swagger-ui/**")
+                        .permitAll() // swagger 설정
 //                        .access(new WebExpressionAuthorizationManager("hasIpAddress('172.30.1.57')"))
 //                        .anyRequest().authenticated()
                 )

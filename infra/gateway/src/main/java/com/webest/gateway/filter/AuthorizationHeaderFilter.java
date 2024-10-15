@@ -49,6 +49,10 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 //                return chain.filter(exchange);  // /signIn,signUp 경로는 필터를 적용하지 않음
 //            }
 
+            if (exchange.getRequest().getURI().getPath().endsWith("api-docs")) {
+                return chain.filter(exchange);
+            }
+
             ServerHttpRequest request = exchange.getRequest();
 
             // Header에 AUTHORIZATION에 관련된 값이 있는지 확인
