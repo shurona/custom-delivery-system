@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(
         name = "store-service",
-        url = "http://127.0.0.1:19093",
         configuration = StoreFeignClientConfig.class,
         fallbackFactory = StoreFallbackFactory.class
 )
