@@ -50,3 +50,10 @@ google:
 kakao:
   client_id: ${KAKAO_API_KEY}
   redirect_uri: http://localhost:8080/api/auth/kakao/callback
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /auth-service/v3/api-docs
+  swagger-ui:
+    path: /auth-service/swagger-ui.html

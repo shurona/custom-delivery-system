@@ -26,14 +26,14 @@ public class FilterConfig {
                     .rewritePath("/api/auth/(?<segment>.*)", "/${segment}"))
                 .uri("lb://AUTH-SERVICE"))
 
-            .route("auth-login-route", r -> r.path("/api/auth/**")
+            .route("auth-login-route", r -> r.path("/api/auth/**", "/auth-service/v3/api-docs")
                 .and()
                 .method("POST", "GET")
                 .filters(f -> f
                     .removeRequestHeader("Cookie"))
                 .uri("lb://AUTH-SERVICE"))
 
-            .route("user-get-all-route", r -> r.path("/api/users/**")
+            .route("user-get-all-route", r -> r.path("/api/users/**", "/user-service/v3/api-docs")
                 .and()
                 .method("GET", "POST", "PATCH", "DELETE")
                 .filters(f -> f
@@ -42,7 +42,7 @@ public class FilterConfig {
                         new AuthorizationHeaderFilter.Config())))  // 필터 팩토리로 필터 생성
                 .uri("lb://USER-SERVICE"))
 
-            .route("user-get-all-route", r -> r.path("/api/v1/orders/**")
+            .route("user-get-all-route", r -> r.path("/api/v1/orders/**", "/order-service/v3/api-docs")
                 .and()
                 .method("GET", "POST", "PATCH", "DELETE")
                 .filters(f -> f
@@ -51,7 +51,7 @@ public class FilterConfig {
                         new AuthorizationHeaderFilter.Config())))  // 필터 팩토리로 필터 생성
                 .uri("lb://ORDER-SERVICE"))
 
-            .route("user-get-all-route", r -> r.path("/api/v1/deliveries/**")
+            .route("user-get-all-route", r -> r.path("/api/v1/deliveries/**", "/delivery-service/v3/api-docs")
                 .and()
                 .method("GET", "POST", "PATCH", "DELETE")
                 .filters(f -> f
@@ -60,7 +60,7 @@ public class FilterConfig {
                         new AuthorizationHeaderFilter.Config())))  // 필터 팩토리로 필터 생성
                 .uri("lb://DELIVERY-SERVICE"))
 
-            .route("user-get-all-route", r -> r.path("/api/v1/stores/**")
+            .route("user-get-all-route", r -> r.path("/api/v1/stores/**", "/store-service/v3/api-docs")
                 .and()
                 .method("GET", "POST", "PATCH", "DELETE", "PUT")
                 .filters(f -> f
@@ -87,7 +87,7 @@ public class FilterConfig {
                         new AuthorizationHeaderFilter.Config())))  // 필터 팩토리로 필터 생성
                 .uri("lb://STORE-SERVICE"))
 
-            .route("user-get-all-route", r -> r.path("/api/v1/coupons/**")
+            .route("user-get-all-route", r -> r.path("/api/v1/coupons/**", "/coupon-service/v3/api-docs")
                 .and()
                 .method("GET", "POST", "PATCH", "DELETE")
                 .filters(f -> f
@@ -96,7 +96,7 @@ public class FilterConfig {
                         new AuthorizationHeaderFilter.Config())))  // 필터 팩토리로 필터 생성
                 .uri("lb://COUPON-SERVICE"))
 
-            .route("user-get-all-route", r -> r.path("/api/v1/riders/**")
+            .route("user-get-all-route", r -> r.path("/api/v1/riders/**", "/rider-service/v3/api-docs")
                 .and()
                 .method("GET", "POST", "PATCH", "PUT", "DELETE")
                 .filters(f -> f

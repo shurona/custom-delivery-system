@@ -34,3 +34,28 @@ spring:
     data:
       host: localhost
       port: 6379
+
+springdoc:
+  enable-native-support: true
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - url: /v3/api-docs
+        name: GATEWAY SERVICE
+      - url: /user-service/v3/api-docs
+        name: USER SERVICE
+      - url: /auth-service/v3/api-docs
+        name: AUTH SERVICE
+      - url: /store-service/v3/api-docs
+        name: STORE SERVICE
+      - url: /order-service/v3/api-docs
+        name: ORDER SERVICE
+      - url: /delivery-service/v3/api-docs
+        name: DELIVERY SERVICE
+      - url: /coupon-service/v3/api-docs
+        name: COUPON SERVICE
+      - url: /rider-service/v3/api-docs
+        name: RIDER SERVICE
