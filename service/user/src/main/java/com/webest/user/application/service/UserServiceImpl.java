@@ -11,11 +11,11 @@ import com.webest.user.infrastructure.geocode.GoogleMapResponse;
 import com.webest.user.presentation.dto.request.UserJoinRequest;
 import com.webest.user.presentation.dto.request.UserUpdateRequest;
 import com.webest.user.presentation.dto.response.UserResponse;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
     // findByUserId
     public User findByUserId(String userId){
-        return userRepository.findByUserId(userId)
+            return userRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
     }
 
@@ -64,10 +64,11 @@ public class UserServiceImpl implements UserService {
 
     // 유저 생성
     @Override
+    @Transactional
     public UserResponse create(UserJoinRequest request) {
 
         // 위/경도 구함
-        String address = request.city() + request.street() + request.district() + request.detailAddress();
+        String address = request.city() + " "+request.street() + " "+ request.district() + " "+ request.detailAddress();
         double[] tmp = getGeocode(address);
 
         // TODO :: null 일때 에러 처리 필요
@@ -79,6 +80,7 @@ public class UserServiceImpl implements UserService {
 
     // 유저 마이페이지 데이터 호출
     @Override
+    @Transactional(readOnly = true)
     public UserResponse getUser(String userId) {
         UserDto dto = findByUserId(userId).to();
 
@@ -87,38 +89,58 @@ public class UserServiceImpl implements UserService {
 
     // 유저 정보 수정
     @Override
+    @Transactional
     public UserResponse update(String userId, UserUpdateRequest request) {
         User user = findByUserId(userId);
 
         String city = user.getCity();
         String street = user.getStreet();
         String district = user.getDistrict();
+        String detailAddress = user.getDetailAddress();
+        int count =0;
 
         if(request.city()!=null){
             city = request.city();
+            count++;
         }
         if(request.street()!=null){
             street = request.street();
+            count++;
         }
         if(request.district()!=null){
             district = request.district();
+            count++;
+        }
+        if(request.detailAddress()!=null){
+            detailAddress = request.detailAddress();
+            count++;
+        }
+
+
+        // 주소가 변경되었으면 위/경도 구함
+        double[] tmp = new double[2];
+        if(count != 0){
+            String address = city + " "+street+ " "+ district + " "+ detailAddress;
+            tmp = getGeocode(address);
         }
 
         AddressDto addressDto = readAddressCsv.findAddressByDistrict(city,street,district);
-        user.update(request,addressDto.code());
+        user.update(request,addressDto.code(),tmp[0],tmp[1]);
 
         return user.to().to();
     }
 
     // 유저 정보 삭제
     @Override
-    public void delete(String userId) {
-        findByUserId(userId);
+    @Transactional
+    public void delete(Long userId,String xUserId) {
+        findByUserId(xUserId);
         userRepository.delete(userId);
     }
 
     // 유저 전부 출력 (관리자 기능)
     @Override
+    @Transactional(readOnly = true)
     public List<UserResponse> getUserByAll() {
         Iterable<User> users = userRepository.findAll();
         List<UserResponse> result = new ArrayList<>();

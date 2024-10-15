@@ -56,8 +56,10 @@ public class UserController {
 
     // 유저 삭제
     @DeleteMapping("/delete/{userId}")
-    public CommonResponse<String> deleteUser(@PathVariable String userId){
-        userService.delete(userId);
+    public CommonResponse<String> deleteUser(@PathVariable ("userId") Long userId,
+                                             @RequestHeader("X-UserId") String xUserId){
+        userService.delete(userId,xUserId);
         return CommonResponse.success(userId + "의 유저가 삭제되었습니다");
     }
+
 }

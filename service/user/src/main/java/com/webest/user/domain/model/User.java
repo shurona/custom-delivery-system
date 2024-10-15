@@ -8,12 +8,16 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@SQLRestriction("is_deleted = false")
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -78,7 +82,7 @@ public class User extends BaseEntity {
         );
     }
 
-    public void update(UserUpdateRequest request, Long addressCode){
+    public void update(UserUpdateRequest request, Long addressCode,double latitude,double longitude){
         this.password = request.password() !=null ? request.password() : this.password;
         this.userName = request.userName() !=null ? request.userName() : this.userName;
         this.email = request.email() !=null ? request.email() : this.email;
@@ -88,5 +92,8 @@ public class User extends BaseEntity {
         this.street = request.street() !=null ? request.street() : this.street;
         this.district = request.district() !=null ? request.district() : this.district;
         this.detailAddress = request.detailAddress() !=null ? request.detailAddress() : this.detailAddress;
+        this.latitude = latitude != 0.0 ? latitude : this.latitude;
+        this.longitude = longitude != 0.0 ? longitude : this.longitude;
+
     }
 }

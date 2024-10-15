@@ -5,6 +5,7 @@ import com.webest.auth.presentation.dto.response.JoinResponse;
 import com.webest.web.common.UserRole;
 
 public record AuthDto(
+        Long id,
         String userId,
         String password,
         String userName,
@@ -19,6 +20,7 @@ public record AuthDto(
     // JoinRequest -> AuthDto
     public static AuthDto from(UserJoinRequest request, String pw, Long code) {
         return new AuthDto(
+                null,
                 request.userId(),
                 pw,
                 request.userName(),
