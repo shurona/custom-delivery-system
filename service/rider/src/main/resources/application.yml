@@ -30,3 +30,10 @@ eureka:
   client:
     service-url:
       defaultZone: ${EUREKA_SERVER_URL}
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /rider-service/v3/api-docs
+  swagger-ui:
+    path: /rider-service/swagger-ui.html

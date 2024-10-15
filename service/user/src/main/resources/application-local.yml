@@ -34,3 +34,11 @@ eureka:
 google:
   map:
     key: ${GOOGLE_API_KEY}
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /user-service/v3/api-docs
+  swagger-ui:
+    path: /user-service/swagger-ui.html
+
