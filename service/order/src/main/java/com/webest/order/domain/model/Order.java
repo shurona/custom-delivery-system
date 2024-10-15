@@ -6,6 +6,8 @@ import com.webest.order.application.dtos.OrderProductDto;
 import com.webest.order.domain.events.*;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 import java.util.stream.Collector;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@SQLDelete(sql = "UPDATE p_store SET is_deleted = true WHERE id = ?")
+@SQLRestriction("is_deleted = false")
 @Table(name = "orders")
 public class Order extends BaseEntity {
 
@@ -31,7 +35,7 @@ public class Order extends BaseEntity {
 
     private Long couponId;
 
-    private Long userId;
+    private String userId;
 
     @Enumerated(EnumType.STRING)  // Enum을 문자열로 DB에 저장
     private OrderStatus orderStatus;
@@ -68,11 +72,15 @@ public class Order extends BaseEntity {
     public static Order create(Long storeId,
                                Long paymentId,
                                Long couponId,
-                               Long userId,
+                               String userId,
                                OrderStatus orderStatus,
                                Boolean isRequest,
                                String requestsToStore,
                                String requestsToRider,
+                               Long arrivalAddressCode,
+                               String arrivalDetailAddress,
+                               Long storeAddressCode,
+                               String storeDetailAddress,
                                Integer totalQuantity,
                                Double totalProductPrice,
                                Double couponAppliedAmount,
@@ -90,6 +98,14 @@ public class Order extends BaseEntity {
         order.isRequest = isRequest;
         order.requestsToStore = requestsToStore;
         order.requestsToRider = requestsToRider;
+
+        order.arrivalAddressCode = arrivalAddressCode;
+
+        order.arrivalDetailAddress = arrivalDetailAddress;
+
+        order.storeAddressCode = storeAddressCode;
+
+        order.storeDetailAddress = storeDetailAddress;
 
         order.totalQuantity = calculateTotalQuantity(orderProducts);
 
@@ -111,7 +127,7 @@ public class Order extends BaseEntity {
     public void update(Long storeId,
                        Long paymentId,
                        Long couponId,
-                       Long userId,
+                       String userId,
                        OrderStatus orderStatus,
                        Boolean isRequest,
                        String requestsToStore,

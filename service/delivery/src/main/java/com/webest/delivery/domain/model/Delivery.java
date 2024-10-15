@@ -25,7 +25,7 @@ public class Delivery extends BaseEntity {
 
     private Long orderId; // 주문 id
 
-    private Long riderId; // 라이더 id
+    private String riderId; // 라이더 id
 
     private String requestsToRider;
 
@@ -43,7 +43,7 @@ public class Delivery extends BaseEntity {
     private Double deliveryFeeAmount; // 배달료
 
     public static Delivery create(Long orderId,
-                                  Long riderId,
+                                  String riderId,
                                   String requestsToRider,
                                   DeliveryStatus deliveryStatus,
                                   Long storeAddressCode,
@@ -67,7 +67,7 @@ public class Delivery extends BaseEntity {
     }
 
     public void update(Long orderId,
-                       Long riderId,
+                       String riderId,
                        String requestsToRider,
                        DeliveryStatus deliveryStatus,
                        Long storeAddressCode,
@@ -91,8 +91,9 @@ public class Delivery extends BaseEntity {
     }
 
     // DeliveryStatus 배차 변경
-    public void dispatch() {
+    public void dispatch(String userId) {
         this.deliveryStatus = DeliveryStatus.DISPATCH;
+        this.riderId = userId;
     }
 
     // DeliveryStatus 출발 변경

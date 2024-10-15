@@ -18,7 +18,7 @@ public class OrderRequestedEvent {
 
     private Long couponId;
 
-    private Long userId;
+    private String userId;
 
     private OrderStatus orderStatus;
 

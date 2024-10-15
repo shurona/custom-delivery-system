@@ -15,7 +15,7 @@ public class DeliveryDispatchedEvent {
 
     private Long orderId; // 주문 id
 
-    private Long riderId; // 라이더 id
+    private String riderId; // 라이더 id
 
     private String requestsToRider;
 

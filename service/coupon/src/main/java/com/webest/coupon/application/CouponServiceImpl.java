@@ -13,6 +13,8 @@ import com.webest.coupon.mapper.CouponMapper;
 import com.webest.coupon.presentation.dtos.request.CouponCreateRequestDto;
 import com.webest.coupon.presentation.dtos.request.CouponUpdateRequestDto;
 import com.webest.coupon.presentation.dtos.response.CouponResponseDto;
+import com.webest.web.exception.ApplicationException;
+import com.webest.web.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -79,7 +81,8 @@ public class CouponServiceImpl implements CouponService {
             requestDto.dateType(),
             requestDto.startTime().atStartOfDay(),
             requestDto.endTime().atStartOfDay(),
-            requestDto.maxQuantity());
+            requestDto.maxQuantity()
+        );
 
         return couponMapper.couponToDto(coupon);
     }

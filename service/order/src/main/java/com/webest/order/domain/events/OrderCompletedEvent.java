@@ -20,7 +20,7 @@ public class OrderCompletedEvent {
 
     private Long couponId;
 
-    private Long userId;
+    private String userId;
 
     private OrderStatus orderStatus;
 

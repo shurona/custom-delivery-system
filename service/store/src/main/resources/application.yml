@@ -4,11 +4,13 @@ server:
 spring:
   application:
     name: store-service
+
   datasource:
-    url: ${DB_URL}
+    url:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: create
@@ -29,7 +31,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA_SERVER_URL}
+      defaultZone: http://localhost:19090/eureka/
 
 
 naver:

@@ -23,7 +23,7 @@ public class DeliveryController {
 
 
     @PostMapping
-    public CommonResponse<DeliveryResponse> createDelivery(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<DeliveryResponse> createDelivery(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                                            @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
                                                            @RequestBody DeliveryCreateRequest createRequest) {
 
@@ -32,7 +32,7 @@ public class DeliveryController {
     }
 
     @GetMapping("/{deliveryId}")
-    public CommonResponse<DeliveryResponse> getDelivery(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<DeliveryResponse> getDelivery(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                                         @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
                                                         @PathVariable(name = "deliveryId") Long deliveryId) {
 
@@ -41,7 +41,7 @@ public class DeliveryController {
     }
 
     @GetMapping
-    public CommonResponse<List<DeliveryResponse>> getAllDeliveries(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<List<DeliveryResponse>> getAllDeliveries(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                                                    @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole) {
 
 
@@ -49,7 +49,7 @@ public class DeliveryController {
     }
 
     @PatchMapping("/{deliveryId}")
-    public CommonResponse<DeliveryResponse> updateDelivery(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<DeliveryResponse> updateDelivery(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                                            @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
                                                            @PathVariable(name = "deliveryId") Long deliveryId,
                                                            @RequestBody DeliveryUpdateRequest updateRequest) {
@@ -59,7 +59,7 @@ public class DeliveryController {
     }
 
     @DeleteMapping("/{deliveryId}")
-    public void deleteDelivery(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public void deleteDelivery(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
                                @PathVariable(name = "deliveryId") Long deliveryId) {
 
@@ -67,7 +67,7 @@ public class DeliveryController {
     }
 
     @GetMapping("/search")
-    public CommonResponse<?> searchDeliveries(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<?> searchDeliveries(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                               @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
                                               @RequestBody DeliverySearchRequest searchRequest,
                                               @RequestParam(defaultValue = "1") int page,
@@ -81,7 +81,7 @@ public class DeliveryController {
 
     // 배차
     @PostMapping("/{deliveryId}/dispatch")
-    public CommonResponse<?> dispatchDelivery(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<?> dispatchDelivery(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
                                @PathVariable(name = "deliveryId") Long deliveryId) {
 
@@ -91,7 +91,7 @@ public class DeliveryController {
 
     // 출발
     @PostMapping("/{deliveryId}/departure")
-    public CommonResponse<?> departureDelivery(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<?> departureDelivery(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                  @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
                                  @PathVariable(name = "deliveryId") Long deliveryId) {
 
@@ -101,7 +101,7 @@ public class DeliveryController {
 
     // 완료
     @PostMapping("/{deliveryId}/complete")
-    public CommonResponse<?> completeDelivery(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<?> completeDelivery(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                   @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
                                   @PathVariable(name = "deliveryId") Long deliveryId) {
 
@@ -111,7 +111,7 @@ public class DeliveryController {
 
     // 취소
     @PostMapping("/{deliveryId}/cancel")
-    public CommonResponse<?> cancelDelivery(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<?> cancelDelivery(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                  @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
                                  @PathVariable(name = "deliveryId") Long deliveryId) {
 

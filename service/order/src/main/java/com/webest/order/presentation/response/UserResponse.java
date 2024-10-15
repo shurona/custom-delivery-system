@@ -4,6 +4,7 @@ public record UserResponse(Long id,
                            String username,
                            String number,
                            String email,
-                           Long addressCode) {
+                           Long addressCode,
+                           String detailAddress) {
 
 }

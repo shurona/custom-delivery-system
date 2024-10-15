@@ -21,7 +21,7 @@ public class DeliveryRecord extends BaseEntity {
 
     private Long deliveryId;
 
-    private Long riderId;
+    private String riderId;
 
     private Long orderId;
 
@@ -31,7 +31,7 @@ public class DeliveryRecord extends BaseEntity {
     private Double deliveryFeeAmount;
 
     public static DeliveryRecord create(Long deliveryId,
-                                  Long riderId,
+                                        String riderId,
                                   Long orderId,
                                   DeliveryStatus deliveryStatus,
                                   Double deliveryFeeAmount)
@@ -47,7 +47,7 @@ public class DeliveryRecord extends BaseEntity {
     }
 
     public void update(Long deliveryId,
-                       Long riderId,
+                       String riderId,
                        Long orderId,
                        DeliveryStatus deliveryStatus,
                        Double deliveryFeeAmount) {
