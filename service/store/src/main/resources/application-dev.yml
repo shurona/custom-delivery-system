@@ -36,3 +36,10 @@ eureka:
 naver:
   client-id: ${NAVER_CLIENT_ID}
   client-secret: ${NAVER_CLIENT_SECRET}
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /store-service/v3/api-docs
+  swagger-ui:
+    path: /store-service/swagger-ui.html

@@ -38,3 +38,9 @@ google:
   instance:
     prefer-ip-address: true
 
+springdoc:
+  api-docs:
+    enabled: true
+    path: /user-service/v3/api-docs
+  swagger-ui:
+    path: /user-service/swagger-ui.html
