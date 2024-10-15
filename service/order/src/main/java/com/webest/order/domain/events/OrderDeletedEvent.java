@@ -18,7 +18,7 @@ public class OrderDeletedEvent {
 
     private Long couponId;
 
-    private Long userId;
+    private String userId;
 
     private OrderStatus orderStatus;
 

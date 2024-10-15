@@ -25,7 +25,7 @@ public class OrderController {
      * 주문 생성
      */
     @PostMapping
-    public CommonResponse<OrderResponse> createOrder(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<OrderResponse> createOrder(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                                      @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
                                                      @RequestBody OrderCreateRequest createRequest) {
 
@@ -37,7 +37,7 @@ public class OrderController {
      * 주문 단건 조회
      */
     @GetMapping("/{orderId}")
-    public CommonResponse<OrderResponse> getOrder(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<OrderResponse> getOrder(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                                   @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
                                                   @PathVariable(name = "orderId") Long orderId) {
 
@@ -48,7 +48,7 @@ public class OrderController {
      * 주문 전체 조회
      */
     @GetMapping
-    public CommonResponse<List<OrderResponse>> getAllOrders(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<List<OrderResponse>> getAllOrders(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                                             @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole) {
 
         return CommonResponse.success(orderService.getAllOrders());
@@ -58,7 +58,7 @@ public class OrderController {
      * 주문 수정
      */
     @PatchMapping("/{orderId}")
-    public CommonResponse<OrderResponse> updateOrder(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<OrderResponse> updateOrder(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                                      @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
                                                      @PathVariable(name = "orderId") Long orderId,
                                                      @RequestBody OrderUpdateRequest updateRequest) {
@@ -70,7 +70,7 @@ public class OrderController {
      * 주문 삭제
      */
     @DeleteMapping("/{orderId}")
-    public CommonResponse<OrderResponse> deleteOrder(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<OrderResponse> deleteOrder(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                                      @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
                                                      @PathVariable(name = "orderId") Long orderId) {
 
@@ -83,7 +83,7 @@ public class OrderController {
      * 주문 확인 (주문확인중: CONFIRMING_ORDER -> 준비중: PREPARING)
      */
     @PostMapping("/{orderId}/preparing")
-    public CommonResponse<?> preparingOrder(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<?> preparingOrder(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                                       @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
                                                       @PathVariable(name = "orderId") Long orderId) {
 
@@ -96,7 +96,7 @@ public class OrderController {
      * 주문 요청 (주문 -> 배달)
      */
     @PostMapping("/{orderId}/request")
-    public CommonResponse<OrderResponse> requestOrder(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<OrderResponse> requestOrder(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                                       @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
                                                       @PathVariable(name = "orderId") Long orderId) {
 
@@ -108,7 +108,7 @@ public class OrderController {
      * 주문 취소
      */
     @PostMapping("/{orderId}/cancel")
-    public CommonResponse<OrderResponse> cancelOrder(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<OrderResponse> cancelOrder(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                                      @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
                                                      @PathVariable(name = "orderId") Long orderId) {
 
@@ -119,7 +119,7 @@ public class OrderController {
      * 주문 검색
      */
     @GetMapping("/search")
-    public CommonResponse<?> searchOrders(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<?> searchOrders(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                           @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
                                           @RequestBody OrderSearchRequest orderSearchRequest,
                                           @RequestParam(defaultValue = "1") int page,

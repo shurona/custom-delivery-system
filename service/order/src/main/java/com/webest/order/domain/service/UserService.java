@@ -1,9 +1,17 @@
 package com.webest.order.domain.service;
 
+import com.webest.order.infrastructure.client.user.UserClient;
+import com.webest.order.infrastructure.client.user.dto.UserResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-import com.webest.order.presentation.response.UserResponse;
-import org.springframework.web.bind.annotation.RequestHeader;
+@Service
+@RequiredArgsConstructor
+public class UserService {
 
-public interface UserService {
-    UserResponse getUser(String userId);
+    private final UserClient userClient;
+
+    public UserResponse getUser(String userId) {
+       return userClient.getUser(userId).getData();
+    }
 }

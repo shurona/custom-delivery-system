@@ -54,6 +54,16 @@ eureka:
         alphanumeric-ids:
           enabled: true
 
+# application.yml
+logging:
+  level:
+    com:  # Package 의 특정 클래스 로깅 레벨 설정
+      feignClient:
+        practice:
+          order:
+            product:
+              ProductClient: DEBUG # Feign logging은 DEBUG 에서만 동작함
+
 resilience4j:
   circuitbreaker:
     configs:

@@ -6,9 +6,9 @@ spring:
     name: store-service
 
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:mysql://localhost:3306/userdb
+    username: root
+    password: Jesuslove1!
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -22,7 +22,7 @@ spring:
   #        use_sql_comments: true # 콘솔에 표시되는 쿼리문 위에 어떤 실행을 하려는지 HINT 표시
   data:
     redis:
-      host: localhost
+      host: 3.37.198.42
       port: 6379
       username: default
       password: systempass
@@ -31,7 +31,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA_SERVER_URL}
+      defaultZone: http://localhost:19090/eureka/
 
 
 naver:

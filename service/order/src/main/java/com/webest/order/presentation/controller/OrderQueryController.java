@@ -18,22 +18,22 @@ public class OrderQueryController {
     private final OrderQueryService orderQueryService;
 
     @GetMapping("/{orderId}")
-    public CommonResponse<OrderQueryResponse> getOrder(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<OrderQueryResponse> getOrder(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                                        @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
                                                        @PathVariable(name = "orderId") Long orderId) {
 
-        return CommonResponse.success(orderQueryService.getOrderQuery(orderId));
+        return CommonResponse.success(orderQueryService.getOrderQuery(userId, userRole, orderId));
     }
 
     @GetMapping
-    public CommonResponse<?> getAllOrders(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<?> getAllOrders(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                           @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole) {
 
-        return CommonResponse.success(orderQueryService.getAllOrderQueries());
+        return CommonResponse.success(orderQueryService.getAllOrderQueries(userId, userRole));
     }
 
     @GetMapping("/search")
-    public CommonResponse<?> searchOrders(@RequestHeader(name = CommonStaticVariable.X_USER_ID) Long userId,
+    public CommonResponse<?> searchOrders(@RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId,
                                           @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
                                           @RequestBody OrderSearchRequest orderSearchRequest,
                                           @RequestParam(defaultValue = "1") int page,

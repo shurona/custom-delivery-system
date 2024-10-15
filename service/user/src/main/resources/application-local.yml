@@ -3,14 +3,14 @@ spring:
     name: user-service
 
   datasource:
-    url: jdbc:mysql://localhost:3310/userdb
-    username: master
-    password: 1234
+    url: jdbc:mysql://localhost:3306/userdb
+    username: root
+    password: Jesuslove1!
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         show_sql: true # sql 로깅

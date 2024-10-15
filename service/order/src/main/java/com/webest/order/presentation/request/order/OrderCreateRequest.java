@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public record OrderCreateRequest(Long storeId,
                                  Long paymentId,
                                  Long couponId,
-                                 Long userId,
+                                 String userId,
                                  OrderStatus orderStatus,
                                  Boolean isRequest,
                                  String requestsToStore,
