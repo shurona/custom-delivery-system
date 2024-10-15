@@ -10,7 +10,7 @@ name: Webest eureka Image CI/CD with ECR
 on:
   push:
     paths:
-      - ./infra/eureka/**
+      - infra/eureka/**
       - .github/workflows/eureka-ci.yml
       - gradlew
       - build.gradle
