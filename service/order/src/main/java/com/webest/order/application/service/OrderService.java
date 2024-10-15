@@ -1,7 +1,6 @@
 package com.webest.order.application.service;
 
 import com.webest.order.application.dtos.OrderDto;
-import com.webest.order.application.dtos.OrderProductDto;
 import com.webest.order.application.dtos.OrderSearchDto;
 import com.webest.order.application.dtos.OrderUpdateDto;
 import com.webest.order.domain.events.OrderPaymentCompletedEvent;
@@ -11,23 +10,20 @@ import com.webest.order.domain.model.Order;
 import com.webest.order.domain.model.OrderProduct;
 import com.webest.order.domain.model.OrderStatus;
 import com.webest.order.domain.repository.order.OrderRepository;
+import com.webest.order.domain.service.StoreService;
 import com.webest.order.domain.service.UserService;
-import com.webest.order.presentation.request.orderproduct.OrderProductRequest;
-import com.webest.order.presentation.response.OrderProductResponse;
+import com.webest.order.infrastructure.client.user.UserClient;
 import com.webest.order.presentation.response.OrderResponse;
-import com.webest.order.presentation.response.UserResponse;
+import com.webest.order.infrastructure.client.store.dto.StoreResponse;
+import com.webest.order.infrastructure.client.user.dto.UserResponse;
 import com.webest.web.common.UserRole;
-import com.webest.web.exception.ApplicationException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +36,7 @@ public class OrderService {
     private final OrderProductService orderProductService;
 
     private final UserService userService;
+    private final StoreService storeService;
 
     /**
      * 주문 생성
@@ -52,7 +49,8 @@ public class OrderService {
 
         UserResponse userResponse = userService.getUser(userId);
 
-        System.out.println("userResponse :" + userResponse.detailAddress());
+        StoreResponse storeResponse = storeService.getStore(request.storeId());
+
 
         // 주문 상품 create
         List<OrderProduct> orderProducts =
@@ -69,6 +67,8 @@ public class OrderService {
                 request.requestsToRider(),
                 userResponse.addressCode(),
                 userResponse.detailAddress(),
+                storeResponse.storeAddress().addressCode(),
+                storeResponse.storeAddress().detailAddress(),
                 request.totalQuantity(),
                 request.totalProductPrice(),
                 request.couponAppliedAmount(),

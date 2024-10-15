@@ -75,6 +75,8 @@ public class Order extends BaseEntity {
                                String requestsToRider,
                                Long arrivalAddressCode,
                                String arrivalDetailAddress,
+                               Long storeAddressCode,
+                               String storeDetailAddress,
                                Integer totalQuantity,
                                Double totalProductPrice,
                                Double couponAppliedAmount,
@@ -96,6 +98,10 @@ public class Order extends BaseEntity {
         order.arrivalAddressCode = arrivalAddressCode;
 
         order.arrivalDetailAddress = arrivalDetailAddress;
+
+        order.storeAddressCode = storeAddressCode;
+
+        order.storeDetailAddress = storeDetailAddress;
 
         order.totalQuantity = calculateTotalQuantity(orderProducts);
 

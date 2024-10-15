@@ -1,8 +1,8 @@
-package com.webest.order.infrastructure.client;
+package com.webest.order.infrastructure.client.user;
 
-import com.webest.order.domain.service.UserService;
+import com.webest.order.infrastructure.client.user.dto.UserResponse;
 import com.webest.order.infrastructure.configuration.UserFeignClientConfig;
-import com.webest.order.presentation.response.UserResponse;
+import com.webest.web.response.CommonResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
         configuration = UserFeignClientConfig.class,
         fallbackFactory = UserFallbackFactory.class
 )
-public interface UserClient extends UserService {
+public interface UserClient{
 
     @GetMapping("/api/users/myPage")
-    UserResponse getUser(@RequestHeader("X-UserId") String userId);
+    CommonResponse<UserResponse> getUser(
+            @RequestHeader("X-UserId") String userId
+    );
 
 }

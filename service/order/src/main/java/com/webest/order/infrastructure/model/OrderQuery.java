@@ -72,6 +72,10 @@ public class OrderQuery extends BaseDocument {
                                     Boolean isRequest,
                                     String requestsToStore,
                                     String requestsToRider,
+                                    Long storeAddressCode,
+                                    String storeDetailAddress,
+                                    Long arrivalAddressCode,
+                                    String arrivalDetailAddress,
                                     Integer totalQuantity,
                                     Double totalProductPrice,
                                     Double couponAppliedAmount,
@@ -90,6 +94,10 @@ public class OrderQuery extends BaseDocument {
         orderQuery.isRequest = isRequest;
         orderQuery.requestsToStore = requestsToStore;
         orderQuery.requestsToRider = requestsToRider;
+        orderQuery.storeAddressCode = storeAddressCode;
+        orderQuery.storeDetailAddress = storeDetailAddress;
+        orderQuery.arrivalAddressCode = arrivalAddressCode;
+        orderQuery.arrivalDetailAddress = arrivalDetailAddress;
         orderQuery.totalQuantity = totalQuantity;
         orderQuery.totalProductPrice = totalProductPrice;
         orderQuery.couponAppliedAmount = couponAppliedAmount;
