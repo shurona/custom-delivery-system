@@ -1,19 +1,21 @@
 package com.webest.auth.presentation.controller;
 
 import com.webest.auth.application.AuthService;
+import com.webest.auth.application.KakaoService;
 import com.webest.auth.infrastructure.email.MailSendService;
 import com.webest.auth.infrastructure.email.dto.EmailCheckDto;
 import com.webest.auth.infrastructure.email.dto.EmailRequest;
+import com.webest.auth.presentation.dto.request.RefreshRequest;
 import com.webest.auth.presentation.dto.request.RiderCreateRequestDto;
 import com.webest.auth.presentation.dto.request.UserJoinRequest;
 import com.webest.auth.presentation.dto.response.JoinResponse;
 import com.webest.web.response.CommonResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -22,6 +24,13 @@ public class AuthController {
 
     private final AuthService authService;
     private final MailSendService mailService;
+    private final KakaoService kakaoService;
+
+    @Value("${kakao.client_id}")
+    private String client_id;
+
+    @Value("${kakao.redirect_uri}")
+    private String redirect_uri;
 
     // 회원 가입
     @PostMapping("/signUp")
@@ -56,5 +65,27 @@ public class AuthController {
         else{
             throw new NullPointerException("인증 정보가 잘 못 되었습니다 다시 인증해주세요");
         }
+    }
+
+    // Access Token 만료시 해당 로직 실행
+    @PostMapping("/refresh")
+    public void refreshToken(@RequestBody RefreshRequest request, HttpServletResponse response) {
+        String accessToken = authService.refreshToken(request);
+
+        response.addHeader("Authorization", "Bearer " + accessToken);
+    }
+
+    // 로그아웃
+    @GetMapping("/logout/{userId}")
+    public CommonResponse<String> logout(@PathVariable(name = "userId") String userId){
+        authService.logout(userId);
+        return CommonResponse.success(userId + "의 유저가 로그아웃되었습니다.");
+    }
+
+    // kakao login
+    @GetMapping("/kakao/callback")
+    public CommonResponse<?> callback(@RequestParam("code") String code) {
+        String accessToken = kakaoService.getAccessTokenFromKakao(code);
+        return CommonResponse.success("success");
     }
 }

@@ -29,7 +29,7 @@ public class Store extends BaseEntity {
     @Column(nullable = false)
     private String name; // 가게 이름
 
-    private Long ownerId; // 가게 주인 ID
+    private String ownerId; // 가게 주인 ID
 
     private Long categoryId; // 카테고리 ID, FK
 
@@ -53,8 +53,6 @@ public class Store extends BaseEntity {
 
     private Double longitude; // 경도
 
-    private Double deliveryRadius; // 배달 반경
-
     private Double deliveryTip; // 배달팁
 
     @ElementCollection
@@ -62,7 +60,7 @@ public class Store extends BaseEntity {
     @Column(name = "address_code")
     private List<Long> addressCodeList = new ArrayList<>();
 
-    public static Store of(String name, Long ownerId, Long categoryId, Integer preparationTime, Double minimumOrderAmount, String phone, LocalTime openTime, LocalTime closeTime) {
+    public static Store of(String name, String ownerId, Long categoryId, Integer preparationTime, Double minimumOrderAmount, String phone, LocalTime openTime, LocalTime closeTime, Double deliveryTip) {
         Store store = new Store();
         store.name = name;
         store.ownerId = ownerId;
@@ -73,6 +71,7 @@ public class Store extends BaseEntity {
         store.phone = phone;
         store.openTime = openTime;
         store.closeTime = closeTime;
+        store.deliveryTip = deliveryTip;
         return store;
     }
 

@@ -15,7 +15,9 @@ public record UserDto(
         String city,
         String street,
         String district,
-        String detailAddress
+        String detailAddress,
+        double latitude,
+        double longitude
 ) {
 
 
@@ -31,7 +33,7 @@ public record UserDto(
     }
 
     // JoinRequest -> AuthDto
-    public static UserDto from(UserJoinRequest request, String pw, Long code) {
+    public static UserDto from(UserJoinRequest request, String pw, Long code, double latitude,double longitude ) {
         return new UserDto(
                 request.userId(),
                 pw,
@@ -43,7 +45,9 @@ public record UserDto(
                 request.city(),
                 request.street(),
                 request.district(),
-                request.detailAddress()
+                request.detailAddress(),
+                latitude,
+                longitude
         );
     }
 

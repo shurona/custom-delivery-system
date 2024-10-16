@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.UUID;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@SQLRestriction("is_deleted = false")
 public class Auth extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -58,6 +60,7 @@ public class Auth extends BaseEntity {
     // Auth -> Dto
     public AuthDto to(){
         return new AuthDto(
+                this.id,
                 this.userId,
                 this.password,
                 this.userName,

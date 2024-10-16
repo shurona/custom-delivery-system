@@ -11,5 +11,5 @@ public interface CouponQueryRepository {
 
     Page<Coupon> findCouponListByQuery(CouponSearchCondition condition, Pageable pageable);
 
-    List<CouponByUserDto> findCouponListByUserId(Long userId, Boolean used);
+    List<CouponByUserDto> findCouponListByUserId(String userId, Boolean used);
 }

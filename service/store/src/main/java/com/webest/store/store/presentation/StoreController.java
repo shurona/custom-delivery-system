@@ -20,15 +20,25 @@ public class StoreController {
 
     // 가게 생성
     @PostMapping
-    public CommonResponse<StoreResponse> saveStore(@RequestBody CreateStoreRequest request) {
-        StoreResponse response = storeService.saveStore(request);
+    public CommonResponse<StoreResponse> saveStore(
+            @RequestBody CreateStoreRequest request,
+            @RequestHeader("X-UserId") String userId,
+            @RequestHeader("X-Role") String role
+            ) {
+        UserRole userRole = UserRole.valueOf(role);
+        StoreResponse response = storeService.saveStore(request, userId, userRole);
         return CommonResponse.success(response);
     }
 
     // 가게 주소 등록
     @PutMapping("/address")
-    public CommonResponse<StoreResponse> updateStoreAddress(@RequestBody UpdateStoreAddressRequest request) {
-        StoreResponse response = storeService.updateStoreAddress(request);
+    public CommonResponse<StoreResponse> updateStoreAddress(
+            @RequestBody UpdateStoreAddressRequest request,
+            @RequestHeader("X-UserId") String userId,
+            @RequestHeader("X-Role") String role
+    ) {
+        UserRole userRole = UserRole.valueOf(role);
+        StoreResponse response = storeService.updateStoreAddress(request, userId, userRole);
         return CommonResponse.success(response);
     }
 
@@ -90,8 +100,14 @@ public class StoreController {
 
     // 가게 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStore(@PathVariable("id") Long id) {
-        storeService.deleteStore(id);
+    public ResponseEntity<Void> deleteStore(
+            @PathVariable("id") Long id,
+            @RequestHeader("X-UserId") String userId,
+            @RequestHeader("X-Role") String role
+    ) {
+
+        UserRole userRole = UserRole.valueOf(role);
+        storeService.deleteStore(id, userId, userRole);
         return ResponseEntity.noContent().build();
     }
 

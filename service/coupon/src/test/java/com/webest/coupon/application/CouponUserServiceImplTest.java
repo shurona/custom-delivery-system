@@ -74,7 +74,8 @@ class CouponUserServiceImplTest {
                 Long userId = i + 10L;
                 executorService.submit(() -> {
                     try {
-                        boolean output = couponUserService.issueCouponToUser(couponId, userId);
+                        boolean output = couponUserService.issueCouponToUser(couponId,
+                            String.valueOf(userId));
                     } catch (Exception e) {
                         failureCount.incrementAndGet();
                         System.out.println("에러 발생 : " + userId + " : " + e);
@@ -112,7 +113,8 @@ class CouponUserServiceImplTest {
                 Long userId = i + 10L;
                 executorService.submit(() -> {
                     try {
-                        boolean output = couponUserService.issueCouponToUser(couponId, userId);
+                        boolean output = couponUserService.issueCouponToUser(couponId,
+                            String.valueOf(userId));
                     } catch (Exception e) {
                         failureCount.incrementAndGet();
                         System.out.println("에러 발생 : " + userId + " : " + e);

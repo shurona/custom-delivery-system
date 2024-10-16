@@ -1,31 +1,50 @@
 package com.webest.auth.infrastructure.redis;
 
+import com.webest.auth.domain.model.vo.RefreshTokenDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
-@Service
-@RequiredArgsConstructor
+@Component
 public class RedisUtil {
-    private final StringRedisTemplate redisTemplate;//Redis에 접근하기 위한 Spring의 Redis 템플릿 클래스
 
-    public String getData(String key){//지정된 키(key)에 해당하는 데이터를 Redis에서 가져오는 메서드
-        ValueOperations<String,String> valueOperations=redisTemplate.opsForValue();
-        return valueOperations.get(key);
+    private final RedisTemplate<String, RefreshTokenDto> refreshTokenRedisTemplate;
+    private final RedisTemplate<String, String> stringRedisTemplate;
+
+    private static final String TOKEN_PREFIX = "refresh_token:";
+
+    public RedisUtil(@Qualifier("customStringRedisTemplate") RedisTemplate<String, String> stringRedisTemplate,
+                     @Qualifier("customRefreshTokenRedisTemplate") RedisTemplate<String, RefreshTokenDto> refreshTokenRedisTemplate) {
+        this.stringRedisTemplate = stringRedisTemplate;
+        this.refreshTokenRedisTemplate = refreshTokenRedisTemplate;
     }
-    public void setData(String key,String value){//지정된 키(key)에 값을 저장하는 메서드
-        ValueOperations<String,String> valueOperations=redisTemplate.opsForValue();
-        valueOperations.set(key,value);
+
+    public Object getData(String key){//지정된 키(key)에 해당하는 데이터를 Redis에서 가져오는 메서드
+        stringRedisTemplate.opsForValue().get(key);
+        return stringRedisTemplate.opsForValue().get(key);
     }
+
+    // email 전용
     public void setDataExpire(String key,String value,long duration){//지정된 키(key)에 값을 저장하고, 지정된 시간(duration) 후에 데이터가 만료되도록 설정하는 메서드
-        ValueOperations<String,String> valueOperations=redisTemplate.opsForValue();
         Duration expireDuration=Duration.ofSeconds(duration);
-        valueOperations.set(key,value,expireDuration);
+        stringRedisTemplate.opsForValue().set(key,value,expireDuration);
     }
-    public void deleteData(String key){//지정된 키(key)에 해당하는 데이터를 Redis에서 삭제하는 메서드
-        redisTemplate.delete(key);
+
+    // RefreshToken 전용
+    public void setDataRefreshToken(RefreshTokenDto dto){//key - 유저 데이터,value - refreshToken 지정된 시간(duration) 후에 데이터가 만료되도록 설정하는 메서드
+        String key = TOKEN_PREFIX + dto.userId();
+        // 만료시간 1시간
+        refreshTokenRedisTemplate.opsForValue().set(key,dto,1, TimeUnit.HOURS);
+    }
+
+    // RefreshToken 전용
+    public RefreshTokenDto getRefreshToken(String userId) {
+        String key = TOKEN_PREFIX + userId;
+        return (RefreshTokenDto) refreshTokenRedisTemplate.opsForValue().get(key);
     }
 }

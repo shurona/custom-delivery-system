@@ -33,3 +33,12 @@ eureka:
   client:
     service-url:
       defaultZone: ${EUREKA_SERVER_URL}
+  instance:
+    prefer-ip-address: true
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /delivery-service/v3/api-docs
+  swagger-ui:
+    path: /delivery-service/swagger-ui.html

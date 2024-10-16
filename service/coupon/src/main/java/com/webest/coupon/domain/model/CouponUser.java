@@ -32,7 +32,7 @@ public class CouponUser {
     private Long couponUserId;
 
     @Column(name = "user_id")
-    private Long userId;
+    private String userId;
 
     @Column
     @ColumnDefault(value = "0")
@@ -45,7 +45,7 @@ public class CouponUser {
 
     @CreatedBy
     @Column(updatable = false)
-    private Long createdBy;
+    private String createdBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_id")
@@ -58,7 +58,7 @@ public class CouponUser {
     private LocalDateTime usedTime;
 
     public static CouponUser from(
-        Long userId, Coupon coupon, LocalDateTime expiredTime) {
+        String userId, Coupon coupon, LocalDateTime expiredTime) {
         CouponUser couponUser = new CouponUser();
         couponUser.coupon = coupon;
         couponUser.userId = userId;

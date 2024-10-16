@@ -14,6 +14,7 @@ import com.webest.store.store.exception.StoreException;
 import com.webest.store.store.infrastructure.naver.NaverGeoClient;
 import com.webest.store.store.infrastructure.naver.dto.GeoResponse;
 import com.webest.store.store.infrastructure.naver.dto.NaverAddress;
+import com.webest.web.common.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,18 +41,26 @@ public class StoreService {
     private final GeoOperation geoOperation;
 
     // 가게 생성
-    // 가게 주소, 위경도, 배달 반경, 배달 팁은 생성 시 설정하지 않고 따로 업데이트
+    // 가게 주소, 위경도는 생성 시 설정하지 않고 따로 업데이트
     @Transactional
-    public StoreResponse saveStore(CreateStoreRequest request) {
-        Store store = request.toEntity();
+    public StoreResponse saveStore(CreateStoreRequest request, String userId, UserRole role) {
+
+        if (role != UserRole.MASTER && role != UserRole.OWNER) {
+            throw new StoreException(StoreErrorCode.UNAUTHORIZED_ACCESS);
+        }
+
+        Store store = request.toEntity(userId);
         storeRepository.save(store);
         return updateStoreCache(store);
     }
 
     // 가게 주소 등록
     @Transactional
-    public StoreResponse updateStoreAddress(UpdateStoreAddressRequest request) {
+    public StoreResponse updateStoreAddress(UpdateStoreAddressRequest request, String userId, UserRole role) {
         Store store = findStoreById(request.storeId());
+
+        // 권한 검증
+        validatePermission(store, userId, role);
 
         // 주소로 법정동 코드 받아오기
         AddressDto addressDto = readAddressCsv.findAddressByDistrict(request.city(), request.street(), request.district());
@@ -128,8 +137,11 @@ public class StoreService {
 
     // 가게 삭제
     @Transactional
-    public void deleteStore(Long id) {
-        Store store = findStoreById(id);
+    public void deleteStore(Long storeId, String userId, UserRole role) {
+        Store store = findStoreById(storeId);
+        // 권한 검증
+        validatePermission(store, userId, role);
+
         storeRepository.delete(store);
         storeCacheService.deleteStoreCache(store.getId());
     }
@@ -174,5 +186,17 @@ public class StoreService {
     // 가게 위치 Geo 업데이트 메서드
     private void updateLocationToGeoCache(Store store) {
         geoOperation.add(store.getLongitude(), store.getLatitude(), String.valueOf(store.getId()));
+    }
+
+    // 권한 검증 메서드
+    private void validatePermission(Store store, String userId, UserRole role) {
+        if (role == UserRole.OWNER) {
+            // OWNER일 경우 가게 주인 여부 확인
+            if (!store.getOwnerId().equals(userId)) {
+                throw new StoreException(StoreErrorCode.UNAUTHORIZED_ACCESS);  // 권한 없는 경우 예외 처리
+            }
+        } else if (role == UserRole.USER) {
+            throw new StoreException(StoreErrorCode.UNAUTHORIZED_ACCESS);
+        }
     }
 }

@@ -1,6 +1,8 @@
 package com.webest.auth.infrastructure.config;
 
 import com.webest.auth.application.AuthService;
+import com.webest.auth.application.JwtTokenService;
+import com.webest.auth.infrastructure.redis.RedisUtil;
 import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,9 +30,9 @@ import java.util.function.Supplier;
 public class WebSecurityConfig{
 
     private final AuthService authService;
+    private final RedisUtil redisUtil;
+    private final JwtTokenService jwtTokenService;
 
-    @Value("${token.secret-key}")
-    private String secretKey ;
 
     @Value("${token.expiration-time}")
     private String tokenTime;
@@ -58,7 +60,13 @@ public class WebSecurityConfig{
         http
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
 //                        .requestMatchers(new AntPathRequestMatcher("/api/users/{userId}")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/**"))
+                        .permitAll()
+                        .requestMatchers(
+                            "/auth-service/v3/api-docs/**"
+                            , "/auth-service/swagger-ui.html"
+                            , "/auth-service/swagger-ui/**")
+                        .permitAll() // swagger 설정
 //                        .access(new WebExpressionAuthorizationManager("hasIpAddress('172.30.1.57')"))
 //                        .anyRequest().authenticated()
                 )
@@ -83,7 +91,7 @@ public class WebSecurityConfig{
     }
 
     private Filter getAuthenticationFilter(AuthenticationManager authenticationManager) {
-        return new AuthenticationFilter(authenticationManager,authService,secretKey,tokenTime);
+        return new AuthenticationFilter(authenticationManager,authService,tokenTime,redisUtil,jwtTokenService);
     }
 
 }
