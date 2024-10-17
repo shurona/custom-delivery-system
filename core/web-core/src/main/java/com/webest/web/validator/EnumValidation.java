@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 public @interface EnumValidation {
 
-    String message() default "{invalid.enum.value}}";
+    String message() default "{invalid.enum.value}";
 
     Class<?>[] groups() default {};
 

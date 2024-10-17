@@ -21,8 +21,7 @@ public class EnumValidator implements ConstraintValidator<EnumValidation, String
         }
 
         Enum<?>[] enumConstants = this.validation.target().getEnumConstants();
-        System.out.println(input + " " + Arrays.toString(enumConstants));
-
+        
         boolean contains = Arrays.stream(enumConstants).map(Enum::name)
             .anyMatch(name -> name.equals(input));
 

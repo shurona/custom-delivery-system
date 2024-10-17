@@ -92,8 +92,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<? extends CommonResponse<?>> handleNoResourceFoundException(
         NoResourceFoundException exception
     ) {
-        System.out.println("멈춰!");
-
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(CommonResponse.error(INVALID_INPUT.getStatus(),
