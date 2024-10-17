@@ -33,16 +33,32 @@ public class CouponUserController {
     private final CouponUserService couponUserService;
 
     /**
-     * 유저 소유한 쿠폰 목록 조회
+     * 유저 소유한 쿠폰 목록 조회 (자기 자신만 조회 가능)
      */
-    @GetMapping("/users/{userId}")
+    @GetMapping("/users")
     public CommonResponse<List<CouponByUserResponseDto>> findCouponByUserId(
-        @PathVariable("userId") String userId,
         @RequestHeader(name = CommonStaticVariable.X_USER_ID) String xUserId,
         @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
         @RequestParam(value = "used", required = false) Boolean used
     ) {
-        checkRequestUserIsSame(userRole, userId, xUserId);
+        List<CouponByUserResponseDto> couponListByUser = couponUserService.findCouponListByUser(
+            xUserId, used);
+
+        return CommonResponse.success(couponListByUser);
+    }
+
+    /**
+     * 마스터가 유저 선택해서 보유 쿠폰 조회 (마스터만 가능)
+     */
+    @GetMapping("/users/{userId}")
+    public CommonResponse<List<CouponByUserResponseDto>> findCouponByUserIdWithAdmin(
+        @PathVariable("userId") String userId,
+        @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
+        @RequestParam(value = "used", required = false) Boolean used
+    ) {
+        if (!userRole.equals(UserRole.MASTER)) {
+            throw new CouponException(CouponErrorCode.NOT_ADMIN);
+        }
 
         List<CouponByUserResponseDto> couponListByUser = couponUserService.findCouponListByUser(
             userId, used);
@@ -147,7 +163,7 @@ public class CouponUserController {
 
         // 요청 유저와 수행 유저가 다름.
         if (!Objects.equals(userId, xUserId)) {
-            throw new CouponException(CouponErrorCode.FORBIDDEN_INPUT);
+            throw new CouponException(CouponErrorCode.NOT_SELF_USER);
         }
     }
 
