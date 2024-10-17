@@ -73,10 +73,10 @@ public class CouponUserServiceImpl implements CouponUserService {
     @RedissonLock(value = "#couponId")
     @Transactional
     public boolean issueCouponToUser(Long couponId, String userId) {
-        Coupon coupon = couponByIdWithLockAndCheck(couponId);
-
         // user가 존재하는 지 확인한다.
         userClient.findUserById(userId);
+
+        Coupon coupon = couponByIdWithLockAndCheck(couponId);
 
         // 쿠폰 발급이 가능한지 확인한다.
         couponDomainService.checkIssueCouponCondition(coupon);
@@ -92,6 +92,9 @@ public class CouponUserServiceImpl implements CouponUserService {
 
     @Override
     public boolean issueCouponWithQueue(Long couponId, String userId) {
+        // user가 존재하는 지 확인한다.
+        userClient.findUserById(userId);
+
         Coupon coupon = couponByIdWithLockAndCheck(couponId);
         // 현재 쿠폰이 열려있는지 확인한다.
         checkCouponIsOpen(coupon);
@@ -117,7 +120,6 @@ public class CouponUserServiceImpl implements CouponUserService {
     @Transactional
     @Override
     public boolean useCouponByUser(Long userCouponId, Long couponId, String userId) {
-
         // user가 존재하는 지 확인한다.
         userClient.findUserById(userId);
 

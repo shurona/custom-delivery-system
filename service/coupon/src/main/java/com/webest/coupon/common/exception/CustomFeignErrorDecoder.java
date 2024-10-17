@@ -18,7 +18,7 @@ public class CustomFeignErrorDecoder implements ErrorDecoder {
         switch (status) {
             case BAD_REQUEST:
             case NOT_FOUND:
-                return new CouponException(CouponErrorCode.INVALID_INPUT);
+                return new CouponException(CouponErrorCode.USER_NOT_FOUND);
             case INTERNAL_SERVER_ERROR: // todo: 이 부분 외부 노출 고민
                 return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "서버 오류가 발생했습니다.");
