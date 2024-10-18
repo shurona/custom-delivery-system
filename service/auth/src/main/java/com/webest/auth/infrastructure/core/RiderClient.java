@@ -16,5 +16,6 @@ public interface RiderClient {
     Long createRider(@Validated @RequestBody RiderCreateRequestDto requestDto);
 
     @PostMapping("/internal/api/v1/riders/sign-in")
-    CommonResponse<RiderResponseDto> authRider(@Validated @RequestBody RiderAuthRequestDto requestDto);
+    CommonResponse<RiderResponseDto> authRider(
+        @Validated @RequestBody RiderAuthRequestDto requestDto);
 }
