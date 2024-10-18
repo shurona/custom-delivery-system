@@ -12,13 +12,9 @@ import com.webest.auth.infrastructure.core.RiderClient;
 import com.webest.auth.infrastructure.core.UserClient;
 import com.webest.auth.infrastructure.redis.RedisUtil;
 import com.webest.auth.presentation.dto.request.RefreshRequest;
-import com.webest.auth.presentation.dto.request.RiderCreateRequestDto;
+import com.webest.auth.presentation.dto.request.rider.RiderCreateRequestDto;
 import com.webest.auth.presentation.dto.request.UserJoinRequest;
 import com.webest.auth.presentation.dto.response.JoinResponse;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,10 +22,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ServerWebExchange;
 
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -71,7 +65,8 @@ public class AuthServiceImpl implements AuthService {
 
             // 입력받은 refresh토큰과 redis에 저장된 토큰이 같다면(refresh 토큰 탈취 방지)
             if(request.refreshToken().equals(dto.token())){
-                return jwtTokenService.createToken(userDetails,Long.parseLong(tokenTime));
+                return jwtTokenService.createToken(userDetails.userId(), userDetails.role(),
+                    Long.parseLong(tokenTime));
             }else{
                 // TODO :: 강제 로그아웃 기능 추가
                 throw new AuthException(AuthErrorCode.INVALID_REFRESH_TOKEN);
