@@ -1,4 +1,4 @@
-package com.webest.auth.presentation.dto.request.rider;
+package com.webest.auth.infrastructure.core.dto;
 
 import com.webest.auth.domain.model.RiderTransportation;
 import java.time.LocalDateTime;

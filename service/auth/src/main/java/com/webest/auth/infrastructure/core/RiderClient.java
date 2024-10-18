@@ -1,8 +1,8 @@
 package com.webest.auth.infrastructure.core;
 
+import com.webest.auth.infrastructure.core.dto.RiderResponseDto;
 import com.webest.auth.presentation.dto.request.rider.RiderAuthRequestDto;
 import com.webest.auth.presentation.dto.request.rider.RiderCreateRequestDto;
-import com.webest.auth.presentation.dto.request.rider.RiderResponseDto;
 import com.webest.web.response.CommonResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.annotation.Validated;
