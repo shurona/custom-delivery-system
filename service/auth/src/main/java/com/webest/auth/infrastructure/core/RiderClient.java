@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface RiderClient {
 
     @PostMapping("/api/v1/riders")
-    Long createRider(@Validated @RequestBody RiderCreateRequestDto requestDto);
+    CommonResponse<String> createRider(@Validated @RequestBody RiderCreateRequestDto requestDto);
 
     @PostMapping("/internal/api/v1/riders/sign-in")
     CommonResponse<RiderResponseDto> authRider(

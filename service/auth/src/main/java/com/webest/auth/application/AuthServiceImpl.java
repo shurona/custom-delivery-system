@@ -15,8 +15,10 @@ import com.webest.auth.presentation.dto.request.RefreshRequest;
 import com.webest.auth.presentation.dto.request.rider.RiderCreateRequestDto;
 import com.webest.auth.presentation.dto.request.UserJoinRequest;
 import com.webest.auth.presentation.dto.response.JoinResponse;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -49,9 +52,18 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Long createRider(RiderCreateRequestDto requestDto) {
-        Long riderId = riderClient.createRider(requestDto);
-        return riderId;
+    public String createRider(RiderCreateRequestDto requestDto) {
+        try {
+            return riderClient.createRider(requestDto).getData();
+        } catch (Exception e) {
+            if (e instanceof FeignException.NotFound) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            } else if (e instanceof FeignException.BadRequest) {
+                throw new AuthException(AuthErrorCode.EXIST_USER);
+            } else {
+                throw e;
+            }
+        }
     }
 
     // 토큰 재발행

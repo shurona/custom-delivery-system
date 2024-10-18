@@ -45,8 +45,9 @@ public class AuthController {
 
     // 라이더 회원 가입
     @PostMapping("/riderSignUp")
-    public CommonResponse<Long> createRider(@RequestBody @Valid RiderCreateRequestDto requestDto) {
-        Long riderId = authService.createRider(requestDto);
+    public CommonResponse<String> createRider(
+        @RequestBody @Valid RiderCreateRequestDto requestDto) {
+        String riderId = authService.createRider(requestDto);
 
         return CommonResponse.success(riderId);
     }
