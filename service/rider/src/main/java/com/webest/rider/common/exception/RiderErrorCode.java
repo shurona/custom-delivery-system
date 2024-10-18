@@ -15,6 +15,11 @@ public enum RiderErrorCode {
     EXIST_PHONE_NUMBER(HttpStatus.BAD_REQUEST, "이미 존재하는 휴대전화입니다."),
     EXIST_USER_ID(HttpStatus.BAD_REQUEST, "이미 존재하는 유저아이디 입니다."),
 
+    // 403
+    NOT_ADMIN(HttpStatus.FORBIDDEN, "권한이 없습니다.."),
+    NOT_RIDER(HttpStatus.FORBIDDEN, "라이더만 접근 가능합니다."),
+    NOT_SELF_USER(HttpStatus.FORBIDDEN, "자기 자신의 정보만 조회 가능합니다."),
+
 
     // 404
     RIDER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 라이더 정보입니다."),
