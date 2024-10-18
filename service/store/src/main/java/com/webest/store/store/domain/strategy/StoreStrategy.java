@@ -11,7 +11,7 @@ public interface StoreStrategy {
     List<StoreResponse> getDeliveryStores(String userId);
 
     // 포장 상점 조회
-    List<StoreResponse> getTakeOutStores(String userId);
+    List<StoreResponse> getTakeOutStores(String userId, Double radius);
 
     boolean checkUserRole(UserRole role);
 }

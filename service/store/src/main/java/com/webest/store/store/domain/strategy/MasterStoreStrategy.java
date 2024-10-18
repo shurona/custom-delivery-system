@@ -25,7 +25,7 @@ public class MasterStoreStrategy implements StoreStrategy {
     }
 
     @Override
-    public List<StoreResponse> getTakeOutStores(String userId) {
+    public List<StoreResponse> getTakeOutStores(String userId, Double radius) {
         List<Store> stores = storeRepository.findAll();
         return stores.stream()
                 .map(StoreResponse::of)
