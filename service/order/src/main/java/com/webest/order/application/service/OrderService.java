@@ -1,6 +1,7 @@
 package com.webest.order.application.service;
 
 import com.webest.order.application.dtos.OrderDto;
+import com.webest.order.application.dtos.OrderProductDto;
 import com.webest.order.application.dtos.OrderSearchDto;
 import com.webest.order.application.dtos.OrderUpdateDto;
 import com.webest.order.domain.events.OrderPaymentCompletedEvent;
@@ -10,8 +11,11 @@ import com.webest.order.domain.model.Order;
 import com.webest.order.domain.model.OrderProduct;
 import com.webest.order.domain.model.OrderStatus;
 import com.webest.order.domain.repository.order.OrderRepository;
+import com.webest.order.domain.service.OrderProductDomainService;
 import com.webest.order.domain.service.StoreService;
 import com.webest.order.domain.service.UserService;
+import com.webest.order.domain.validator.OrderProductValidator;
+import com.webest.order.infrastructure.client.store.dto.ProductResponse;
 import com.webest.order.infrastructure.client.user.UserClient;
 import com.webest.order.presentation.response.OrderResponse;
 import com.webest.order.infrastructure.client.store.dto.StoreResponse;
@@ -21,9 +25,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +43,12 @@ public class OrderService {
     private final OrderProductService orderProductService;
 
     private final UserService userService;
+
     private final StoreService storeService;
+
+    private final OrderProductValidator orderProductValidator;
+
+    private final OrderProductDomainService orderProductDomainService;
 
     /**
      * 주문 생성
@@ -47,15 +59,24 @@ public class OrderService {
     public OrderResponse createOrder(String userId, UserRole userRole, OrderDto request) {
 
 
-
+        // 유저 정보 가져오기 (유저 주소값)
         UserResponse userResponse = userService.getUser(userId);
 
+        // 상점 정보 가져오기 (상점 주소값)
         StoreResponse storeResponse = storeService.getStore(request.storeId());
 
+        // 상점아이디로 존재하는 상품 검색
+        Page<ProductResponse> productResponse = storeService.getProductsByStore(request.storeId(), Pageable.unpaged());
+
+        // 상점에 포함된 상품만 요청가능하게 validate
+        orderProductValidator.validateProductExistence(productResponse, request);
 
         // 주문 상품 create
         List<OrderProduct> orderProducts =
-                orderProductService.createOrderProduct(request.orderProductDtos());
+                orderProductDomainService.createOrderProduct(request);
+
+        // coupon 적용
+
 
         Order order = Order.create(
                 request.storeId(),
@@ -273,6 +294,23 @@ public class OrderService {
         }).orElseThrow(() -> new OrderException(ErrorCode.ORDER_NOT_FOUND));
 
     }
+
+    @Transactional
+    public OrderResponse rollbackOrder(Long orderId) {
+
+        return orderRepository.findById(orderId).map(order -> {
+
+            // 롤백 되면 주문상태가 준비중으로 바뀜
+            order.preparing();
+
+            // 주문이 롤백 되었을 때 이벤트 발행
+            orderEventService.publishOrderRollbackEvent(order.rollbackEvent());
+
+            return OrderResponse.of(order);
+        }).orElseThrow(() -> new OrderException(ErrorCode.ORDER_NOT_FOUND));
+
+    }
+
 
 
 }
