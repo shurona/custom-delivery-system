@@ -93,7 +93,6 @@ public class RiderServiceImpl implements RiderService {
 
         // 안맞으면 에러
         if (!passwordEncoder.matches(password, rider.getPassword())) {
-            System.out.println(password);
             throw new RiderException(RiderErrorCode.INVALID_PASSWORD);
         }
 
@@ -132,7 +131,7 @@ public class RiderServiceImpl implements RiderService {
     public RiderResponseDto updateRiderById(String userId, RiderUpdateRequestDto requestDto) {
 
         Rider rider = findRiderByUserIdAndCheck(userId);
-        rider.updateRiderInfo(requestDto.transportation());
+        rider.updateRiderInfo(RiderTransportation.valueOf(requestDto.transportation()));
 
         return RiderResponseDto.from(rider);
     }
