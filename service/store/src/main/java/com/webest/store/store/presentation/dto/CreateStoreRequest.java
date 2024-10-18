@@ -15,8 +15,8 @@ public record CreateStoreRequest(
         @NotNull(message = "최소 주문 금액을 입력해주세요.")
         @DecimalMin(value = "0.0", inclusive = false, message = "최소 주문 금액은 0보다 커야 합니다.")
         Double minimumOrderAmount,
-        @NotBlank(message = "전화번호를 입력해주세요.")
-        @Pattern(regexp = "^(\\+\\d{1,3}[- ]?)?\\d{10}$", message = "잘못된 전화번호 형식입니다.")
+        @NotBlank(message = "")
+        @Pattern(regexp = "^\\d{2,3}-\\d{3,4}-\\d{4}$", message = "전화번호를 xx-xxxx-xxxx 형식으로입력해주세요.")
         String phone,
         LocalTime openTime,
         LocalTime closeTime,
