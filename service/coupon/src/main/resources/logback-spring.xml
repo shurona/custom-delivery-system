@@ -27,7 +27,7 @@
     <param name="Encoding" value="UTF-8"/>
   </appender>
   <springProfile name="dev">
-    <root level="INFO">
+    <root level="WARN">
       <appender-ref ref="CONSOLE"/>
       <appender-ref ref="LOGSTASH"/>
     </root>
