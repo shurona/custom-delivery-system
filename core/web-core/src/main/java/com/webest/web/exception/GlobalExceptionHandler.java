@@ -94,7 +94,7 @@ public class GlobalExceptionHandler {
         HttpRequestMethodNotSupportedException.class
     })
     public ResponseEntity<? extends CommonResponse<?>> handleNoResourceFoundException(
-        NoResourceFoundException exception
+        Exception exception
     ) {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)

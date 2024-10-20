@@ -1,6 +1,6 @@
 package com.webest.rider.infrastructure.config;
 
-import static com.webest.rider.common.constant.StaticVariable.DOCS_AUTH_KEY;
+import static com.webest.rider.common.constant.RiderStaticVariable.DOCS_AUTH_KEY;
 import static com.webest.web.common.CommonStaticVariable.SWAGGER_TITLE;
 
 import io.swagger.v3.oas.models.Components;

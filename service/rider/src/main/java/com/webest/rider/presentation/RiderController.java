@@ -1,6 +1,6 @@
 package com.webest.rider.presentation;
 
-import static com.webest.rider.common.constant.StaticVariable.DOCS_AUTH_KEY;
+import static com.webest.rider.common.constant.RiderStaticVariable.DOCS_AUTH_KEY;
 import static com.webest.web.exception.ErrorCode.INVALID_INPUT;
 
 import com.webest.rider.application.RiderService;
