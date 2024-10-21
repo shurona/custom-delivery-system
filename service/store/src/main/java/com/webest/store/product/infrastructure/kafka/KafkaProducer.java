@@ -21,19 +21,12 @@ public class KafkaProducer {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ProductRepository productRepository;
 
-    public CartDto send(Long id,String userId){
+    public String send(Long id,String userId){
         // 제품 검증
-//        Product product = productRepository.findById(id)
-//                .orElseThrow(() -> new ProductException(ProductErrorCode.PRODUCT_NOT_FOUND));
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductException(ProductErrorCode.PRODUCT_NOT_FOUND));
 
-        ProductDto productDto;
-        if(id == 1L){
-            productDto = new ProductDto(1l,2l,"testProduct",100.0,"test");
-        }else if(id == 2L){
-            productDto = new ProductDto(2l,2l,"testProduct2",100.0,"test");
-        }else{
-            productDto = new ProductDto(1l,3l,"testProduct",100.0,"test");
-        }
+        ProductDto productDto = new ProductDto(id,product.getStore().getId(),product.getName(),product.getPrice(),product.getDescription());
 
 
         // cart 객체 생성
@@ -50,6 +43,6 @@ public class KafkaProducer {
         kafkaTemplate.send("cart-topic", jsonInString);
         log.info("Kafka Producer send success :"+cartDto);
 
-        return cartDto;
+        return productDto.name();
     }
 }

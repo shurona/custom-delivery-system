@@ -1,11 +1,8 @@
 package com.webest.store.product.presentation;
 
 import com.webest.store.product.infrastructure.kafka.KafkaProducer;
-import com.webest.store.product.presentation.dto.CreateProductRequest;
-import com.webest.store.product.presentation.dto.ProductResponse;
+import com.webest.store.product.presentation.dto.*;
 import com.webest.store.product.application.ProductService;
-import com.webest.store.product.presentation.dto.UpdateProductDetailsRequest;
-import com.webest.store.product.presentation.dto.UpdateProductStatusRequest;
 import com.webest.web.common.UserRole;
 import com.webest.web.response.CommonResponse;
 import jakarta.validation.Valid;
@@ -92,12 +89,12 @@ public class ProductController {
     }
 
     // 장바구니 추가
-    @GetMapping("/{id}/cart")
+    @PostMapping("/cart")
     public CommonResponse<String> addCart(
-            @PathVariable("id") Long id,
+            @RequestBody CartRequest request,
             @RequestHeader("X-UserId") String userId){
-        kafkaProducer.send(id,userId);
+        String name = kafkaProducer.send(request.productId(),userId);
 
-        return CommonResponse.success(id+"제품이 장바구니에 추가되었습니다");
+        return CommonResponse.success(name+"제품이 장바구니에 추가되었습니다");
     }
 }
