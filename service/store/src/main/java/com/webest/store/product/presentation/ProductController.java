@@ -1,5 +1,6 @@
 package com.webest.store.product.presentation;
 
+import com.webest.store.product.infrastructure.kafka.KafkaProducer;
 import com.webest.store.product.presentation.dto.CreateProductRequest;
 import com.webest.store.product.presentation.dto.ProductResponse;
 import com.webest.store.product.application.ProductService;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
 
     private final ProductService productService;
-
+    private final KafkaProducer kafkaProducer;
     // 상품 생성
     @PostMapping
     public CommonResponse<ProductResponse> saveProduct(
@@ -88,5 +89,15 @@ public class ProductController {
         UserRole userRole = UserRole.valueOf(role);
         productService.deleteProduct(id, userId, userRole);
         return CommonResponse.success(id);
+    }
+
+    // 장바구니 추가
+    @GetMapping("/{id}/cart")
+    public CommonResponse<String> addCart(
+            @PathVariable("id") Long id,
+            @RequestHeader("X-UserId") String userId){
+        kafkaProducer.send(id,userId);
+
+        return CommonResponse.success(id+"제품이 장바구니에 추가되었습니다");
     }
 }
