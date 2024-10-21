@@ -8,6 +8,7 @@ import com.webest.coupon.presentation.dtos.request.CouponUsedRequestDto;
 import com.webest.coupon.presentation.dtos.response.CouponByUserResponseDto;
 import com.webest.coupon.presentation.dtos.response.CouponIssueResponseDto;
 import com.webest.coupon.presentation.dtos.response.CouponOffsetResponseDto;
+import com.webest.coupon.presentation.dtos.response.CouponUserResponseDto;
 import com.webest.web.common.CommonStaticVariable;
 import com.webest.web.common.UserRole;
 import com.webest.web.response.CommonResponse;
@@ -64,6 +65,25 @@ public class CouponUserController {
             userId, used);
 
         return CommonResponse.success(couponListByUser);
+    }
+
+    /**
+     * 유저 쿠폰 단일 조회
+     */
+    @GetMapping("/single/{id}")
+    public CommonResponse<CouponUserResponseDto> findUserCouponById(
+        @PathVariable("id") Long userCouponId,
+        @RequestHeader(name = CommonStaticVariable.X_USER_ID) String userId
+    ) {
+
+        CouponUserResponseDto couponUserInfo = couponUserService.findUserCouponById(
+            userId, userCouponId);
+
+        if (!couponUserInfo.userId().equals(userId)) {
+            throw new CouponException(CouponErrorCode.NOT_OWNED_COUPON);
+        }
+
+        return CommonResponse.success(couponUserInfo);
     }
 
     /**

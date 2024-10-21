@@ -19,6 +19,7 @@ import com.webest.coupon.domain.service.CouponRedisService;
 import com.webest.coupon.mapper.CouponMapper;
 import com.webest.coupon.presentation.dtos.request.CouponKafkaIssueDto;
 import com.webest.coupon.presentation.dtos.response.CouponByUserResponseDto;
+import com.webest.coupon.presentation.dtos.response.CouponUserResponseDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -58,6 +59,17 @@ public class CouponUserServiceImpl implements CouponUserService {
             couponQueryRepository.findCouponListByUserId(userId, used);
 
         return couponMapper.couponByUserDtoToResponseDto(couponListByUserId);
+    }
+
+    @Override
+    public CouponUserResponseDto findUserCouponById(String userId, Long userCouponId) {
+        Coupon couponInfo = findCouponByUserCouponId(userCouponId);
+
+        if (couponInfo.getCouponUserList().isEmpty()) {
+            throw new CouponException(CouponErrorCode.NOT_OWNED_COUPON);
+        }
+
+        return CouponUserResponseDto.from(couponInfo.getCouponUserList().get(0));
     }
 
     @Override
