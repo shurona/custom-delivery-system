@@ -11,10 +11,9 @@ import com.webest.order.domain.model.Order;
 import com.webest.order.domain.model.OrderProduct;
 import com.webest.order.domain.model.OrderStatus;
 import com.webest.order.domain.repository.order.OrderRepository;
-import com.webest.order.domain.service.OrderProductDomainService;
-import com.webest.order.domain.service.StoreService;
-import com.webest.order.domain.service.UserService;
+import com.webest.order.domain.service.*;
 import com.webest.order.domain.validator.OrderProductValidator;
+import com.webest.order.infrastructure.client.coupon.dto.CouponByUserResponseDto;
 import com.webest.order.infrastructure.client.store.dto.ProductResponse;
 import com.webest.order.infrastructure.client.user.UserClient;
 import com.webest.order.presentation.response.OrderResponse;
@@ -50,6 +49,10 @@ public class OrderService {
 
     private final OrderProductDomainService orderProductDomainService;
 
+    private final CouponService couponService;
+
+    private final OrderCouponDomainService orderCouponDomainService;
+
     /**
      * 주문 생성
      * @param request 주문 생성에 필요한 정보를 담은 OrderDto
@@ -76,7 +79,13 @@ public class OrderService {
                 orderProductDomainService.createOrderProduct(request);
 
         // coupon 적용
+        List<CouponByUserResponseDto> couponByUserResponseDtoList =
+                couponService.findCouponByUserId(userId, userRole, false);
 
+        // 사용된 쿠폰 validation
+        orderCouponDomainService.validateCouponUsage(
+                request.couponId(), couponByUserResponseDtoList
+        );
 
         Order order = Order.create(
                 request.storeId(),
@@ -101,7 +110,6 @@ public class OrderService {
 
         // 주문 저장
         orderRepository.save(order);
-
 
         // 주문 생성시 이벤트 발생
         orderEventService.publishOrderCreatedEvent(order.createdEvent());

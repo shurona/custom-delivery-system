@@ -21,19 +21,14 @@ import java.util.List;
 )
 public interface CouponClient {
 
-    @GetMapping("/api/v1/coupons/users/{userId}")
+    /**
+     * 유저 소유한 쿠폰 목록 조회 (자기 자신만 조회 가능)
+     */
+    @GetMapping("/api/v1/coupons/users")
     CommonResponse<List<CouponByUserResponseDto>> findCouponByUserId(
-            @PathVariable("userId") String userId,
             @RequestHeader(name = CommonStaticVariable.X_USER_ID) String xUserId,
             @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
             @RequestParam(value = "used", required = false) Boolean used
-    );
-
-    @PatchMapping("/api/v1/coupons/used")
-    CommonResponse<Boolean> useCoupon(
-            @RequestHeader(name = CommonStaticVariable.X_USER_ID) String xUserId,
-            @RequestHeader(name = CommonStaticVariable.X_USER_ROLE) UserRole userRole,
-            @Validated @RequestBody CouponUsedRequestDto requestDto
     );
 
 }
