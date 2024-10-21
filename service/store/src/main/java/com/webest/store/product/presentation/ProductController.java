@@ -7,6 +7,7 @@ import com.webest.store.product.presentation.dto.UpdateProductDetailsRequest;
 import com.webest.store.product.presentation.dto.UpdateProductStatusRequest;
 import com.webest.web.common.UserRole;
 import com.webest.web.response.CommonResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +24,7 @@ public class ProductController {
     // 상품 생성
     @PostMapping
     public CommonResponse<ProductResponse> saveProduct(
-            @RequestBody CreateProductRequest request,
+            @Valid @RequestBody CreateProductRequest request,
             @RequestHeader("X-UserId") String userId,
             @RequestHeader("X-Role") String role
     ) {
@@ -68,7 +69,7 @@ public class ProductController {
     // 상품 이름, 가격, 설명 변경
     @PutMapping("/details")
     public CommonResponse<ProductResponse> updateDetails(
-            @RequestBody UpdateProductDetailsRequest request,
+            @Valid @RequestBody UpdateProductDetailsRequest request,
             @RequestHeader("X-UserId") String userId,
             @RequestHeader("X-Role") String role
     ) {

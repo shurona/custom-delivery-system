@@ -133,25 +133,29 @@ services:
       - DEV_REDIS_PASSWORD=${DEV_REDIS_PASSWORD}
       - DEV_REDIS_USERNAME=${DEV_REDIS_USERNAME}
       - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+      - LOG_STASH_HOST=${LOG_STASH_HOST}
+      - LOG_STASH_PORT=${LOG_STASH_PORT}
     networks:
       - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
     restart: always
 
-#  rider-service:
-#    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/rider
-#    build: ./service/rider/.
-#    extra_hosts:
-#      - "host.docker.internal:host-gateway"
-#    ports:
-#      - "19099:19099"
-#    environment:
-#      - DB_URL=${DB_URL}
-#      - DB_USERNAME=${DB_USERNAME}
-#      - DB_PASSWORD=${DB_PASSWORD}
-#      - EUREKA_SERVER_URL=${EUREKA_SERVER_URL}
-#    networks:
-#      - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
-#    restart: always
+  rider-service:
+    image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/rider
+    build: ./service/rider/.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "19099:19099"
+    environment:
+      - DB_URL=${DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - EUREKA_SERVER_URL=${EUREKA_SERVER_URL}
+      - LOG_STASH_HOST=${LOG_STASH_HOST}
+      - LOG_STASH_PORT=${LOG_STASH_PORT}
+    networks:
+      - spring-network  # Spring 서버가 기본적으로 사용할 네트워크
+    restart: always
 
   delivery-service:
     image: ${ECR_REGISTRY}/${ECR_NAMESPACE}/delivery

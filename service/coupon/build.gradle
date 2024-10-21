@@ -27,6 +27,9 @@ dependencies {
     // kafka
     implementation 'org.springframework.kafka:spring-kafka'
 
+    // # Logback <-> Logstash 연동을 위함
+    implementation 'net.logstash.logback:logstash-logback-encoder:8.0'
+
     // 테스트 카프카
     testImplementation 'org.springframework.kafka:spring-kafka-test'
 
