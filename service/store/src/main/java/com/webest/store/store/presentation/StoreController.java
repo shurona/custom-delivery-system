@@ -72,6 +72,21 @@ public class StoreController {
         return CommonResponse.success(responses);
     }
 
+    // 배달 가게 가게이름으로 검색
+    @GetMapping("/search")
+    public CommonResponse<List<StoreResponse>> searchDeliveryStores(
+            @RequestHeader("X-UserId") String userId,
+            @RequestHeader("X-Role") String role,
+            @RequestParam(value = "categoryId", required = false) Long categoryId,
+            @RequestParam(value = "keyword", required = false) String keyword
+
+    ) {
+        // String을 UserRole로 변환
+        UserRole userRole = UserRole.valueOf(role);
+        List<StoreResponse> responses = storeStrategyContext.searchDeliveryStores(userId, userRole, categoryId, keyword);
+        return CommonResponse.success(responses);
+    }
+
     // 포장 가게 목록 조회 (MASTER - 전체 / OWNER & USER - REDIS GEO로 반경내 가게만 조회)
     @GetMapping("/take-out/{radius}")
     public CommonResponse<List<StoreResponse>> getTakeOutStores(

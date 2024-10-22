@@ -31,6 +31,16 @@ public class UserStoreStrategy implements StoreStrategy {
                 .toList();
     }
 
+    // 배달 상점 검색 & 카테고리별 조회
+    @Override
+    public List<StoreResponse> searchDeliveryStores(String userId, String keyword, Long categoryId) {
+        UserResponse user = userClient.getUser(userId).getData();
+        return customStoreRepository.findStoresByAddressCodeAndCategoryIdAndName(user.addressCode(), categoryId, keyword)
+                .stream()
+                .map(StoreResponse::of)
+                .toList();
+    }
+
     @Override
     public List<StoreResponse> getTakeOutStores(String userId, Double radius) {
         UserResponse user = userClient.getUser(userId).getData();
