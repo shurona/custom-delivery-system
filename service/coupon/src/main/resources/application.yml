@@ -46,3 +46,10 @@ log:
   logstash:
     host: ${LOG_STASH_HOST}
     port: ${LOG_STASH_PORT}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "prometheus"
+
