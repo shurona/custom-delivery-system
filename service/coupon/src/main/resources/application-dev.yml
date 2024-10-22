@@ -1,4 +1,6 @@
 spring:
+  # config:
+  #   import: optional:file:.env.local[.properties]
   application:
     name: coupon-service
   datasource:
@@ -45,3 +47,10 @@ log:
   logstash:
     host: ${LOG_STASH_HOST}
     port: ${LOG_STASH_PORT}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "prometheus"
+
