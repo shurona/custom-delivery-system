@@ -34,8 +34,9 @@ docker compose up -d
 `.env.example` 파일을 확인해주세요
 
 ## 💾 인프라 설계도
+![image](https://github.com/user-attachments/assets/d5fca4d2-7f91-4fb8-b440-93aa1eb19fb2)
 
-링크 페이지에서 추가
+
 
 ## 🛵 주요 기능
 
@@ -194,7 +195,7 @@ Spring에서는 Redis를 사용할 때, 주로 Lettuce와 Redisson 라이브러�
 따라서 이를 위해 Kafka를 통해 Product서비스에서 제품을 장바구니에 담는 End Point가 동작하는 이벤트 발생 시 User쪽에서 해당 데이터를 가져와 해당 유저에 대해
 장바구니 데이터를 Redis에 저장하도록 구현하여 FeignClient를 통해 진행하는 것보다 속도 향상이 되었고, 동시성 처리도 가능하기에 사용하게 되었다.
 
-</details>
+</details><br>
 <details> <summary>Redis Geo를 이용한 가게 검색</summary><br>
 
 Redis Geo를 이용한 가게 검색은 위치 기반 서비스에서 효율적으로 가게를 조회하는 기능을 제공한다. Redis Geo는 위도와 경도 데이터를 저장하고 검색할 수 있는 기능을
