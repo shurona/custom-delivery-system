@@ -7,11 +7,12 @@ AI를 활용한 대규모 배달 시스템
 - Language: Java 17
 - Framework: Spring boot 3.x
 - cloud: Spring Eureka
-- Repository: MySql, Redis
+- Repository: MySql, MongoDB, Redis
 - Messaging: Kafka
 - Build Tool: Gradle 8.x
 - Monitoring: Grafana, Prometheus
 - CI: GitHub Action
+- Deploy: ECR, EC2
 
 ## ✈️ 실행 방법
 
