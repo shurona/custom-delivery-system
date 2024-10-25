@@ -57,7 +57,7 @@ jobs:
       - name: Build, Tag and Push docker image to AWS ECR
         run: |
           docker compose build eureka-server
-          ./push_to_ecr.sh eureka
+        #          ./push_to_ecr.sh eureka
         env:
           ECR_REGISTRY: ${{ vars.ECR_REGISTRY }}
           ECR_NAMESPACE: ${{ vars.ECR_NAMESPACE }}

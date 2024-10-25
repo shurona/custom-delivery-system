@@ -59,7 +59,7 @@ jobs:
         # 여기 서비스 특정
         run: |
           docker compose build user-service  
-          ./push_to_ecr.sh user
+        #          ./push_to_ecr.sh user
         env:
           DB_URL: ${{ secrets.DB_URL }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}

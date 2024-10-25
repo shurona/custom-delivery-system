@@ -60,7 +60,7 @@ jobs:
         # 여기 서비스 특정
         run: |
           docker compose build order-service  
-          ./push_to_ecr.sh order
+        #          ./push_to_ecr.sh order
         env:
           DB_URL: ${{ secrets.DB_URL }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}

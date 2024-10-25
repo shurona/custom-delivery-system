@@ -56,7 +56,7 @@ jobs:
       - name: Build, Tag and Push docker image to AWS ECR
         run: |
           docker compose build gateway-service  
-          ./push_to_ecr.sh gateway
+        #          ./push_to_ecr.sh gateway
         env:
           EUREKA_SERVER_URL: ${{ vars.EUREKA_SERVER_URL }}
           JWT_TOKEN_EXPIRE: ${{ secrets.JWT_TOKEN_EXPIRE }}
