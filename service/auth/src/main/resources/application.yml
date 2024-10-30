@@ -34,17 +34,17 @@ eureka:
     service-url:
       defaultZone: http://localhost:19090/eureka/
 
-logging:
-  level:
-    com.example.user : DEBUG
+#logging:
+#  level:
+#    com.example.user : DEBUG
 
 token:
-  expiration-time: ${JWT_EXPIRATION_TIME}
+  expiration-time: ${JWT_TOKEN_EXPIRE}
   secret-key: ${JWT_SECRET_KEY}
 
 google:
   email: ${GOOGLE_EMAIL}
-  secret-key: ${GOOGLE_EMAIL_SECRET_KEY}
+  secret-key: ${GOOGLE_SECRET_KEY}
 
 
 kakao:
