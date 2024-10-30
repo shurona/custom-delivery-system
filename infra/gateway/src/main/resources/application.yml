@@ -14,7 +14,7 @@ token:
 
 spring:
   config:
-    import: optional:file:./Gateway/.env[.properties]
+    import: optional:file:.env.local[.properties]
   application:
     name: gateway-service
   cloud:

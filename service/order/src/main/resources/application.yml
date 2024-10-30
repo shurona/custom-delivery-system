@@ -2,32 +2,33 @@ server:
   port: 19094
 
 spring:
+  config:
+    import: optional:file:.env.local[.properties]
   application:
     name: order-service
 
   datasource:
-    url: jdbc:mysql://localhost:3306/userdb
-    username: root
-    password: Jesuslove1!
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 
   data:
     mongodb:
-      host: localhost
-      port: 27017
-      username: root
-      password: rootpassword
-      database: mydatabase
-      uri: mongodb://root:rootpassword@localhost:27017/mydatabase?authSource=admin
-      authentication-database: admin
+      host: ${MONGO_DB_HOST}
+      port: ${MONGO_DB_PORT}
+      username: ${MONGO_DB_USERNAME}
+      password: ${MONGO_DB_PASSWORD}
+      database: ${MONGO_DB_DATABASE}
+      uri: ${MONGO_DB_URI}
+      authentication-database: ${MONGO_DB_AUTH}
 
 
   jpa:
     hibernate:
-      ddl-auto: create
-      dialect: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
+      ddl-auto: update
+  #      dialect: org.hibernate.dialect.PostgreSQLDialect
 
   kafka:
     bootstrap-servers: localhost:9092
@@ -57,7 +58,7 @@ eureka:
 # application.yml
 logging:
   level:
-    com:  # Package 의 특정 클래스 로깅 레벨 설정
+    com: # Package 의 특정 클래스 로깅 레벨 설정
       feignClient:
         practice:
           order:
@@ -67,7 +68,7 @@ logging:
 resilience4j:
   circuitbreaker:
     configs:
-      default:  # 기본 구성 이름
+      default: # 기본 구성 이름
         registerHealthIndicator: true  # 애플리케이션의 헬스 체크에 서킷 브레이커 상태를 추가하여 모니터링 가능
         # 서킷 브레이커가 동작할 때 사용할 슬라이딩 윈도우의 타입을 설정
         # COUNT_BASED: 마지막 N번의 호출 결과를 기반으로 상태를 결정

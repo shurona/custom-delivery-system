@@ -2,8 +2,8 @@ server:
   port: 19099
 
 spring:
-  # config:
-  #   import: optional:file:.env.local[.properties]
+  config:
+    import: optional:file:.env.local[.properties]
   application:
     name: rider-service
   datasource:
