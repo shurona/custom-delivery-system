@@ -13,6 +13,8 @@ import com.webest.store.product.exception.ProductException;
 import com.webest.store.product.presentation.dto.CartResponseDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -28,15 +30,13 @@ public class CartService {
     private final MongoTemplate mongoTemplate;
 
     // 여기서 캐시를 갱신해주고
-    public String createCart(Long productId, String userId) {
+    @CachePut(cacheNames = "userCart", key = "args[1]")
+    public CartResponseDto createCart(Long productId, String userId) {
 
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new ProductException(
                 ProductErrorCode.PRODUCT_NOT_FOUND)
             );
-
-        //    Cart cart = Cart.createdCart(userId, product.getStore().getId(), product);
-        //    cartRepository.save(cart);
 
         Query query = new Query();
         query.addCriteria(where("userId").is(userId));
@@ -47,10 +47,14 @@ public class CartService {
 
         mongoTemplate.upsert(query, update, Cart.class);
 
-        return product.getName();
+        Cart cart = mongoTemplate.query(Cart.class)
+            .matching(query(where("userId").is(userId))).firstValue();
+
+        return CartResponseDto.from(cart);
     }
 
     // 여기서 캐시를 갖고 온다.
+    @Cacheable(cacheNames = "userCart", key = "args[0]")
     public CartResponseDto findCartById(String userId) {
 
 //        Cart cart = cartRepository.findByUserId(userId).orElse(null);

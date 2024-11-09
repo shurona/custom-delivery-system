@@ -136,8 +136,8 @@ public class ProductController {
         @RequestHeader("X-UserId") String userId) {
 
         // 몽고 DB로 저장을 합시다
-        String productName = cartService.createCart(requestBody.productId(), userId);
+        CartResponseDto cart = cartService.createCart(requestBody.productId(), userId);
 
-        return CommonResponse.success(productName + " 제품이 장바구니에 추가되었습니다");
+        return CommonResponse.success(cart.name() + " 제품이 장바구니에 추가되었습니다");
     }
 }
