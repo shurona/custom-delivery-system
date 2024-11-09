@@ -1,19 +1,27 @@
-package com.webest.store.store.infrastructure.redis;
+package com.webest.store.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.webest.store.store.presentation.dto.StoreResponse;
+import java.time.Duration;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.CacheKeyPrefix;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.GeoOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+@EnableCaching
 @Configuration
 public class RedisCacheConfig {
 
@@ -41,6 +49,23 @@ public class RedisCacheConfig {
     }
 
     @Bean
+    public RedisCacheManager defaultCacheManager(RedisConnectionFactory connectionFactory) {
+        RedisCacheConfiguration configuration = RedisCacheConfiguration
+            .defaultCacheConfig()
+            // null을 캐싱할지
+            .disableCachingNullValues()
+            // 기본 캐싱 유지 시간(Time to live)
+            .entryTtl(Duration.ofMinutes(60))
+            // 캐시를 구분하는 접두사 설정
+            .computePrefixWith(CacheKeyPrefix.simple())
+            // 캐시에 저장할 값을 어떻게 직렬화 / 역직렬화 할것인지
+            .serializeValuesWith(
+                SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+
+        return RedisCacheManager.builder(connectionFactory).cacheDefaults(configuration).build();
+    }
+
+    @Bean
     public GeoOperations<String, String> geoOperations() {
         return geoRedisTemplate().opsForGeo();
     }
@@ -53,7 +78,8 @@ public class RedisCacheConfig {
         objectMapper.registerModule(new JavaTimeModule()); // JavaTimeModule 등록
 
         // Jackson2JsonRedisSerializer 사용
-        Jackson2JsonRedisSerializer<StoreResponse> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, StoreResponse.class);
+        Jackson2JsonRedisSerializer<StoreResponse> serializer = new Jackson2JsonRedisSerializer<>(
+            objectMapper, StoreResponse.class);
         RedisTemplate<String, StoreResponse> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
 
