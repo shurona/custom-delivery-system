@@ -20,8 +20,6 @@ spring:
   #        show_sql: true # sql 로깅
   #        format_sql: true # SQL 문 정렬하여 출력
   #        highlight_sql: true # SQL 문 색 부여
-  kafka:
-    bootstrap-servers: http://localhost:9092
 
 eureka:
   client:
