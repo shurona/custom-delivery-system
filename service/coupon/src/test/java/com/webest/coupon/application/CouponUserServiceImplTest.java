@@ -22,20 +22,38 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 @ExtendWith(TestContainerConfig.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@Testcontainers
 class CouponUserServiceImplTest {
+
+    private static final String KAFKA_IMAGE = "confluentinc/cp-kafka:7.7.1";
+
+    //kafka Container
+    @Container
+    static final KafkaContainer kafka = new KafkaContainer(
+        DockerImageName.parse(KAFKA_IMAGE));
+
 
     @Autowired
     private CouponServiceImpl couponService;
-
     @Autowired
     private CouponUserServiceImpl couponUserService;
-
     @MockBean
     private UserClient userClient;
 
+    @DynamicPropertySource
+    static void setKafkaProperties(DynamicPropertyRegistry registry) {
+//        System.out.println("?? 여기는 실행되나요? " + kafka.getBootstrapServers());
+        registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
+    }
 
     @Nested
     @DisplayName("쿠폰 동시성 테스트")

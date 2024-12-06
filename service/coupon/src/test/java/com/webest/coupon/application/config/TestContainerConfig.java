@@ -14,19 +14,9 @@ public class TestContainerConfig implements BeforeAllCallback {
 
     public static final Integer port = 6379;
     public static final Integer kafkaPort = 9092;
-    //    private static final KafkaContainer kafka = new KafkaContainer(
-//        DockerImageName.parse(KAFKA_IMAGE));
+
     public static GenericContainer<?> redis;
     public static GenericContainer<?> kafka;
-
-//    static {
-//        kafka.start();
-//    }
-//
-//    @DynamicPropertySource
-//    static void setKafkaProperties(DynamicPropertyRegistry registry) {
-//        registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
-//    }
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
@@ -34,7 +24,7 @@ public class TestContainerConfig implements BeforeAllCallback {
         startRedisContainer();
 
         // kafka
-        startKafkaContainer();
+//        startKafkaContainer();
     }
 
     private void startRedisContainer() {
