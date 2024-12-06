@@ -1,36 +1,36 @@
 package com.webest.auth.application;
 
-import com.webest.auth.domain.model.vo.AuthDto;
 import com.webest.web.common.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
+import java.security.Key;
+import java.util.Base64;
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerWebExchange;
 
-import java.security.Key;
-import java.util.Base64;
-import java.util.Date;
-
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Service
 public class JwtTokenService {
 
-    @Value("${token.secret-key}")
-    private String secretKey ;
-
-    @Value("${token.expiration-time}")
-    private String tokenTime;
-
-
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
+    private final String secretKey;
 
-    public String createToken(String userId, UserRole role, Long tokenTime){
+    private final String tokenTime;
+
+    public JwtTokenService(
+        @Value("${token.secret-key}") String secretKey,
+        @Value("${token.expiration-time}") String tokenTime) {
+        this.secretKey = secretKey;
+        this.tokenTime = tokenTime;
+    }
+
+    public String createToken(String userId, UserRole role, Long tokenTime) {
 
         byte[] bytes = Base64.getDecoder().decode(secretKey);
         Key key = Keys.hmacShaKeyFor(bytes);
@@ -44,11 +44,11 @@ public class JwtTokenService {
 
         // 엑세스 토큰
         String token = Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(validity)
-                .signWith(key, signatureAlgorithm)
-                .compact();
+            .setClaims(claims)
+            .setIssuedAt(now)
+            .setExpiration(validity)
+            .signWith(key, signatureAlgorithm)
+            .compact();
 
         return token;
     }
@@ -63,15 +63,15 @@ public class JwtTokenService {
     }
 
     // 토큰 암호화 제거
-    private Claims extractClaims(String token) {
+    public Claims extractClaims(String token) {
         byte[] bytes = Base64.getDecoder().decode(secretKey);
         var secretKeyBytes = Keys.hmacShaKeyFor(bytes);
 //            SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(secretKey));
 
         Jws<Claims> claimsJws = Jwts.parserBuilder()
-                .setSigningKey(secretKeyBytes)
-                .build()
-                .parseClaimsJws(token);
+            .setSigningKey(secretKeyBytes)
+            .build()
+            .parseClaimsJws(token);
 
         return claimsJws.getBody();
     }
