@@ -2,6 +2,7 @@ package com.webest.coupon.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.webest.coupon.application.client.UserClient;
 import com.webest.coupon.application.config.TestContainerConfig;
 import com.webest.coupon.domain.model.DateType;
 import com.webest.coupon.domain.model.DiscountType;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 @ExtendWith(TestContainerConfig.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -30,6 +32,9 @@ class CouponUserServiceImplTest {
 
     @Autowired
     private CouponUserServiceImpl couponUserService;
+
+    @MockBean
+    private UserClient userClient;
 
 
     @Nested
@@ -51,7 +56,7 @@ class CouponUserServiceImplTest {
                 1,
                 DateType.DAY.toString(),
                 LocalDate.parse("2024-10-01"),
-                LocalDate.parse("2024-10-10"),
+                LocalDate.parse("2040-10-10"),
                 DiscountType.FIXED.toString(),
                 3000,
                 maxQuantity
@@ -68,6 +73,7 @@ class CouponUserServiceImplTest {
 
             ExecutorService executorService = Executors.newFixedThreadPool(30);
             CountDownLatch latch = new CountDownLatch(threadCount);
+
             // when
             final Long currentMemberId = 1L;
             for (int i = 0; i < threadCount; i++) {
