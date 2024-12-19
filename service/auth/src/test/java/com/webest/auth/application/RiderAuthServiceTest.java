@@ -97,7 +97,7 @@ class RiderAuthServiceTest {
 
     @Nested
     @DisplayName("라이더 모듈에서 에러발생 경우")
-    class errorInRiderModule {
+    class ErrorInRiderModule {
 
         String userId;
         RiderAuthRequestDto requestDto;
