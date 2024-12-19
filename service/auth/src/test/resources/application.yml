@@ -1,0 +1,40 @@
+server:
+  port: 19100
+
+spring:
+  cloud:
+    discovery:
+      enabled: false
+  application:
+    name: auth-service
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create
+  #    properties:
+  #      hibernate:
+  #        show_sql: true # sql 로깅
+  #        format_sql: true # SQL 문 정렬하여 출력
+  #        highlight_sql: true # SQL 문 색 부여
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:19090/eureka/
+
+token:
+  expiration-time: 3600
+  secret-key: dkdkdkd
+
+google:
+  email: abc@abce.abc
+  secret-key: googlesecrectkey
+
+
+kakao:
+  client_id: kakaoapikey
+  redirect_uri: http://localhost:8080/api/auth/kakao/callback

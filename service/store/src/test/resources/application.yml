@@ -1,0 +1,25 @@
+server:
+  port: 19093
+
+spring:
+  cloud:
+    discovery:
+      enabled: false
+  application:
+    name: store-service
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test
+    username: sa
+    password:
+
+# redis는 testcontainer로 설정
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:19090/eureka/
+
+naver:
+  client-id: clientid
+  client-secret: clientsecret

@@ -1,0 +1,43 @@
+server:
+  port: 19094
+
+spring:
+  cloud:
+    discovery:
+      enabled: false
+  application:
+    name: order-service
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test
+    username: sa
+    password:
+
+  # mongodb는 testcontinaer를 사용한다.
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+  #      dialect: org.hibernate.dialect.PostgreSQLDialect
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:19090/eureka/
+#
+#  cloud:
+#    openfeign:
+#      circuitbreaker:
+#        enabled: true
+#        alphanumeric-ids:
+#          enabled: true
+
+# application.yml
+#logging:
+#  level:
+#    com: # Package 의 특정 클래스 로깅 레벨 설정
+#      feignClient:
+#        practice:
+#          order:
+#            product:
+#              ProductClient: DEBUG # Feign logging은 DEBUG 에서만 동작함

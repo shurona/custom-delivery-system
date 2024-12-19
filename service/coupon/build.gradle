@@ -36,6 +36,9 @@ dependencies {
     // prometheus (https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-prometheus)
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
+    /*
+        아래는 테스트 config
+     */
     // 테스트 카프카
     testImplementation 'org.springframework.kafka:spring-kafka-test'
 
