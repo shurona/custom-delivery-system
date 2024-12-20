@@ -1,20 +1,26 @@
 package com.webest.store.store.domain.model;
 
 import com.webest.app.jpa.BaseEntity;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.*;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "p_store")
@@ -23,12 +29,14 @@ import java.util.List;
 @SQLDelete(sql = "UPDATE p_store SET is_deleted = true WHERE id = ?")
 @SQLRestriction("is_deleted = false")
 public class Store extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
     private String name; // 가게 이름
 
+    @Column(unique = true)
     private String ownerId; // 가게 주인 ID
 
     private Long categoryId; // 카테고리 ID, FK
@@ -60,7 +68,9 @@ public class Store extends BaseEntity {
     @Column(name = "address_code")
     private List<Long> addressCodeList = new ArrayList<>();
 
-    public static Store of(String name, String ownerId, Long categoryId, Integer preparationTime, Double minimumOrderAmount, String phone, LocalTime openTime, LocalTime closeTime, Double deliveryTip) {
+    public static Store of(String name, String ownerId, Long categoryId, Integer preparationTime,
+        Double minimumOrderAmount, String phone, LocalTime openTime, LocalTime closeTime,
+        Double deliveryTip) {
         Store store = new Store();
         store.name = name;
         store.ownerId = ownerId;

@@ -1,11 +1,15 @@
 package com.webest.store.category.domain.model;
 
 import com.webest.app.jpa.BaseEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -16,6 +20,7 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "UPDATE p_store_category SET is_deleted = true WHERE id = ?")
 @SQLRestriction("is_deleted = false")
 public class StoreCategory extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,6 +28,7 @@ public class StoreCategory extends BaseEntity {
     @Column(unique = true)
     private String categoryKey;
 
+    @Column(name = "category_value")
     private String value;
 
     private StoreCategory(String categoryKey, String value) {
@@ -36,8 +42,12 @@ public class StoreCategory extends BaseEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         StoreCategory storeCategory = (StoreCategory) o;
 

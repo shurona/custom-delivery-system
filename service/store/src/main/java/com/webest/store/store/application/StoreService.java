@@ -2,28 +2,29 @@ package com.webest.store.store.application;
 
 import com.webest.app.address.csv.ReadAddressCsv;
 import com.webest.app.address.service.AddressDto;
+import com.webest.store.store.domain.model.Store;
 import com.webest.store.store.domain.model.StoreAddress;
 import com.webest.store.store.domain.repository.CustomStoreRepository;
-import com.webest.store.store.infrastructure.user.UserClient;
-import com.webest.store.store.infrastructure.user.dto.UserResponse;
-import com.webest.store.store.presentation.dto.*;
-import com.webest.store.store.domain.model.Store;
 import com.webest.store.store.domain.repository.StoreRepository;
 import com.webest.store.store.exception.StoreErrorCode;
 import com.webest.store.store.exception.StoreException;
 import com.webest.store.store.infrastructure.naver.NaverGeoClient;
 import com.webest.store.store.infrastructure.naver.dto.GeoResponse;
 import com.webest.store.store.infrastructure.naver.dto.NaverAddress;
+import com.webest.store.store.infrastructure.user.UserClient;
+import com.webest.store.store.infrastructure.user.dto.UserResponse;
+import com.webest.store.store.presentation.dto.Coordinates;
+import com.webest.store.store.presentation.dto.CreateStoreRequest;
+import com.webest.store.store.presentation.dto.DeliveryAreaRequest;
+import com.webest.store.store.presentation.dto.StoreResponse;
+import com.webest.store.store.presentation.dto.UpdateStoreAddressRequest;
 import com.webest.web.common.UserRole;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @RequiredArgsConstructor
@@ -56,19 +57,22 @@ public class StoreService {
 
     // 가게 주소 등록
     @Transactional
-    public StoreResponse updateStoreAddress(UpdateStoreAddressRequest request, String userId, UserRole role) {
+    public StoreResponse updateStoreAddress(UpdateStoreAddressRequest request, String userId,
+        UserRole role) {
         Store store = findStoreById(request.storeId());
 
         // 권한 검증
         validatePermission(store, userId, role);
 
         // 주소로 법정동 코드 받아오기
-        AddressDto addressDto = readAddressCsv.findAddressByDistrict(request.city(), request.street(), request.district());
+        AddressDto addressDto = readAddressCsv.findAddressByDistrict(request.city(),
+            request.street(), request.district());
         StoreAddress storeAddress = StoreAddress.from(addressDto, request.detailAddress());
 
         // 주소 조합 (시, 구, 동, 상세주소)
-        String fullAddress = request.city() + " " + request.street() + " " + request.district() + " " + request.detailAddress();
-
+        String fullAddress =
+            request.city() + " " + request.street() + " " + request.district() + " "
+                + request.detailAddress();
 
         // 주소로 위경도 받아오기
         GeoResponse geoResponse = fetchGeoCoordinates(fullAddress);
@@ -96,11 +100,11 @@ public class StoreService {
 
         // Address code가 존재하는 지 확인
         request.addressCodeList().forEach(
-                (code) -> {
-                    if (readAddressCsv.findAddressByCode(code) == null) {
-                        throw new StoreException(StoreErrorCode.INVALID_ADDRESS);
-                    }
+            (code) -> {
+                if (readAddressCsv.findAddressByCode(code) == null) {
+                    throw new StoreException(StoreErrorCode.INVALID_ADDRESS);
                 }
+            }
         );
 
         store.registerDeliveryArea(request.addressCodeList());
@@ -121,18 +125,20 @@ public class StoreService {
     // 가게 법정동별 조회
     public List<StoreResponse> getStoresByUserAddressCode(String userId) {
         UserResponse userResponse = userClient.getUser(userId).getData();
-        return findStoresByAddressCode(userResponse.addressCode()).stream().map(StoreResponse::of).toList();
+        return findStoresByAddressCode(userResponse.addressCode()).stream().map(StoreResponse::of)
+            .toList();
     }
 
     // 유저 근처 상점 조회
     public List<StoreResponse> getStoresByCoordinates(Coordinates coordinates) {
-        List<String> storeIds = geoOperation.findNearByStores(coordinates.longitude(), coordinates.latitude(), coordinates.radius());
+        List<String> storeIds = geoOperation.findNearByStores(coordinates.longitude(),
+            coordinates.latitude(), coordinates.radius());
         return storeIds.stream()
-                .map(storeId -> storeRepository.findById(Long.parseLong(storeId))
-                        .map(StoreResponse::of)  // Store 객체를 StoreResponse로 변환
-                        .orElse(null))  // 없으면 null 반환
-                .filter(Objects::nonNull)  // null 제거
-                .collect(Collectors.toList());
+            .map(storeId -> storeRepository.findById(Long.parseLong(storeId))
+                .map(StoreResponse::of)  // Store 객체를 StoreResponse로 변환
+                .orElse(null))  // 없으면 null 반환
+            .filter(Objects::nonNull)  // null 제거
+            .collect(Collectors.toList());
     }
 
     // 가게 삭제
@@ -147,17 +153,10 @@ public class StoreService {
     }
 
 
-
-
-
-
-
-
-
     // ID로 상점을 찾는 공통 메서드
     private Store findStoreById(Long id) {
         return storeRepository.findById(id).orElseThrow(
-                () -> new StoreException(StoreErrorCode.STORE_NOT_FOUND)
+            () -> new StoreException(StoreErrorCode.STORE_NOT_FOUND)
         );
     }
 
