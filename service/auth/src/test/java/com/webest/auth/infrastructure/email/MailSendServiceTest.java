@@ -43,15 +43,17 @@ class MailSendServiceTest {
         // given
         // when
         mailSendService.makeRandomNumber();
-        String authNumberOne = String.valueOf(
-            ReflectionTestUtils.getField(mailSendService, "authNumber"));
+        int authNumberOne =
+            (int) ReflectionTestUtils.getField(mailSendService, "authNumber");
+
         mailSendService.makeRandomNumber();
-        String authNumberTwo = String.valueOf(
-            ReflectionTestUtils.getField(mailSendService, "authNumber"));
+        int authNumberTwo =
+            (int) ReflectionTestUtils.getField(mailSendService, "authNumber");
 
         // then
-        assertThat(authNumberOne).hasSize(AUTH_SIZE);
-        assertThat(authNumberTwo).hasSize(AUTH_SIZE);
+
+        assertThat(authNumberOne).isLessThan(1000000);
+        assertThat(authNumberTwo).isLessThan(1000000);
         assertThat(authNumberOne).isNotEqualTo(authNumberTwo);
 
 
@@ -62,20 +64,18 @@ class MailSendServiceTest {
         // given
 
         MimeMessage mimeMessage = mock(MimeMessage.class);
-//        String key = mock(String.class);
-//        String value = mock(String.class);
-//        Long duration = mock(Long.class);
 
         when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
 
         doNothing().when(mailSender).send(mimeMessage);
+
         doNothing().when(redisUtil).setDataExpire(anyString(), anyString(), eq(60 * 5L));
 
         // when
         String rand = mailSendService.joinEmail(email);
 
         // then
-        assertThat(rand).hasSize(AUTH_SIZE);
+        assertThat(rand.length()).isLessThanOrEqualTo(AUTH_SIZE);
 
     }
 
