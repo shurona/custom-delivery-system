@@ -30,6 +30,7 @@ dependencies {
 
     // 테스트 container
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation "org.testcontainers:mongodb:1.20.4"
     testImplementation 'org.testcontainers:junit-jupiter'
 
 
