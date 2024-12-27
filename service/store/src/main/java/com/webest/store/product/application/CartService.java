@@ -54,7 +54,7 @@ public class CartService {
     }
 
     // 여기서 캐시를 갖고 온다.
-    @Cacheable(cacheNames = "userCart", key = "args[0]")
+    @Cacheable(cacheNames = "userCart", key = "args[0]", unless = "#result == null")
     public CartResponseDto findCartById(String userId) {
 
 //        Cart cart = cartRepository.findByUserId(userId).orElse(null);
