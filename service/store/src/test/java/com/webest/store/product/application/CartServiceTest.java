@@ -3,6 +3,7 @@ package com.webest.store.product.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,7 +28,6 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 @SpringBootTest
-//@ExtendWith(MockitoExtension.class)
 @ExtendWith({TestContainerConfig.class, MongoContainerConfig.class, MockitoExtension.class})
 class CartServiceTest {
 
@@ -90,12 +90,14 @@ class CartServiceTest {
         // 카트 생성
         cartService.createCart(productId, userId);
 
+        reset(mongoTemplate);
+
         // when
         CartResponseDto cartById = cartService.findCartById(userId);
 
         // then
         // find에서는 호출이 안되므로 create 할 때만 호출되어야 한다.
-        verify(mongoTemplate, times(2)).query(Cart.class);
+        verify(mongoTemplate, times(0)).query(Cart.class);
         assertThat(cartById.name()).isEqualTo(name);
 
     }
