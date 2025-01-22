@@ -20,7 +20,7 @@ on:
       - build.gradle
       - gradlew.bat
       - settings.gradle
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]  # coupon은 붙일 때 CI로 테스트를 진행한다.
 
 jobs:
   build:
