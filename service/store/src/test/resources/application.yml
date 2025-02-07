@@ -2,6 +2,8 @@ server:
   port: 19093
 
 spring:
+  profiles:
+    active: test
   cloud:
     discovery:
       enabled: false
@@ -14,6 +16,19 @@ spring:
     password:
 
   # redis는 testcontainer로 설정
+
+redis:
+  sentinel:
+    name: name
+    one:
+      host: host1
+      port: 12345
+    two:
+      host: host2
+      port: 12346
+    three:
+      host: host3
+      port: 12347
 
 logging:
   level:
