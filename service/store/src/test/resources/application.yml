@@ -13,7 +13,18 @@ spring:
     username: sa
     password:
 
-# redis는 testcontainer로 설정
+  # redis는 testcontainer로 설정
+
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          mongodb:
+            core:
+              MongoTemplate: DEBUG
+      mongodb:
+        driver: DEBUG
 
 eureka:
   client:
