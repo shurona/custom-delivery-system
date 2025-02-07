@@ -39,7 +39,7 @@ public class RedissonLockAspect {
                 joinPoint.getArgs(), lockAnnotation.value());
 
         // 순서의 보장을 최대한 맞추기 위해 FairLock 사용
-        RLock lock = redissonClient.getFairLock(lockKey);
+        RLock lock = redissonClient.getLock(lockKey);
         boolean output;
 
         try {
