@@ -33,6 +33,19 @@ spring:
       authentication-database: ${MONGO_DB_AUTH}
       auto-index-creation: true
 
+redis:
+  sentinel:
+    name: ${SENTINEL_NAME}
+    one:
+      host: ${SENTINEL_ONE_HOST}
+      port: ${SENTINEL_ONE_PORT}
+    two:
+      host: ${SENTINEL_TWO_HOST}
+      port: ${SENTINEL_TWO_PORT}
+    three:
+      host: ${SENTINEL_THREE_HOST}
+      port: ${SENTINEL_THREE_PORT}
+
 eureka:
   client:
     service-url:

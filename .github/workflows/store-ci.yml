@@ -20,7 +20,7 @@ on:
       - build.gradle
       - gradlew.bat
       - settings.gradle
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
 
 jobs:
   build:
