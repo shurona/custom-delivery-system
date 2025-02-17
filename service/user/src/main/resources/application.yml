@@ -28,6 +28,14 @@ spring:
 server:
   port: 19092
 
+
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          socket: DEBUG
+
 eureka:
   client:
     service-url:
