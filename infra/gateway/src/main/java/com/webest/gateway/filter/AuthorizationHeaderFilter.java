@@ -48,6 +48,7 @@ public class AuthorizationHeaderFilter extends
 //                return chain.filter(exchange);  // /signIn,signUp 경로는 필터를 적용하지 않음
 //            }
 
+            // api-docs는 외부에서 접근할 수 있도록 한다.
             if (exchange.getRequest().getURI().getPath().endsWith("api-docs")) {
                 return chain.filter(exchange);
             }
