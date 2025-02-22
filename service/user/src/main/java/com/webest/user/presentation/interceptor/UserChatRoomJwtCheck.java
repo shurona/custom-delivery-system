@@ -1,6 +1,7 @@
 package com.webest.user.presentation.interceptor;
 
-import com.webest.user.common.JwtUtils;
+
+import com.webest.app.security.JwtUtils;
 import com.webest.user.common.TokenStatus;
 import com.webest.user.infrastructure.redis.RedisUtil;
 import com.webest.user.presentation.dto.request.RefreshTokenDto;
@@ -43,7 +44,7 @@ public class UserChatRoomJwtCheck implements ChannelInterceptor {
             }
 
             Claims claims = jwtUtils.extractClaims(token);
-            
+
             RefreshTokenDto dto;
             try {
                 dto = redisUtil.getRefreshToken(claims.get("userId").toString());

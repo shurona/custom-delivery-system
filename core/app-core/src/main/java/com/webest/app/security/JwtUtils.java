@@ -1,4 +1,4 @@
-package com.webest.user.common;
+package com.webest.app.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -13,11 +13,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtUtils {
 
+    private static final String DEFAULT_SECRET_KEY = "ZGVmYWx1dHZhbHVlZGVmYXVsdHZhbHVlZGVmYWx1dHZhbHVlZGVmYXVsdHZhbHVl";
     private final Logger log = LoggerFactory.getLogger(getClass());
-
     private SecretKey key;
 
-    public JwtUtils(@Value("${token.secret-key}") String secretKey) {
+    public JwtUtils(
+        @Value("${token.secret-key:" + DEFAULT_SECRET_KEY + "}") String secretKey) {
         byte[] bytes = Base64.getDecoder().decode(secretKey);
         key = Keys.hmacShaKeyFor(bytes);
     }
@@ -36,4 +37,5 @@ public class JwtUtils {
     public Claims extractClaims(String jwtToken) {
         return Jwts.parser().verifyWith(key).build().parseSignedClaims(jwtToken).getPayload();
     }
+
 }

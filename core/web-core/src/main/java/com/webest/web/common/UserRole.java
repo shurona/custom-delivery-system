@@ -7,10 +7,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum UserRole {
-    RIDER(Authority.RIDER),
-    USER(Authority.USER),
-    OWNER(Authority.OWNER),
-    MASTER(Authority.MASTER);
+    RIDER(Authority.RIDER), // 라이더
+    USER(Authority.USER),   // 유저
+    OWNER(Authority.OWNER), // 가게 주인
+    MASTER(Authority.MASTER); // 관리자
 
     private final String authority;
 
