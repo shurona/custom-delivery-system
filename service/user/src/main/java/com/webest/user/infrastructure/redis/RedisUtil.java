@@ -34,7 +34,6 @@ public class RedisUtil {
 
     public RefreshTokenDto getRefreshToken(String userId) {
         String key = TOKEN_PREFIX + userId;
-        System.out.println("??? : " + key);
         return (RefreshTokenDto) refreshTokenDtoRedisTemplate.opsForValue().get(key);
     }
 }

@@ -1,6 +1,6 @@
 package com.webest.user.config;
 
-import com.webest.user.presentation.interceptor.UserChatRoomJwtCheck;
+import com.webest.user.presentation.interceptor.UserChatRoomJwtInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -14,7 +14,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketStompConfig implements WebSocketMessageBrokerConfigurer {
 
-    private final UserChatRoomJwtCheck userChatRoomJwtCheck;
+    private final UserChatRoomJwtInterceptor userChatRoomJwtInterceptor;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -23,7 +23,7 @@ public class WebSocketStompConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(userChatRoomJwtCheck);
+        registration.interceptors(userChatRoomJwtInterceptor);
     }
 
     @Override

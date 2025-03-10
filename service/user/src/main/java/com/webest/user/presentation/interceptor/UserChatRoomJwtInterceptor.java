@@ -7,6 +7,8 @@ import com.webest.user.infrastructure.redis.RedisUtil;
 import com.webest.user.presentation.dto.request.RefreshTokenDto;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -17,11 +19,12 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class UserChatRoomJwtCheck implements ChannelInterceptor {
+public class UserChatRoomJwtInterceptor implements ChannelInterceptor {
 
     private final JwtUtils jwtUtils;
     private final String JWT_PREFIX = "Bearer ";
     private final RedisUtil redisUtil;
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -49,7 +52,7 @@ public class UserChatRoomJwtCheck implements ChannelInterceptor {
             try {
                 dto = redisUtil.getRefreshToken(claims.get("userId").toString());
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                log.error(e.getMessage());
                 throw new IllegalArgumentException("Redis에서 값을 갖고 올 때 문제 발생");
             }
 
