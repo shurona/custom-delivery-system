@@ -43,35 +43,35 @@ jobs:
       # 여기 서비스 특정
       - name: Build with Gradle
         run: ./build_service.sh coupon
+        #
+        #      - name: Configure AWS credentials
+        #        uses: aws-actions/configure-aws-credentials@v4
+        #        with:
+        #          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        #          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        #          aws-region: ${{ secrets.AWS_REGION }}
+        #
+        #      - name: Login to Amazon ECR
+        #        id: login-ecr
+        #        uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      # docker compose 를 이용해서 여러 이미지를 모두 빌드하고, 별도의 script를 사용해서 이미지를 push 합니다.
-      - name: Build, Tag and Push docker image to AWS ECR
+        # docker compose 를 이용해서 여러 이미지를 모두 빌드하고, 별도의 script를 사용해서 이미지를 push 합니다.
+        #      - name: Build, Tag and Push docker image to AWS ECR
         # 여기 서비스 특정
-        run: |
-          docker compose build coupon-service  
+        #        run: |
+        #          docker compose build coupon-service
         #          ./push_to_ecr.sh coupon
-        env:
-          DB_URL: ${{ secrets.DB_URL }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          EUREKA_SERVER_URL: ${{ vars.EUREKA_SERVER_URL }}
-          DEV_REDIS_HOST: ${{ secrets.DEV_REDIS_HOST }}
-          DEV_REDIS_PASSWORD: ${{ secrets.DEV_REDIS_PASSWORD }}
-          DEV_REDIS_USERNAME: ${{ secrets.DEV_REDIS_USERNAME }}
-          KAFKA_BOOTSTRAP_SERVERS: ${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}
-          ECR_REGISTRY: ${{ vars.ECR_REGISTRY }}
-          ECR_NAMESPACE: ${{ vars.ECR_NAMESPACE }}
+#        env:
+#          DB_URL: ${{ secrets.DB_URL }}
+#          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+#          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+#          EUREKA_SERVER_URL: ${{ vars.EUREKA_SERVER_URL }}
+#          DEV_REDIS_HOST: ${{ secrets.DEV_REDIS_HOST }}
+#          DEV_REDIS_PASSWORD: ${{ secrets.DEV_REDIS_PASSWORD }}
+#          DEV_REDIS_USERNAME: ${{ secrets.DEV_REDIS_USERNAME }}
+#          KAFKA_BOOTSTRAP_SERVERS: ${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}
+#          ECR_REGISTRY: ${{ vars.ECR_REGISTRY }}
+#          ECR_NAMESPACE: ${{ vars.ECR_NAMESPACE }}
 
 
 
