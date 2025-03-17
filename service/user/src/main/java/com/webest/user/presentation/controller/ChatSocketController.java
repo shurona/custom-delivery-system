@@ -46,9 +46,6 @@ public class ChatSocketController {
         return CommonResponse.success(new ChatRoomCreateResponseDto(chatRoom.getId()));
     }
 
-    /*
-        채팅창
-     */
     @MessageMapping("/chat")
 //    @SendTo("/topic/chat/{rcvUserId}")
     public void handler(ChatRequestDto requestDto,
@@ -72,6 +69,9 @@ public class ChatSocketController {
         messagingTemplate.convertAndSend(destination,
             new ChatLogResponseDto(requestDto.chatData(), writer, LocalDateTime.now().toString()));
     }
+    /*
+        채팅창
+     */
 
     private String getTimestamp() {
         return new SimpleDateFormat("MM/dd/yyyy h:mm:ss a").format(new Date());
