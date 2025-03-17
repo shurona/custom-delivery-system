@@ -42,10 +42,14 @@ public class SocketEventHandler {
                 throw new IllegalArgumentException("잘못된 JWT 토큰입니다.");
             }
 
+            // 여기서 추출이 안되면 오류 발생될 것이라 기대한다.
             Claims claims = jwtUtils.extractClaims(token);
 
             // 세션 추가
             sessions.put(accessor.getSessionId(), claims.get("userId").toString());
+
+            log.info("[세션 추가] {} [유저 아이디] {}",
+                accessor.getSessionId(), claims.get("userId").toString());
         }
     }
 
