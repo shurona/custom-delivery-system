@@ -26,40 +26,49 @@ public class UserChatRoomJwtInterceptor implements ChannelInterceptor {
     private final RedisUtil redisUtil;
     private final Logger log = LoggerFactory.getLogger(getClass());
 
+    public void jwtAuth(String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith(JWT_PREFIX)) {
+            throw new IllegalArgumentException("JWT 토큰이 들어있지 않아요");
+        }
+
+        // "Bearer " 제거
+        String token = authHeader.substring(7);
+
+        // 토큰 검증
+        if (!jwtUtils.validateToken(token)) {
+            throw new IllegalArgumentException("잘못된 JWT 토큰입니다.");
+        }
+
+        Claims claims = jwtUtils.extractClaims(token);
+
+        RefreshTokenDto dto;
+        try {
+            dto = redisUtil.getRefreshToken(claims.get("userId").toString());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new IllegalArgumentException("Redis에서 값을 갖고 올 때 문제 발생");
+        }
+
+        if (dto == null || dto.status() == TokenStatus.DEACTIVATE) {
+            throw new IllegalArgumentException("만료된 토큰입니다.");
+        }
+    }
+
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
 
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
-        // 접속할 때에만 token 검증
+        // 연결 할 때 token 검증
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             String authHeader = accessor.getFirstNativeHeader(HttpHeaders.AUTHORIZATION);
-            if (authHeader == null || !authHeader.startsWith(JWT_PREFIX)) {
-                throw new IllegalArgumentException("JWT 토큰이 들어있지 않아요");
-            }
+            jwtAuth(authHeader);
 
-            // "Bearer " 제거
-            String token = authHeader.substring(7);
-
-            // 토큰 검증
-            if (!jwtUtils.validateToken(token)) {
-                throw new IllegalArgumentException("잘못된 JWT 토큰입니다.");
-            }
-
-            Claims claims = jwtUtils.extractClaims(token);
-
-            RefreshTokenDto dto;
-            try {
-                dto = redisUtil.getRefreshToken(claims.get("userId").toString());
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                throw new IllegalArgumentException("Redis에서 값을 갖고 올 때 문제 발생");
-            }
-
-            if (dto == null || dto.status() == TokenStatus.DEACTIVATE) {
-                throw new IllegalArgumentException("만료된 토큰입니다.");
-            }
-
+            // 구독 연셜 시 token 검증
+        } else if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+            String authHeader = accessor.getFirstNativeHeader(HttpHeaders.AUTHORIZATION);
+            jwtAuth(authHeader);
         }
 
         return message;
