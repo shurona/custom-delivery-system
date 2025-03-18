@@ -71,7 +71,8 @@ docker compose up -d
 
 ### 유저는 가게 주인과 1:1 채팅 가능
 
-- Spring WebSocket과 STOMP 프로토콜을 활용한 1:1 실시간 채팅 시스템을 구현
+- Spring WebSocket과 STOMP 프로토콜을 활용한 실시간 채팅 시스템을 구현
+- 소켓 연결 및 구독 단계에서 JWT 인증을 적용하여 접근 제어 보장
 
 ## 📠 기술적 의사 결정
 
